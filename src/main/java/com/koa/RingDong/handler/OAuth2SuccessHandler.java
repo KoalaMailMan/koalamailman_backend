@@ -1,9 +1,9 @@
 package com.koa.RingDong.handler;
 
+import com.koa.RingDong.provider.TokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import nkk.knock_now.provider.TokenProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
