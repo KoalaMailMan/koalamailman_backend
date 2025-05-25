@@ -7,10 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "block", indexes = {
+@Table(name = "sub_block", indexes = {
         @Index(
-                name = "idx_block_position",
-                columnList = "mandalart_id, position",
+                name = "idx_main_position",
+                columnList = "main_id, position",
                 unique = true
         )
 })
@@ -20,17 +20,17 @@ public class SubBlock {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long blockId;
+    private Long subId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mandalart_id", nullable = false)
+    @JoinColumn(name = "main_id", nullable = false)
     private MainBlock mainBlock;
 
     @Column(nullable = false)
-    private Integer position; // 9개
+    private Integer position;
 
     @Column(nullable = true)
-    private String content; // 블럭 중앙 content
+    private String content;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
