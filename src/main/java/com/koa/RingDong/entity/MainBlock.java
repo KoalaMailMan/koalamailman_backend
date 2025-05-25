@@ -7,7 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "mandalart", indexes = {
+@Table(name = "main_block", indexes = {
         @Index(
                 name = "idx_user_id",
                 columnList = "userId")
@@ -18,7 +18,7 @@ public class MainBlock {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mandalartId;
+    private Long mainId;
 
     @Column(nullable = false)
     private Long userId;

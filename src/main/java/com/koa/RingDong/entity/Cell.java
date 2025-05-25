@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "cell", indexes = {
         @Index(
-                name = "idx_cell_position",
-                columnList = "block_id, position",
+                name = "idx_sub_position",
+                columnList = "sub_id, position",
                 unique = true
         )
 })
@@ -25,7 +25,7 @@ public class Cell {
     private Long cellId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "block_id", nullable = false)
+    @JoinColumn(name = "sub_id", nullable = false)
     private SubBlock subBlock;
 
     @Column(nullable = false)
