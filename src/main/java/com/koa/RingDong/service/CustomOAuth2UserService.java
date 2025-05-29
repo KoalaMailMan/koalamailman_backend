@@ -36,7 +36,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String kakaoId = attributes.get("id").toString(); // 고유 식별자
         String nickname = (String) profile.get("nickname");
         String email = (String) kakaoAccount.get("email"); // 선택적
-        String token = userRequest.getAccessToken().getTokenValue(); // access token 저장
 
         // 2. 이미 존재하는 유저인지 확인
         User user = userRepository.findByKakaoId(kakaoId)
