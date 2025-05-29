@@ -2,20 +2,21 @@ package com.koa.RingDong.provider;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.koa.RingDong.service.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class TokenProvider {
+
+    private final CustomUserDetailsService userDetailsService;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -23,9 +24,9 @@ public class TokenProvider {
     @Value("${jwt.expiration}")
     private long expirationTime;
 
-    public String generateAccessToken(String kakaoId) {
+    public String generateAccessToken(Long userId) {
         return JWT.create()
-                .withSubject(kakaoId)
+                .withSubject(userId.toString())
                 .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
                 .sign(Algorithm.HMAC256(secretKey));
     }
@@ -38,13 +39,9 @@ public class TokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        String kakaoId = getSubjectFromToken(token); // JWT에서 sub 추출
-
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-
-        UserDetails userDetails = new User(kakaoId, "", authorities); // Spring Security User 객체 사용
-
-        return new UsernamePasswordAuthenticationToken(userDetails, token, authorities);
+        String userIdStr = getSubjectFromToken(token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userIdStr);
+        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
     }
 
     public boolean validateToken(String token) {
