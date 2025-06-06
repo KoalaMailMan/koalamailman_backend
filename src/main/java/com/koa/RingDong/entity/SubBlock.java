@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "sub_block", indexes = {
         @Index(
@@ -35,6 +38,9 @@ public class SubBlock {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
+
+    @OneToMany(mappedBy = "subBlock", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Cell> cells = new ArrayList<>();
 
     @Builder
     public SubBlock(MainBlock mainBlock, Integer position, String content) {

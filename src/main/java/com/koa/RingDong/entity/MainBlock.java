@@ -5,6 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "main_block", indexes = {
@@ -33,6 +35,9 @@ public class MainBlock {
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "mainBlock", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SubBlock> subBlocks = new ArrayList<>();
 
     @Builder
     public MainBlock(Long userId, String content) {
