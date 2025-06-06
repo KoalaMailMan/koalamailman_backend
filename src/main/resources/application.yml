@@ -26,21 +26,21 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
+
   datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:mysql://localhost:3306/ringdong?useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 2875drDR
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
-      ddl-auto: update
-    database-platform: org.hibernate.dialect.H2Dialect
+      ddl-auto: update  # 초기에는 update → 이후 운영은 validate 추천
     show-sql: true
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+    properties:
+      hibernate:
+        format_sql: true
 
 jwt:
   secret: ringdong-secret-key
-  expiration: 3600000 # 1시간 (ms)
+  expiration: 3600000000 # 임시로 늘림
