@@ -49,6 +49,6 @@ public class SubBlock {
     }
 
     public void setStatus(Status newStatus) {
-        this.status = newStatus;
+        if (newStatus != null) this.status = newStatus;
     }
 }
