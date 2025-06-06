@@ -28,7 +28,7 @@ public class MainBlockService {
     private final CellRepository cellRepository;
 
     @Transactional
-    public Long createMainBlock(CreateMainBlockRequest request, Long userId) {
+    public Long createMain(CreateMainBlockRequest request, Long userId) {
         MainBlock mainBlock = MainBlock.builder()
                 .userId(userId)
                 .content(request.getContent())

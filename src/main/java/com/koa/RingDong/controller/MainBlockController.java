@@ -31,7 +31,7 @@ public class MainBlockController {
             @RequestBody @Valid CreateMainBlockRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long mainId = mainBlockService.createMainBlock(request, userDetails.getUserId());
+        Long mainId = mainBlockService.createMain(request, userDetails.getUserId());
         return ResponseEntity.ok(ApiResponse.success("만다라트 핵심 목표 생성 성공", Map.of("mainId", mainId)));
     }
 

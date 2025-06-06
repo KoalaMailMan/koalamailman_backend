@@ -14,10 +14,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -28,27 +31,21 @@ public class SubBlockService {
     private final CellRepository cellRepository;
 
     @Transactional
-    public Long createSubBlock(Long mainId, CreateSubBlockRequest request) {
+    public Long createSub(Long mainId, Long subId) {
         MainBlock mainBlock = mainBlockRepository.findById(mainId)
                 .orElseThrow(() -> new IllegalArgumentException("MainBlock not found"));
 
-        SubBlock subBlock = SubBlock.builder()
-                .mainBlock(mainBlock)
-                .position(request.getPosition())
-                .content(request.getContent())
-                .build();
+        SubBlock subBlock = subBlockRepository.findBySubId(subId)
+                .orElseThrow(() -> new IllegalArgumentException("SubBlock not found"));
 
-        subBlockRepository.save(subBlock);
-
-        List<Cell> cells = request.getCells().stream()
-                .map(c -> Cell.builder()
+        List<Cell> cells = IntStream.range(0, 8)
+                .mapToObj(pos -> Cell.builder()
                         .subBlock(subBlock)
-                        .position(c.getPosition())
-                        .content(c.getContent())
+                        .position(pos)
                         .build())
                 .toList();
-
         cellRepository.saveAll(cells);
+
         return subBlock.getSubId();
     }
 
