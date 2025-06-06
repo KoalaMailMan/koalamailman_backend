@@ -25,12 +25,12 @@ public class SubBlockController {
     private final SubBlockService subBlockService;
 
     @Operation(summary = "만다라트 세부 목표 생성")
-    @PostMapping
+    @PostMapping("/{subId}")
     public ResponseEntity<ApiResponse<Map<String, Object>>> createSubBlockWithCells(
             @PathVariable("mainId") Long mainId,
-            @RequestBody @Valid CreateSubBlockRequest request
+            @PathVariable("subId") Long subId
     ) {
-        Long subBlockId = subBlockService.createSubBlock(mainId, request);
+        Long subBlockId = subBlockService.createSub(mainId, subId);
         return ResponseEntity.ok(ApiResponse.success("서브 블럭 및 셀 생성 성공", Map.of("subBlockId", subBlockId)));
     }
 

@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface SubBlockRepository extends JpaRepository<SubBlock, Long> {
     List<SubBlock> findByMainBlock(MainBlock mainBlock);
+    Optional<SubBlock> findBySubId(Long subId);
     Optional<SubBlock> findByMainBlockAndPosition(MainBlock mainBlock, int position);
 
 }
