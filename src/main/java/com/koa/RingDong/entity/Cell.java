@@ -50,11 +50,11 @@ public class Cell {
         this.status = Status.UNDONE;
     }
 
-    public void updateContent(String newContent) {
+    public void setContent(String newContent) {
         this.content = newContent;
     }
 
-    public void updateStatus(Status newStatus) {
+    public void setStatus(Status newStatus) {
         this.status = newStatus;
     }
 }

@@ -44,4 +44,6 @@ public class MainBlock {
     public void setContent(String newContent) {
         this.content = newContent;
     }
+    public void setStatusDone() { this.status = Status.DONE; }
+    public void setStatusUnDone() { this.status = Status.UNDONE; }
 }
