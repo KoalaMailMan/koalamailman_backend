@@ -6,8 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "sub_block", indexes = {
@@ -40,7 +40,7 @@ public class SubBlock {
     private Status status;
 
     @OneToMany(mappedBy = "subBlock", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Cell> cells = new ArrayList<>();
+    private Set<Cell> cells = new HashSet<>();
 
     @Builder
     public SubBlock(MainBlock mainBlock, Integer position, String content) {

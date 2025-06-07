@@ -2,6 +2,7 @@ package com.koa.RingDong.dto.response;
 
 import com.koa.RingDong.entity.Cell;
 import com.koa.RingDong.entity.Status;
+import com.koa.RingDong.entity.SubBlock;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,5 +15,20 @@ public class SubBlockResponse {
     private Integer position;
     private String content;
     private Status status;
-    private List<CellResponse> cellResponses;
+    private List<CellResponse> cells;
+
+    public static SubBlockResponse from(SubBlock subBlock) {
+        return SubBlockResponse.builder()
+                .subId(subBlock.getSubId())
+                .position(subBlock.getPosition())
+                .content(subBlock.getContent())
+                .status(subBlock.getStatus())
+                .cells(
+                        subBlock.getCells().stream()
+                                .map(CellResponse::from)
+                                .toList()
+                )
+                .build();
+    }
 }
+

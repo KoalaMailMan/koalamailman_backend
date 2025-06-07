@@ -5,8 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "main_block", indexes = {
@@ -28,6 +28,9 @@ public class MainBlock {
     @Column(nullable = true)
     private String content; // 정중앙 content
 
+    @Column(nullable = false)
+    private ReminderInterval reminderInterval;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
@@ -37,18 +40,22 @@ public class MainBlock {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "mainBlock", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SubBlock> subBlocks = new ArrayList<>();
+    private Set<SubBlock> subBlocks = new HashSet<>();
 
     @Builder
     public MainBlock(Long userId, String content) {
         this.userId = userId;
         this.content = content;
+        this.reminderInterval = ReminderInterval.ONE_MONTH;
         this.status = Status.UNDONE;
     }
 
-    public void setContent(String newContent) {
-        this.content = newContent;
+    public void setContent(String content) {
+        this.content = content;
     }
+    public void setReminderInterval(ReminderInterval reminderInterval){ this.reminderInterval = reminderInterval; }
+    public void setStatus(Status status) { this.status = status; }
+
     public void setStatusDone() { this.status = Status.DONE; }
     public void setStatusUnDone() { this.status = Status.UNDONE; }
 }
