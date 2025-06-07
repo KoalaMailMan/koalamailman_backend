@@ -31,7 +31,7 @@ public class SubBlockService {
     private final CellRepository cellRepository;
 
     @Transactional
-    public Long createSub(Long mainId, Long subId) {
+    public Long createSubArea(Long mainId, Long subId) {
         MainBlock mainBlock = mainBlockRepository.findById(mainId)
                 .orElseThrow(() -> new IllegalArgumentException("MainBlock not found"));
 
@@ -50,7 +50,7 @@ public class SubBlockService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public SubBlockResponse getSubBlock(Long subBlockId) {
+    public SubBlockResponse getSubArea(Long subBlockId) {
         SubBlock subBlock = subBlockRepository.findById(subBlockId)
                 .orElseThrow(() -> new IllegalArgumentException("서브 블럭이 존재하지 않습니다."));
 
@@ -66,12 +66,12 @@ public class SubBlockService {
                 .position(subBlock.getPosition())
                 .content(subBlock.getContent())
                 .status(subBlock.getStatus())
-                .cellResponses(cells)
+                .cells(cells)
                 .build();
     }
 
     @Transactional
-    public void updateSubBlock(Long mainId, Long subId, UpdateSubBlockRequest req) {
+    public void updateSubArea(Long mainId, Long subId, UpdateSubBlockRequest req) {
         SubBlock subBlock = subBlockRepository.findById(subId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 서브 블럭이 존재하지 않습니다."));
 

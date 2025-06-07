@@ -1,9 +1,5 @@
 package com.koa.RingDong.service;
 
-import com.koa.RingDong.dto.request.CreateMainBlockRequest;
-import com.koa.RingDong.dto.request.UpdateMainBlockRequest;
-import com.koa.RingDong.dto.request.UpdateSubBlockRequest;
-import com.koa.RingDong.dto.response.CellResponse;
 import com.koa.RingDong.dto.response.MainBlockResponse;
 import com.koa.RingDong.dto.response.SubBlockResponse;
 import com.koa.RingDong.entity.SubBlock;
@@ -28,10 +24,9 @@ public class MainBlockService {
     private final CellRepository cellRepository;
 
     @Transactional
-    public Long createMain(CreateMainBlockRequest request, Long userId) {
+    public MainBlock createMainArea(Long userId) {
         MainBlock mainBlock = MainBlock.builder()
                 .userId(userId)
-                .content(request.getContent())
                 .build();
         mainBlockRepository.save(mainBlock);
 
@@ -43,45 +38,11 @@ public class MainBlockService {
                 .toList();
         subBlockRepository.saveAll(subBlocks);
 
-        return mainBlock.getMainId();
+        return mainBlock;
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public MainBlockResponse getAllBlock(Long userId) {
-        MainBlock mainBlock = mainBlockRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("메인 블럭이 존재하지 않습니다."));
-
-        List<SubBlockResponse> subBlocks = subBlockRepository.findByMainBlock(mainBlock).stream()
-                .map(sub -> {
-                    List<CellResponse> cells = cellRepository.findBySubBlock(sub).stream()
-                            .map(cell -> CellResponse.builder()
-                                    .position(cell.getPosition())
-                                    .content(cell.getContent())
-                                    .status(cell.getStatus())
-                                    .build())
-                            .toList();
-
-                    return SubBlockResponse.builder()
-                            .subId(sub.getSubId())
-                            .position(sub.getPosition())
-                            .content(sub.getContent())
-                            .status(sub.getStatus())
-                            .cellResponses(cells)
-                            .build();
-                })
-                .toList();
-
-        return MainBlockResponse.builder()
-                .mainId(mainBlock.getMainId())
-                .userId(mainBlock.getUserId())
-                .content(mainBlock.getContent())
-                .status(mainBlock.getStatus())
-                .subBlockResponses(subBlocks)
-                .build();
-    }
-
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public MainBlockResponse getMainBlock(Long userId) {
+    public MainBlockResponse getMainArea(Long userId) {
         MainBlock mainBlock = mainBlockRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("메인 블럭이 존재하지 않습니다."));
 
@@ -97,25 +58,7 @@ public class MainBlockService {
                 .userId(mainBlock.getUserId())
                 .content(mainBlock.getContent())
                 .status(mainBlock.getStatus())
-                .subBlockResponses(subBlocks)
+                .subBlocks(subBlocks)
                 .build();
-    }
-
-    @Transactional
-    public void updateMain(Long mainId, UpdateMainBlockRequest request) {
-        MainBlock mainBlock = mainBlockRepository.findById(mainId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 메인 블럭이 존재하지 않습니다."));
-
-        // 메인 블럭 필드 업데이트
-        mainBlock.setContent(request.getContent());
-
-        // 각 서브 블럭 업데이트
-        for (UpdateSubBlockRequest subReq : request.getSubBlockRequests()) {
-            SubBlock subBlock = subBlockRepository.findByMainBlockAndPosition(mainBlock, subReq.getPosition())
-                    .orElseThrow(() -> new IllegalArgumentException("position " + subReq.getPosition() + "에 해당하는 서브 블럭이 없습니다."));
-
-            subBlock.setContent(subReq.getContent());
-            subBlock.setStatus(subReq.getStatus());
-        }
     }
 }
