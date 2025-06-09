@@ -7,7 +7,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.util.Date;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"oauthId", "oauthProvider"})
+})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
@@ -16,8 +18,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "kakao_id", nullable = false)
-    private String kakaoId;
+    @Column(nullable = false)
+    private String oauthId; // 각 플랫폼의 고유 id
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private OAuthProvider oauthProvider;  // KAKAO, NAVER
 
     @Column(nullable = false)
     private String nickname;
@@ -30,8 +36,9 @@ public class User {
     private Date createdAt;
 
     @Builder
-    public User(String kakaoId, String nickname, String email, Integer knockChance) {
-        this.kakaoId = kakaoId;
+    public User(String oauthId, OAuthProvider oauthProvider, String nickname, String email, Integer knockChance) {
+        this.oauthId = oauthId;
+        this.oauthProvider = oauthProvider;
         this.nickname = nickname;
         this.email = email;
     }

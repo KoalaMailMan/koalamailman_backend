@@ -1,8 +1,10 @@
 package com.koa.RingDong.service;
 
+import com.koa.RingDong.entity.OAuthProvider;
 import com.koa.RingDong.entity.User;
 import com.koa.RingDong.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -22,37 +24,56 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+
         OAuth2User oAuth2User = super.loadUser(userRequest);
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        String userNameAttributeName = userRequest.getClientRegistration()
-                .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
-        // 1. kakao_account 정보 꺼내기
-        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
-        Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+        String oauthId;
+        String nickname;
+        String email;
 
-        String kakaoId = attributes.get("id").toString(); // 고유 식별자
-        String nickname = (String) profile.get("nickname");
-        String email = (String) kakaoAccount.get("email"); // 선택적
+        if ("kakao".equals(registrationId)) {
+            Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+            Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
 
-        // 2. 이미 존재하는 유저인지 확인
-        User user = userRepository.findByKakaoId(kakaoId)
+            oauthId = attributes.get("id").toString();
+            nickname = (String) profile.get("nickname");
+            email = (String) kakaoAccount.get("email");
+
+        } else if ("naver".equals(registrationId)) {
+            Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+
+            oauthId = (String) response.get("id");
+            nickname = (String) response.get("name");
+            email = (String) response.get("email");
+
+        } else {
+            throw new OAuth2AuthenticationException("지원하지 않는 로그인입니다.");
+        }
+
+        User user = userRepository.findByOauthIdAndOauthProvider(oauthId, OAuthProvider.valueOf(registrationId.toUpperCase()))
                 .orElseGet(() -> {
                     User newUser = User.builder()
-                            .kakaoId(kakaoId)
+                            .oauthId(oauthId)
+                            .oauthProvider(OAuthProvider.valueOf(registrationId.toUpperCase()))
                             .nickname(nickname)
                             .email(email)
                             .build();
                     return userRepository.save(newUser);
                 });
 
-        // 3. 권한 부여 및 반환
+        Map<String, Object> customAttributes = Map.of(
+                "id", oauthId,
+                "nickname", nickname,
+                "email", email
+        );
+
         return new DefaultOAuth2User(
                 Set.of(new SimpleGrantedAuthority("ROLE_USER")),
-                attributes,
-                "id"  // userNameAttributeName
+                customAttributes,
+                "id"
         );
     }
 }

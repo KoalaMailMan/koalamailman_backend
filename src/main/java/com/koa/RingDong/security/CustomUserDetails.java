@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-@Getter
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
@@ -21,10 +20,6 @@ public class CustomUserDetails implements UserDetails {
 
     public Long getUserId() {
         return user.getId();
-    }
-
-    public String getKakaoId() {
-        return user.getKakaoId();
     }
 
     public String getNickname() {
