@@ -7,7 +7,6 @@ import lombok.Getter;
 @Getter
 public class UserResponse {
 
-    private Long id;
     private String nickname;
     private String email;
 }
