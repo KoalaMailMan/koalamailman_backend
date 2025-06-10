@@ -49,6 +49,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             nickname = (String) response.get("name");
             email = (String) response.get("email");
 
+        } else if ("google".equals(registrationId)) {
+
+            oauthId = (String) attributes.get("sub");
+            nickname = (String) attributes.get("name");
+            email = (String) attributes.get("email");
+
         } else {
             throw new OAuth2AuthenticationException("지원하지 않는 로그인입니다.");
         }

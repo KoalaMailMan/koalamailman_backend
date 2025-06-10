@@ -14,7 +14,12 @@ public class LoginController {
     }
 
     @GetMapping("/naver")
-    public String redirectToNaver(){
+    public String redirectToNaver() {
         return "redirect:/oauth2/authorization/naver";
+    }
+
+    @GetMapping("/google")
+    public String redirectToGoogle() {
+        return "redirect:/oauth2/authorization/google";
     }
 }
