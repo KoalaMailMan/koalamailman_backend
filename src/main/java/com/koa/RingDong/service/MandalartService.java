@@ -81,6 +81,7 @@ public class MandalartService {
         if (request.getReminderInterval() != null) {
             mainBlock.setReminderInterval(request.getReminderInterval());
         }
+        mainBlock.setNextScheduledTime(request.getNextScheduledTime());
 
         // SubBlock 업데이트
         for (UpdateSubBlockRequest subReq : request.getSubBlockRequests()) {
