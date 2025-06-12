@@ -31,6 +31,9 @@ public class MainBlock {
     @Column(nullable = false)
     private ReminderInterval reminderInterval;
 
+    @Column(nullable = true)
+    private LocalDateTime nextScheduledTime;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
@@ -58,4 +61,5 @@ public class MainBlock {
 
     public void setStatusDone() { this.status = Status.DONE; }
     public void setStatusUnDone() { this.status = Status.UNDONE; }
+    public void setNextScheduledTime(LocalDateTime nextScheduledTime) { this.nextScheduledTime = nextScheduledTime; }
 }

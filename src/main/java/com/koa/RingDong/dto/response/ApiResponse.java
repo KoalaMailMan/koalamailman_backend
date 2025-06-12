@@ -18,6 +18,10 @@ public class ApiResponse<T> {
         this.metadata = metadata;
     }
 
+    public static <T> ApiResponse<T> success(String message) {
+        return new ApiResponse<>("success", message, null, null);
+    }
+
     public static <T> ApiResponse<T> success(String message, T data) {
         return new ApiResponse<>("success", message, data, null);
     }
