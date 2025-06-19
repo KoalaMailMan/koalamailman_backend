@@ -46,10 +46,10 @@ public class MainBlock {
     private Set<SubBlock> subBlocks = new HashSet<>();
 
     @Builder
-    public MainBlock(Long userId, String content) {
+    public MainBlock(Long userId, String content, ReminderInterval reminderInterval) {
         this.userId = userId;
         this.content = content;
-        this.reminderInterval = ReminderInterval.ONE_MONTH;
+        this.reminderInterval = reminderInterval;
         this.status = Status.UNDONE;
     }
 
@@ -62,4 +62,17 @@ public class MainBlock {
     public void setStatusDone() { this.status = Status.DONE; }
     public void setStatusUnDone() { this.status = Status.UNDONE; }
     public void setNextScheduledTime(LocalDateTime nextScheduledTime) { this.nextScheduledTime = nextScheduledTime; }
+
+    @Override
+    public String toString() {
+        return "MainBlock{" +
+                "mainId=" + mainId +
+                ", userId=" + userId +
+                ", content='" + content + '\'' +
+                ", status=" + status +
+                ", reminderInterval=" + reminderInterval +
+                ", nextScheduledTime=" + nextScheduledTime +
+                ", subBlocks=" + subBlocks +
+                '}';
+    }
 }

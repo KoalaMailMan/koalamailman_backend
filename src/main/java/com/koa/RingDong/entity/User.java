@@ -36,7 +36,7 @@ public class User {
     private Date createdAt;
 
     @Builder
-    public User(String oauthId, OAuthProvider oauthProvider, String nickname, String email, Integer knockChance) {
+    public User(String oauthId, OAuthProvider oauthProvider, String nickname, String email) {
         this.oauthId = oauthId;
         this.oauthProvider = oauthProvider;
         this.nickname = nickname;

@@ -43,11 +43,11 @@ public class SubBlock {
     private Set<Cell> cells = new HashSet<>();
 
     @Builder
-    public SubBlock(MainBlock mainBlock, Integer position, String content) {
+    public SubBlock(MainBlock mainBlock, Integer position, String content, Status status) {
         this.mainBlock = mainBlock;
         this.position = position;
         this.content = content;
-        this.status = Status.UNDONE;
+        this.status = status;
     }
 
     public void setContent(String newContent) {
@@ -56,5 +56,16 @@ public class SubBlock {
 
     public void setStatus(Status newStatus) {
         if (newStatus != null) this.status = newStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "SubBlock{" +
+                "subId=" + subId +
+                ", position=" + position +
+                ", content='" + content + '\'' +
+                ", status=" + status +
+                ", cells=" + cells.size() + "개" +
+                '}';
     }
 }

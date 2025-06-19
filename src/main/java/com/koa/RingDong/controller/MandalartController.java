@@ -23,11 +23,12 @@ public class MandalartController {
 
     @Operation(summary = "만다라트 전체 9x9 생성")
     @PostMapping()
-    public ResponseEntity<ApiResponse<String>> createMandalart(
+    public ResponseEntity<ApiResponse<MainBlockResponse>> createMandalart(
+            @RequestBody @Valid UpdateMainBlockRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
-        mandalartService.createMandalart(userDetails.getUserId());
-        return ResponseEntity.ok(ApiResponse.success("만다라트 전체 9x9 생성", null));
+        MainBlockResponse response = mandalartService.createMandalart(userDetails.getUserId(), request);
+        return ResponseEntity.ok(ApiResponse.success("만다라트 전체 9x9 생성", response));
     }
 
     @Operation(summary = "만다라트 전체 9x9 조회")
@@ -40,12 +41,12 @@ public class MandalartController {
     }
 
     @Operation(summary = "만다라트 전체 9x9 수정")
-    @PatchMapping("/{mainId}")
-    public ResponseEntity<ApiResponse<String>> updateMandalart(
-            @PathVariable("mainId") Long mainId,
-            @RequestBody @Valid UpdateMainBlockRequest request
+    @PatchMapping()
+    public ResponseEntity<ApiResponse<MainBlockResponse>> updateMandalart(
+            @RequestBody @Valid UpdateMainBlockRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        mandalartService.updateMandalart(mainId, request);
-        return ResponseEntity.ok(ApiResponse.success("만다라트 전체 9x9 수정", null));
+        MainBlockResponse response = mandalartService.updateMandalart(userDetails.getUserId(), request);
+        return ResponseEntity.ok(ApiResponse.success("만다라트 전체 9x9 수정", response));
     }
 }
