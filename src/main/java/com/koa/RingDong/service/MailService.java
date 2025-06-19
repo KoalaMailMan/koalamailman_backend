@@ -5,6 +5,7 @@ import com.koa.RingDong.entity.User;
 import com.koa.RingDong.provider.ReminderTimeProvider;
 import com.koa.RingDong.repository.MainBlockRepository;
 import com.koa.RingDong.repository.UserRepository;
+import com.koa.RingDong.util.MailContentBuilder;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -34,6 +35,7 @@ public class MailService {
     final private UserRepository userRepository;
     final private MainBlockRepository mainBlockRepository;
     final private ReminderTimeProvider reminderTimeProvider;
+    private final MailContentBuilder mailContentBuilder;
 
     @Transactional
     public void sendMail(Long targetId) {
@@ -46,7 +48,9 @@ public class MailService {
                 .orElseThrow(() -> new IllegalArgumentException("Main Block이 존재하지 않는 사용자 ID: " + targetId));
 
         try {
-            sendHTMLMail(user.getEmail(), "RingDong", buildHtmlTableFromMainBlock(mainBlock));
+            String title = mailContentBuilder.buildTitle();
+            String html = mailContentBuilder.buildFullHtml(mainBlock);
+            sendHTMLMail(user.getEmail(), title, html);
         } catch (IOException e) {
             log.error("메일 전송 실패 - userId: {}, email: {}, 이유: {}", targetId, user.getEmail(), e.getMessage());
 
@@ -76,62 +80,5 @@ public class MailService {
         }
 
         log.info("메일 전송 성공 - to: {}, subject: {}", to, subject);
-    }
-
-    private String buildHtmlTableFromMainBlock(MainBlock mainBlock) {
-        String[] cellContents = new String[9];
-        Arrays.fill(cellContents, "");  // 초기화
-
-        // 중앙 목표 (position 4)
-        cellContents[4] = "<b>중앙 목표</b><br>" + (mainBlock.getContent() == null ? "미정" : mainBlock.getContent());
-
-        // SubBlock 채우기 (position 0~8 중에서 4는 중앙이므로 제외)
-        mainBlock.getSubBlocks().forEach(sub -> {
-            int pos = sub.getPosition();
-            if (pos >= 0 && pos < 9 && pos != 4) {
-                String content = sub.getContent() == null ? "(비어있음)" : sub.getContent();
-                cellContents[pos] = content;
-            }
-        });
-
-        // HTML 테이블 생성
-        StringBuilder html = new StringBuilder();
-        html.append("<div style=\"width: 100%; max-width: 900px; margin: 0 auto;\">");
-        html.append("<table style=\"width: 100%; border-collapse: collapse; text-align: center; background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);\">");
-
-        for (int i = 0; i < 3; i++) {
-            html.append("<tr>");
-            for (int j = 0; j < 3; j++) {
-                int pos = i * 3 + j;
-                String cellStyle = "";
-
-                // 중앙 셀 스타일
-                if (pos == 4) {
-                    cellStyle = "background-color: #fef3c7; font-weight: bold; font-size: 1.1em;";
-                } else {
-                    // 각 위치별 배경색 설정 (프론트엔드의 pastel 테마와 유사하게)
-                    String[] bgColors = {
-                            "#eff6ff", // blue-50
-                            "#f0fdfa", // teal-50
-                            "#ecfeff", // cyan-50
-                            "#fffbeb", // amber-50
-                            "#fff1f2", // rose-50
-                            "#f5f3ff", // violet-50
-                            "#ecfdf5", // emerald-50
-                            "#fff7ed"  // orange-50
-                    };
-                    cellStyle = "background-color: " + bgColors[pos > 4 ? pos - 1 : pos] + ";";
-                }
-
-                html.append("<td style=\"border: 2px solid #e5e7eb; padding: 16px; " + cellStyle + "\">")
-                        .append(cellContents[pos])
-                        .append("</td>");
-            }
-            html.append("</tr>");
-        }
-
-        html.append("</table>");
-        html.append("</div>");
-        return html.toString();
     }
 }
