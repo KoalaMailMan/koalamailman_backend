@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,4 +21,7 @@ public interface MainBlockRepository extends JpaRepository<MainBlock, Long> {
         WHERE m.userId = :userId
     """)
     Optional<MainBlock> findFullMandalartByUserId(@Param("userId") Long userId);
+
+    List<MainBlock> findByNextScheduledTimeBetween(LocalDateTime start, LocalDateTime end);
+
 }
