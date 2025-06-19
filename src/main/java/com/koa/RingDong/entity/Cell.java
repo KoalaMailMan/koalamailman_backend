@@ -43,11 +43,11 @@ public class Cell {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Cell(SubBlock subBlock, Integer position, String content) {
+    public Cell(SubBlock subBlock, Integer position, String content, Status status) {
         this.subBlock = subBlock;
         this.position = position;
         this.content = content;
-        this.status = Status.UNDONE;
+        this.status = status;
     }
 
     public void setContent(String newContent) {
