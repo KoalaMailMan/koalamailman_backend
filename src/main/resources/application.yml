@@ -29,6 +29,14 @@ spring:
             scope:
               - name
               - email
+          google:
+            client-id: 285365440369-opvu0s5nlt5lctvmoti6nhocsb74vdmi.apps.googleusercontent.com
+            client-secret: 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
+            client-name: Google
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope:
+              - email
+              - profile
         provider:
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
@@ -42,18 +50,23 @@ spring:
             user-name-attribute: response
 
   datasource:
-    url: jdbc:mysql://localhost:3306/ringdong?useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: 2875drDR
+    url: jdbc:mysql://ringdongdb.crya6wgists4.ap-northeast-2.rds.amazonaws.com:3306/ringdongdb
+    username: admin
+    password: dkaghrkdehaodnrkdgka88
     driver-class-name: com.mysql.cj.jdbc.Driver
+
 
   jpa:
     hibernate:
-      ddl-auto: create  # 초기에는 update → 이후 운영은 validate 추천
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+sendgrid:
+  api-key: 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
 
 jwt:
   secret: ringdong-secret-key
