@@ -1,5 +1,6 @@
 package com.koa.RingDong.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,18 +9,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/login")
 public class LoginController {
 
-    @GetMapping("/kakao")
-    public String redirectToKakao() {
-        return "redirect:/oauth2/authorization/kakao";
-    }
+    @Value("${app.oauth2.front-uri}")
+    private String frontUri;
 
     @GetMapping("/naver")
     public String redirectToNaver() {
-        return "redirect:/oauth2/authorization/naver";
+        return "redirect:" + frontUri + "/oauth2/authorization/naver";
     }
 
     @GetMapping("/google")
     public String redirectToGoogle() {
-        return "redirect:/oauth2/authorization/google";
+        return "redirect:" + frontUri + "/oauth2/authorization/google";
     }
 }
