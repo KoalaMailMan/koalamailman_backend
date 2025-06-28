@@ -6,6 +6,10 @@ server:
       force: true
       enabled: true
 
+app:
+  oauth2:
+    dashboard-uri: https://ringdong.kr/dashboard
+
 spring:
   security:
     oauth2:
