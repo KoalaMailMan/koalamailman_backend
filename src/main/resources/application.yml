@@ -8,7 +8,7 @@ server:
 
 app:
   oauth2:
-    dashboard-uri: https://ringdong.kr/dashboard
+    front-uri: https://ringdong.kr
 
 spring:
   security:

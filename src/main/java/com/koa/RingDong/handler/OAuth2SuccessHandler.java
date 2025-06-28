@@ -28,8 +28,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final TokenProvider tokenProvider;
     private final UserRepository userRepository;
 
-    @Value("${app.oauth2.dashboard-uri}")
-    private String dashboardUri;
+    @Value("${app.oauth2.front-uri}")
+    private String frontUri;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -62,7 +62,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
         // 6. 프론트엔드로 리다이렉트
-        response.sendRedirect(dashboardUri);
+        response.sendRedirect(frontUri + "/dashboard");
     }
 }
 
