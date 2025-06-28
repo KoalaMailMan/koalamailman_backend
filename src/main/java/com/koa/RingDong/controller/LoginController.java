@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/login")
 public class LoginController {
 
-    @GetMapping("/kako")
+    @GetMapping("/kakao")
     public String redirectToKakao() {
         return "redirect:/oauth2/authorization/kakao";
     }
