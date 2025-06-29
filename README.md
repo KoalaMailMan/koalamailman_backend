@@ -1,6 +1,6 @@
 #  Ring📞Dong🔔 Backend System
 
-<img width="749" alt="스크린샷 2025-06-07 13 36 08" src="https://github.com/user-attachments/assets/f8f300c3-a54c-48f1-bc39-9019ed88449a" />
+<img width="749" alt="스크린샷 2025-06-07 13 36 08" src="https://github.com/user-attachments/assets/f8f300c3-a54c-48f1-bc39-9019ed88449a" />
 
 - **Main Area**  
   - 핵심 목표(Main Block)와 이를 보조하는 8개의 Sub Block으로 구성된 중심 영역 (3x3 그리드)
@@ -25,3 +25,12 @@ User
            └── Cell (각 SubBlock당 8개)
 ```
 ---
+
+## 🛠️ 기술 스택
+
+- **Framework**: Spring Boot 3.3.1
+- **Security**: Spring Security + OAuth2
+- **Database**: MySQL 8.0
+- **JWT**: Auth0 Java JWT
+- **Email**: SendGrid
+- **Build Tool**: Gradle
