@@ -48,9 +48,13 @@ public class MailService {
                 .orElseThrow(() -> new IllegalArgumentException("Main Block이 존재하지 않는 사용자 ID: " + targetId));
 
         try {
+
             String title = mailContentBuilder.buildTitle();
             String html = mailContentBuilder.buildFullHtml(mainBlock);
             sendHTMLMail(user.getEmail(), title, html);
+
+            LocalDateTime nextTime = reminderTimeProvider.generateRandomTime(mainBlock.getReminderInterval());
+            mainBlock.setNextScheduledTime(nextTime);
         } catch (IOException e) {
             log.error("메일 전송 실패 - userId: {}, email: {}, 이유: {}", targetId, user.getEmail(), e.getMessage());
 
