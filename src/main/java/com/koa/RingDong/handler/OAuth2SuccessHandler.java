@@ -57,7 +57,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 .secure(true)
                 .path("/")
                 .maxAge(Duration.ofHours(1))
-                .sameSite("Strict")
+                .sameSite("None")
+                .domain("ringdong.kr")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
