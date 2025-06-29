@@ -8,16 +8,18 @@ server:
 
 app:
   oauth2:
-    front-uri: https://ringdong.kr
+    front-uri: ${FRONT_URI:https://ringdong.kr}
 
 spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
   security:
     oauth2:
       client:
         registration:
           kakao:
-            client-id: 1ea7f05331a9bbed57ec0ea7087d8f2a
-            client-secret:
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             authorization-grant-type: authorization_code
             client-name: Kakao
@@ -25,8 +27,8 @@ spring:
               - profile_nickname
               - talk_message
           naver:
-            client-id: mgFujTvPvlY3lcdDTch7
-            client-secret: dnouDj_f7i
+            client-id: ${NAVER_CLIENT_ID}
+            client-secret: ${NAVER_CLIENT_SECRET}
             client-name: Naver
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
@@ -34,8 +36,8 @@ spring:
               - name
               - email
           google:
-            client-id: 285365440369-opvu0s5nlt5lctvmoti6nhocsb74vdmi.apps.googleusercontent.com
-            client-secret: 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
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             client-name: Google
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope:
@@ -54,11 +56,10 @@ spring:
             user-name-attribute: response
 
   datasource:
-    url: jdbc:mysql://ringdongdb.crya6wgists4.ap-northeast-2.rds.amazonaws.com:3306/ringdongdb
-    username: admin
-    password: dkaghrkdehaodnrkdgka88
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-
 
   jpa:
     hibernate:
@@ -70,8 +71,8 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
 
 sendgrid:
-  api-key: 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
+  api-key: ${SENDGRID_API_KEY}
 
 jwt:
-  secret: ringdong-secret-key
-  expiration: 3600000000 # 임시로 늘림
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:3600000000}
