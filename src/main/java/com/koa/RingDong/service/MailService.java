@@ -21,8 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +50,6 @@ public class MailService {
             String title = mailContentBuilder.buildTitle();
             String html = mailContentBuilder.buildFullHtml(mainBlock);
             sendHTMLMail(user.getEmail(), title, html);
-
             LocalDateTime nextTime = reminderTimeProvider.generateRandomTime(mainBlock.getReminderInterval());
             mainBlock.setNextScheduledTime(nextTime);
         } catch (IOException e) {

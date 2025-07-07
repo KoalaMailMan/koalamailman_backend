@@ -49,7 +49,7 @@ public class MailContentBuilder {
 
         html.append(buildHeader());
         html.append("<br/>");
-        html.append(buildMainOnlyHtml(mainBlock));
+        html.append(buildMainHtml(mainBlock));
         html.append("<br/>");
         html.append(buildFooter());
 
@@ -74,94 +74,44 @@ public class MailContentBuilder {
                 + "<a href='https://ringdong.kr' style='color:#007BFF; text-decoration:none;'>https://ringdong.kr</a>"
                 + "</div>";
     }
-
-    public String buildFullGridHtml(MainBlock mainBlock) {
-        Map<Integer, SubBlock> subMap = mainBlock.getSubBlocks().stream()
-                .collect(Collectors.toMap(SubBlock::getPosition, sb -> sb));
-
-        StringBuilder html = new StringBuilder();
-        html.append("<table class='full-grid-table' style='width:100%; border-collapse:collapse; table-layout:fixed;'>");
-
-        for (int mainRow = 0; mainRow < 3; mainRow++) {
-            html.append("<tr>");
-            for (int mainCol = 0; mainCol < 3; mainCol++) {
-                int position = mainRow * 3 + mainCol;
-                String bgColor = pastelColors.getOrDefault(position, "#ffffff");
-
-                html.append("<td data-position='").append(position)
-                        .append("' style='border:1px solid #ccc; padding:4px; background-color:")
-                        .append(bgColor)
-                        .append("; vertical-align:top;'>");
-
-                html.append("<table style='width:100%; aspect-ratio:1/1; table-layout:fixed; border-collapse:collapse;'>");
-
-                for (int detailRow = 0; detailRow < 3; detailRow++) {
-                    html.append("<tr>");
-                    for (int detailCol = 0; detailCol < 3; detailCol++) {
-                        int subCellPos = detailRow * 3 + detailCol;
-                        boolean isCenter = (detailRow == 1 && detailCol == 1);
-
-                        html.append("<td style='border:1px solid #ddd; font-size:10px; padding:4px; text-align:center; vertical-align:middle; width:33.3%; height:33.3%;'>");
-
-                        html.append("<a href='https://ringdong.kr' style='color:inherit; text-decoration:none;'>");
-
-                        if (position == 4 && isCenter) {
-                            html.append("<b>").append(escape(mainBlock.getContent())).append("</b>");
-                        } else if (position == 4) {
-                            int subPosition = mapCenterSurroundingCellToSubPosition(detailRow, detailCol);
-                            SubBlock sub = subMap.get(subPosition);
-                            if (sub != null) {
-                                html.append(escape(sub.getContent()));
-                            }
-                        } else if (isCenter) {
-                            SubBlock sub = subMap.get(position);
-                            if (sub != null) {
-                                html.append("<b>").append(escape(sub.getContent())).append("</b>");
-                            }
-                        } else {
-                            SubBlock sub = subMap.get(position);
-                            if (sub != null) {
-                                Cell cell = sub.getCells().stream()
-                                        .filter(c -> c.getPosition() == subCellPos)
-                                        .findFirst()
-                                        .orElse(null);
-                                if (cell != null) {
-                                    html.append(escape(cell.getContent()));
-                                }
-                            }
-                        }
-
-                        html.append("</a></td>");
-                    }
-                    html.append("</tr>");
-                }
-
-                html.append("</table>");
-                html.append("</td>");
-            }
-            html.append("</tr>");
-        }
-
-        html.append("</table>");
-        return html.toString();
-    }
-
-    public String buildMainOnlyHtml(MainBlock mainBlock) {
+    public String buildMainHtml(MainBlock mainBlock) {
         StringBuilder html = new StringBuilder();
 
-        html.append("<table class='main-only-table' style='width:100%; border-collapse:collapse; table-layout:fixed;'>");
-        html.append("<tr><td style='background-color:")
-                .append(pastelColors.getOrDefault(4, "#fef3c7"))
-                .append("; padding:4px; border:1px solid #ccc;'>");
+        html.append("<div style='max-width:620px; margin:0 auto; padding:32px 16px; font-family:Noto Sans KR,Apple SD Gothic Neo,sans-serif;'>");
 
-        html.append("<table style='width:100%; aspect-ratio:1/1; table-layout:fixed; border-collapse:collapse;'>");
+        html.append("<div style='display:grid; grid-template-columns:repeat(3,1fr); gap:4px; border-radius:8px; overflow:hidden;'>");
 
         for (int row = 0; row < 3; row++) {
-            html.append("<tr>");
             for (int col = 0; col < 3; col++) {
                 boolean isCenter = (row == 1 && col == 1);
                 int pos = row * 3 + col;
-                html.append("<td style='border:1px solid #ddd; font-size:12px; padding:4px; text-align:center; vertical-align:middle; width:33.3%; height:33.3%;'>");
+
+                // 색상 매핑
+                String backgroundColor;
+                if (isCenter) {
+                    backgroundColor = "#fef3c7"; // 중앙 셀 색상
+                } else {
+                    int[] pastelOrder = {0, 1, 2, 3, 5, 6, 7, 8}; // sub position
+                    int subPosition = mapCenterSurroundingCellToSubPosition(row, col);
+                    int colorIndex = subPosition >= 0 && subPosition < pastelOrder.length ? pastelOrder[subPosition] : 0;
+                    backgroundColor = switch (colorIndex) {
+                        case 0 -> "#eff6ff";
+                        case 1 -> "#f0fdfa";
+                        case 2 -> "#ecfeff";
+                        case 3 -> "#fffbeb";
+                        case 4 -> "#fef3c7"; // not used here
+                        case 5 -> "#fff1f2";
+                        case 6 -> "#f5f3ff";
+                        case 7 -> "#ecfdf5";
+                        case 8 -> "#fff7ed";
+                        default -> "#f0f0f0";
+                    };
+                }
+
+                html.append("<div style='background-color:")
+                        .append(backgroundColor)
+                        .append("; height:72px; display:flex; align-items:center; justify-content:center; font-size:14px; padding:8px; word-break:break-word;'>");
+
                 html.append("<a href='https://ringdong.kr' style='color:inherit; text-decoration:none;'>");
 
                 if (isCenter) {
@@ -176,16 +126,17 @@ public class MailContentBuilder {
                         html.append(escape(sub.getContent()));
                     }
                 }
-                html.append("</a></td>");
+
+                html.append("</a></div>");
             }
-            html.append("</tr>");
         }
 
-        html.append("</table>");
-        html.append("</td></tr></table>");
+        html.append("</div>"); // grid
+        html.append("</div>"); // container
 
         return html.toString();
     }
+
 
     private String escape(String text) {
         if (text == null) return "";
