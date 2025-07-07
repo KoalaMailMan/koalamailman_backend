@@ -23,5 +23,7 @@ public interface MainBlockRepository extends JpaRepository<MainBlock, Long> {
     Optional<MainBlock> findFullMandalartByUserId(@Param("userId") Long userId);
 
     List<MainBlock> findByNextScheduledTimeBetween(LocalDateTime start, LocalDateTime end);
+    List<MainBlock> findByNextScheduledTimeBefore(LocalDateTime time);
+
 
 }
