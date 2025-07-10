@@ -30,6 +30,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     @Value("${app.oauth2.front-uri}")
     private String frontUri;
+    @Value("${app.oauth2.domain}")
+    private String cookieDomain;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -58,7 +60,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 .path("/")
                 .maxAge(Duration.ofHours(1))
                 .sameSite("None")
-                .domain("ringdong.kr")
+                .domain(cookieDomain)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
