@@ -9,6 +9,8 @@ server:
 app:
   oauth2:
     front-uri: ${FRONT_URI:https://ringdong.kr}
+    back-uri: ${BACK_URI:https://ringdong.kr}
+    domain: ${COOKIE_DOMAIN:ringdong.kr}
 
 spring:
   profiles:

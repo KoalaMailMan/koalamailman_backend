@@ -9,16 +9,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/login")
 public class LoginController {
 
-    @Value("${app.oauth2.front-uri}")
-    private String frontUri;
+    @Value("${app.oauth2.back-uri}")
+    private String backUri;
 
     @GetMapping("/naver")
     public String redirectToNaver() {
-        return "redirect:" + frontUri + "/oauth2/authorization/naver";
+        return "redirect:" + backUri + "/oauth2/authorization/naver";
     }
 
     @GetMapping("/google")
     public String redirectToGoogle() {
-        return "redirect:" + frontUri + "/oauth2/authorization/google";
+        return "redirect:" + backUri + "/oauth2/authorization/google";
     }
 }
