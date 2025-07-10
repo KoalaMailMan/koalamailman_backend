@@ -18,6 +18,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class MailController {
 
+    /**
     private final MailService mailService;
 
     @Operation(summary = "메일 전송")
@@ -26,4 +27,5 @@ public class MailController {
         mailService.sendMail(request.getTargetId());
         return ResponseEntity.ok(ApiResponse.success("메일 전송 성공"));
     }
+    **/
 }

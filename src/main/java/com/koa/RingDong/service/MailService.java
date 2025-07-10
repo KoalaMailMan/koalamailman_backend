@@ -53,12 +53,12 @@ public class MailService {
             LocalDateTime nextTime = reminderTimeProvider.generateRandomTime(mainBlock.getReminderInterval());
             mainBlock.setNextScheduledTime(nextTime);
         } catch (IOException e) {
-            log.error("메일 전송 실패 - userId: {}, email: {}, 이유: {}", targetId, user.getEmail(), e.getMessage());
+            log.error("[메일 전송] 전송 실패 - userId: {}, email: {}, 이유: {}", targetId, user.getEmail(), e.getMessage());
 
             // 메일 전송 실패 시 nextScheduledTime 내일로 다시 설정
             mainBlock.setNextScheduledTime(reminderTimeProvider.generateRandomTimeForTomorrow(mainBlock.getReminderInterval()));
 
-            log.info("메일 재전송을 위한 nextScheduledTime 갱신 완료 - {}로 설정됨");
+            log.info("[메일 전송] 메일 재전송을 위한 nextScheduledTime 갱신 완료");
         }
     }
 
@@ -77,9 +77,9 @@ public class MailService {
         Response response = sg.api(request);
 
         if (response.getStatusCode() != 202) {
-            throw new IOException("SendGrid 응답 실패 - 상태 코드: " + response.getStatusCode());
+            throw new IOException("[메일 전송] SendGrid 응답 실패 - 상태 코드: " + response.getStatusCode());
         }
 
-        log.info("메일 전송 성공 - to: {}, subject: {}", to, subject);
+        log.info("[메일 전송] 전송 성공 - to: {}, subject: {}", to, subject);
     }
 }

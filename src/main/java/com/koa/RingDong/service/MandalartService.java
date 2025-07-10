@@ -74,7 +74,7 @@ public class MandalartService {
 
         // 3. 저장
         MainBlock saved = mainBlockRepository.save(mainBlock);
-        log.info("createMandalart" + saved.toString());
+        log.info("[만다라트] 생성 createMandalart" + saved.toString());
 
         return mainBlockRepository.findFullMandalartByUserId(userId)
                 .map(MainBlockResponse::from)
@@ -88,21 +88,20 @@ public class MandalartService {
                 .map(MainBlockResponse::from)
                 .orElse(null);
 
-        log.info("getMandalart");
+        log.info("[만다라트] 조회 getMandalart");
         return response;
     }
 
     @Transactional
     public MainBlockResponse updateMandalart(Long userId, UpdateMainBlockRequest request) {
         Optional<MainBlock> optional = mainBlockRepository.findFullMandalartByUserId(userId);
-        log.info("updateMandalart - " + request);
 
         if (optional.isEmpty()) {
-            log.info("updateMandalart - Mandalart 없는 경우 create");
+            log.info("[만다라트] 생성 updateMandalart - Mandalart 없는 경우 create");
             return createMandalart(userId, request); // 여기선 바로 응답 리턴
         }
 
-        log.info("updateMandalart - Mandalart 있는 경우 update");
+        log.info("[만다라트] 수정 updateMandalart - Mandalart 있는 경우 update");
         MainBlock mainBlock = optional.get();
 
         // MainBlock 업데이트
