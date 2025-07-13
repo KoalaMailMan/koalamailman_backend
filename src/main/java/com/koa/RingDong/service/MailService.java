@@ -30,9 +30,9 @@ public class MailService {
     @Value("${sendgrid.api-key}")
     private String apiKey;
 
-    final private UserRepository userRepository;
-    final private MainBlockRepository mainBlockRepository;
-    final private ReminderTimeProvider reminderTimeProvider;
+    private final UserRepository userRepository;
+    private final MainBlockRepository mainBlockRepository;
+    private final ReminderTimeProvider reminderTimeProvider;
     private final MailContentBuilder mailContentBuilder;
 
     @Transactional

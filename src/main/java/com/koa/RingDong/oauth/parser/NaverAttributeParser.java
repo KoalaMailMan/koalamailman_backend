@@ -1,7 +1,6 @@
 package com.koa.RingDong.oauth.parser;
 
 import com.koa.RingDong.entity.OAuthProvider;
-import com.koa.RingDong.oauth.parser.OauthAttributeParser;
 import com.koa.RingDong.oauth.OauthUserInfo;
 
 import java.util.Map;

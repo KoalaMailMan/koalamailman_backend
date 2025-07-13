@@ -11,9 +11,10 @@ import java.util.Random;
 @Component
 public class ReminderTimeProvider {
 
+    private final Random random = new Random();
+
     public LocalDateTime generateRandomTime(ReminderInterval interval) {
         int intervalDays = interval.getDays();
-        Random random = new Random();
         int plusDays = random.nextInt(intervalDays) + 1;
         LocalDate randomDate = LocalDate.now().plusDays(plusDays);
 
@@ -23,9 +24,8 @@ public class ReminderTimeProvider {
         return LocalDateTime.of(randomDate, LocalTime.of(hour, minute));
     }
 
-    public LocalDateTime generateRandomTimeForTomorrow(ReminderInterval interval) {
+    public LocalDateTime generateRandomTimeForTomorrow() {
         LocalDateTime tomorrow = LocalDate.now().plusDays(1).atStartOfDay();
-        Random random = new Random();
 
         int hour = 9 + random.nextInt(12);  // 9~20시
         int minute = random.nextInt(60);

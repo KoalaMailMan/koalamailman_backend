@@ -2,7 +2,6 @@ package com.koa.RingDong.config;
 
 import com.koa.RingDong.filter.JwtAuthenticationFilter;
 import com.koa.RingDong.handler.CustomAccessDeniedHandler;
-import com.koa.RingDong.handler.JwtAuthenticationEntryPoint;
 import com.koa.RingDong.handler.OAuth2SuccessHandler;
 import com.koa.RingDong.service.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -50,7 +49,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login/**","/api/login/**", "/auth/**", "/oauth2/**", "/error", "/api/auth/check").permitAll()
+                .requestMatchers("/", "/login/**","/api/login/**", "api/mail/**", "/auth/**", "/oauth2/**", "/error", "/api/auth/check").permitAll()
                 .anyRequest().authenticated()
             )
             .headers(headers -> headers

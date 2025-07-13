@@ -30,7 +30,7 @@ public class MandalartService {
 
     @Transactional
     public MainBlockResponse createMandalart(Long userId, UpdateMainBlockRequest request) {
-        log.info("createMandalart");
+        log.info("[만다라트] 생성 createMandalart");
 
         // 1. MainBlock 생성
         MainBlock mainBlock = MainBlock.builder()
@@ -105,15 +105,9 @@ public class MandalartService {
         MainBlock mainBlock = optional.get();
 
         // MainBlock 업데이트
-        if (request.getContent() != null) {
-            mainBlock.setContent(request.getContent());
-        }
-        if (request.getStatus() != null) {
-            mainBlock.setStatus(request.getStatus());
-        }
-        if (request.getReminderInterval() != null) {
-            mainBlock.setReminderInterval(request.getReminderInterval());
-        }
+        mainBlock.setContent(request.getContent());
+        mainBlock.setStatus(request.getStatus());
+        mainBlock.setReminderInterval(request.getReminderInterval());
         mainBlock.setNextScheduledTime(reminderTimeProvider.generateRandomTime(request.getReminderInterval()));
 
         // SubBlock 업데이트
@@ -123,12 +117,8 @@ public class MandalartService {
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("SubBlock not found"));
 
-            if (subReq.getContent() != null) {
-                subBlock.setContent(subReq.getContent());
-            }
-            if (subReq.getStatus() != null) {
-                subBlock.setStatus(subReq.getStatus());
-            }
+            subBlock.setContent(subReq.getContent());
+            subBlock.setStatus(subReq.getStatus());
 
             // Cell 업데이트
             for (UpdateCellRequest cellReq : subReq.getCells()) {
@@ -137,12 +127,8 @@ public class MandalartService {
                         .findFirst()
                         .orElseThrow(() -> new IllegalArgumentException("Cell not found with ID: " + cellReq.getCellId()));
 
-                if (cellReq.getContent() != null) {
-                    cell.setContent(cellReq.getContent());
-                }
-                if (cellReq.getStatus() != null) {
-                    cell.setStatus(cellReq.getStatus());
-                }
+                cell.setContent(cellReq.getContent());
+                cell.setStatus(cellReq.getStatus());
             }
         }
         return mainBlockRepository.findFullMandalartByUserId(userId)

@@ -39,15 +39,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OauthUserAttribute attribute = new OauthUserAttribute(attributes, parser);
         OauthUserInfo userInfo = attribute.toOauthUserInfo();
 
-        User user = userRepository.findByOauthIdAndOauthProvider(userInfo.getOauthId(), provider)
-                .orElseGet(() -> userRepository.save(
-                        User.builder()
-                                .oauthId(userInfo.getOauthId())
-                                .oauthProvider(provider)
-                                .nickname(userInfo.getName())
-                                .email(userInfo.getEmail())
-                                .build()
-                ));
+        userRepository.findByOauthIdAndOauthProvider(userInfo.getOauthId(), provider)
+            .orElseGet(() -> userRepository.save(
+                    User.builder()
+                            .oauthId(userInfo.getOauthId())
+                            .oauthProvider(provider)
+                            .nickname(userInfo.getName())
+                            .email(userInfo.getEmail())
+                            .build()
+            ));
 
         Map<String, Object> customAttributes = Map.of(
                 "id", userInfo.getOauthId(),

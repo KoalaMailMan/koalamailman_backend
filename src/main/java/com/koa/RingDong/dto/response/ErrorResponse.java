@@ -1,4 +1,4 @@
-package com.koa.RingDong.exception;
+package com.koa.RingDong.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
