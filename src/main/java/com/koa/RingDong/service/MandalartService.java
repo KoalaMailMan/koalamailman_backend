@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -37,11 +36,8 @@ public class MandalartService {
                 .userId(userId)
                 .content(request.getContent())
                 .reminderInterval(request.getReminderInterval())
+                .nextScheduledTime(reminderTimeProvider.generateRandomTime(request.getReminderInterval()))
                 .build();
-
-        mainBlock.setNextScheduledTime(
-                reminderTimeProvider.generateRandomTime(request.getReminderInterval())
-        );
 
         Set<SubBlock> subBlocks = new HashSet<>();
 
@@ -105,10 +101,7 @@ public class MandalartService {
         MainBlock mainBlock = optional.get();
 
         // MainBlock 업데이트
-        mainBlock.setContent(request.getContent());
-        mainBlock.setStatus(request.getStatus());
-        mainBlock.setReminderInterval(request.getReminderInterval());
-        mainBlock.setNextScheduledTime(reminderTimeProvider.generateRandomTime(request.getReminderInterval()));
+        mainBlock.updateMainBlockField(request, reminderTimeProvider.generateRandomTime(request.getReminderInterval()));
 
         // SubBlock 업데이트
         for (UpdateSubBlockRequest subReq : request.getSubBlockRequests()) {
@@ -116,9 +109,7 @@ public class MandalartService {
                     .filter(sb -> sb.getSubId().equals(subReq.getSubId()))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("SubBlock not found"));
-
-            subBlock.setContent(subReq.getContent());
-            subBlock.setStatus(subReq.getStatus());
+            subBlock.updateSubBlockField(subReq.getContent(), subReq.getStatus());
 
             // Cell 업데이트
             for (UpdateCellRequest cellReq : subReq.getCells()) {
@@ -127,8 +118,7 @@ public class MandalartService {
                         .findFirst()
                         .orElseThrow(() -> new IllegalArgumentException("Cell not found with ID: " + cellReq.getCellId()));
 
-                cell.setContent(cellReq.getContent());
-                cell.setStatus(cellReq.getStatus());
+                cell.updateCellField(subBlock.getContent(), subReq.getStatus());
             }
         }
         return mainBlockRepository.findFullMandalartByUserId(userId)

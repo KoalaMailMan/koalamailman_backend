@@ -1,5 +1,7 @@
 package com.koa.RingDong.entity;
 
+import com.koa.RingDong.dto.request.UpdateMainBlockRequest;
+import com.koa.RingDong.provider.ReminderTimeProvider;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -46,22 +48,24 @@ public class MainBlock {
     private Set<SubBlock> subBlocks = new HashSet<>();
 
     @Builder
-    public MainBlock(Long userId, String content, ReminderInterval reminderInterval) {
+    public MainBlock(Long userId, String content, ReminderInterval reminderInterval, LocalDateTime nextScheduledTime) {
         this.userId = userId;
         this.content = content;
         this.reminderInterval = reminderInterval;
         this.status = Status.UNDONE;
+        this.nextScheduledTime = nextScheduledTime;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void updateMainBlockField(UpdateMainBlockRequest request, LocalDateTime nextScheduledTime) {
+        this.content = request.getContent();
+        this.status = request.getStatus();
+        this.reminderInterval = request.getReminderInterval();
+        this.nextScheduledTime = nextScheduledTime;
     }
-    public void setReminderInterval(ReminderInterval reminderInterval){ this.reminderInterval = reminderInterval; }
-    public void setStatus(Status status) { this.status = status; }
 
-    public void setStatusDone() { this.status = Status.DONE; }
-    public void setStatusUnDone() { this.status = Status.UNDONE; }
-    public void setNextScheduledTime(LocalDateTime nextScheduledTime) { this.nextScheduledTime = nextScheduledTime; }
+    public void updateNextScheduledTime(LocalDateTime nextScheduledTime) {
+        this.nextScheduledTime = nextScheduledTime;
+    }
 
     @Override
     public String toString() {

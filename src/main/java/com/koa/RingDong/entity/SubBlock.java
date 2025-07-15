@@ -50,12 +50,9 @@ public class SubBlock {
         this.status = status;
     }
 
-    public void setContent(String newContent) {
-        this.content = newContent;
-    }
-
-    public void setStatus(Status newStatus) {
-        if (newStatus != null) this.status = newStatus;
+    public void updateSubBlockField(String content, Status status) {
+        this.content = content;
+        this.status = status;
     }
 
     @Override

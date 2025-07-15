@@ -75,8 +75,7 @@ public class SubBlockService {
         SubBlock subBlock = subBlockRepository.findById(subId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 서브 블럭이 존재하지 않습니다."));
 
-        subBlock.setContent(req.getContent());
-        subBlock.setStatus(req.getStatus());
+        subBlock.updateSubBlockField(req.getContent(), req.getStatus());
 
         List<Cell> cells = cellRepository.findBySubBlock(subBlock);
 
@@ -86,8 +85,7 @@ public class SubBlockService {
         for (UpdateCellRequest cellReq : req.getCells()) {
             Cell cell = cellMap.get(cellReq.getPosition());
             if (cell != null) {
-                cell.setContent(cellReq.getContent());
-                cell.setStatus(cellReq.getStatus());
+                cell.updateCellField(cellReq.getContent(), cellReq.getStatus());
             } else {
                 throw new IllegalArgumentException("해당 position의 셀이 존재하지 않습니다: " + cellReq.getPosition());
             }

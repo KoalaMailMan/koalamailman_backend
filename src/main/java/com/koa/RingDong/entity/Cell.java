@@ -50,12 +50,9 @@ public class Cell {
         this.status = status;
     }
 
-    public void setContent(String newContent) {
-        this.content = newContent;
-    }
-
-    public void setStatus(Status newStatus) {
-        this.status = newStatus;
+    public void updateCellField(String content, Status status) {
+        this.content = content;
+        this.status = status;
     }
 }
 
