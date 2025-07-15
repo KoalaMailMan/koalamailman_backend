@@ -50,11 +50,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
         // 4. JWT access token 생성
-        String jwtAccessToken = tokenProvider.generateAccessToken(user.getId());
+        String jwtAccessToken = tokenProvider.generateAccessToken(user);
         log.info("[JWT 생성] userId: {}, token: {}", user.getId(), jwtAccessToken);
 
         // 5. JWT를 HttpOnly Secure 쿠키에 담아 전달
-        ResponseCookie cookie = ResponseCookie.from("token", jwtAccessToken)
+        ResponseCookie cookie = ResponseCookie.from("access_token", jwtAccessToken)
                 .httpOnly(true)
                 .secure(true)
                 .path("/")

@@ -69,7 +69,7 @@ public class SecurityConfig {
             )
             .logout(logout -> logout
                 .logoutSuccessUrl("/")
-                .deleteCookies("JSESSIONID", "token")
+                .deleteCookies("JSESSIONID", "access_token")
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(ex -> ex
