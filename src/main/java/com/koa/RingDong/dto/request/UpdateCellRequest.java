@@ -1,7 +1,6 @@
 package com.koa.RingDong.dto.request;
 
 import com.koa.RingDong.entity.Status;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Builder

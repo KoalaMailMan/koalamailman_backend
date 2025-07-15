@@ -3,7 +3,6 @@ package com.koa.RingDong.service;
 import com.koa.RingDong.entity.MainBlock;
 import com.koa.RingDong.provider.ReminderTimeProvider;
 import com.koa.RingDong.repository.MainBlockRepository;
-import com.koa.RingDong.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,7 @@ public class ReminderSchedulerService {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     // 매일 오전 6시 실행
-    @Scheduled(cron = "0 0 6 * * *")
+    @Scheduled(cron = "0 0 6 * * *", zone = "Asia/Seoul")
     public void checkAndScheduleTodayMails() {
         log.info("[스케줄러] 🔔오전 6시 스케줄러 실행");
         reschedulePastOrScheduleToday();
@@ -61,9 +60,10 @@ public class ReminderSchedulerService {
         for (MainBlock main : targets) {
             if (main.getNextScheduledTime().isBefore(startOfToday)) {
                 log.info("[스케줄러] 🔄과거 시간 발견 - userId: {}, 원래 시간: {}", main.getUserId(), main.getNextScheduledTime());
-                LocalDateTime newTime = reminderTimeProvider.generateRandomTime(main.getReminderInterval());
-                main.setNextScheduledTime(newTime);
-                log.info("[스케줄러] 🆕새로 설정된 시간: {}", newTime);
+
+                main.updateNextScheduledTime(reminderTimeProvider.generateRandomTime(main.getReminderInterval()));
+
+                log.info("[스케줄러] 🆕새로 설정된 시간: {}", main.getNextScheduledTime());
             }
 
             if (!main.getNextScheduledTime().isBefore(startOfToday) &&

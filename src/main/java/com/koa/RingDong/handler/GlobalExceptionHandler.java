@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<com.koa.RingDong.exception.ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
+    public ResponseEntity<com.koa.RingDong.dto.response.ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new com.koa.RingDong.exception.ErrorResponse("BAD_REQUEST", ex.getMessage()));
+                .body(new com.koa.RingDong.dto.response.ErrorResponse("BAD_REQUEST", ex.getMessage()));
     }
 }
