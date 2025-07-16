@@ -118,7 +118,7 @@ public class MandalartService {
                         .findFirst()
                         .orElseThrow(() -> new IllegalArgumentException("Cell not found with ID: " + cellReq.getCellId()));
 
-                cell.updateCellField(subBlock.getContent(), subReq.getStatus());
+                cell.updateCellField(cellReq.getContent(), cellReq.getStatus());
             }
         }
         return mainBlockRepository.findFullMandalartByUserId(userId)
