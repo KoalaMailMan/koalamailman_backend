@@ -1,9 +1,8 @@
 package com.koa.RingDong.filter;
 
-import com.koa.RingDong.provider.TokenProvider;
+import com.koa.RingDong.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Optional;
 
 @Component
@@ -23,42 +21,44 @@ import java.util.Optional;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final TokenProvider tokenProvider;
+    private final JwtService tokenService;
+    private final String header = "Authorization";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String token = resolveToken(request);
-        log.debug("[JWT 필터] 요청 URI: {}, 토큰 존재: {}", request.getRequestURI(), StringUtils.hasText(token));
-
-        if (StringUtils.hasText(token)) {
-            if (tokenProvider.validateToken(token)) {
-                try {
-                    Authentication auth = tokenProvider.getAuthentication(token);
-                    SecurityContextHolder.getContext().setAuthentication(auth);
-                    log.debug("[JWT 필터] 인증 성공 - URI: {}", request.getRequestURI());
-                } catch (Exception e) {
-                    log.error("[JWT 필터] 인증 실패 - URI: {}, 에러: {}", request.getRequestURI(), e.getMessage());
-                    SecurityContextHolder.clearContext();
-                }
-            } else {
-                log.warn("[JWT 필터] 유효하지 않은 토큰 - URI: {}", request.getRequestURI());
-                SecurityContextHolder.clearContext();
-            }
-        }
+        getTokenString(request.getHeader(header))
+                .filter(StringUtils::hasText)
+                .ifPresent(token -> {
+                    if (tokenService.validateToken(token)) {
+                        try {
+                            Authentication auth = tokenService.getAuthentication(token);
+                            SecurityContextHolder.getContext().setAuthentication(auth);
+                            log.debug("[JWT 필터] 인증 성공 - URI: {}", request.getRequestURI());
+                        } catch (Exception e) {
+                            log.error("[JWT 필터] 인증 실패 - URI: {}, 에러: {}", request.getRequestURI(), e.getMessage());
+                            SecurityContextHolder.clearContext();
+                        }
+                    } else {
+                        log.warn("[JWT 필터] 유효하지 않은 토큰 - URI: {}", request.getRequestURI());
+                        SecurityContextHolder.clearContext();
+                    }
+                });
 
         filterChain.doFilter(request, response);
     }
 
-    private String resolveToken(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null) return null;
-
-        return Arrays.stream(cookies)
-                .filter(cookie -> "access_token".equals(cookie.getName()))
-                .findFirst()
-                .map(Cookie::getValue)
-                .orElse(null);
+    private Optional<String> getTokenString(String header) {
+        if (header == null) {
+            return Optional.empty();
+        } else {
+            String[] split = header.split(" ");
+            if (split.length < 2) {
+                return Optional.empty();
+            } else {
+                return Optional.ofNullable(split[1]);
+            }
+        }
     }
 }

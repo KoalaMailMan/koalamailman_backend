@@ -2,8 +2,8 @@ package com.koa.RingDong.handler;
 
 import com.koa.RingDong.entity.OAuthProvider;
 import com.koa.RingDong.entity.User;
-import com.koa.RingDong.provider.TokenProvider;
 import com.koa.RingDong.repository.UserRepository;
+import com.koa.RingDong.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ import java.time.Duration;
 @Slf4j
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-    private final TokenProvider tokenProvider;
+    private final JwtService tokenService;
     private final UserRepository userRepository;
 
     @Value("${app.oauth2.front-uri}")
@@ -50,7 +50,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
         // 4. JWT access token 생성
-        String jwtAccessToken = tokenProvider.generateAccessToken(user);
+        String jwtAccessToken = tokenService.generateAccessToken(user);
         log.info("[JWT 생성] userId: {}, token: {}", user.getId(), jwtAccessToken);
 
         // 5. JWT를 HttpOnly Secure 쿠키에 담아 전달

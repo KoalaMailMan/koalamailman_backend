@@ -13,6 +13,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,6 +27,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 @Configuration
@@ -39,28 +42,23 @@ public class SecurityConfig {
     @Value("${app.oauth2.front-uri}")
     private String frontUri;
 
+    private static final String[] WHITE_LIST = {
+            "/", "/login/**", "/api/login/**", "/api/mail/**",
+            "/auth/**", "/oauth2/**", "/error", "/api/auth/check"
+    };
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .httpBasic(basic -> basic.disable())
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login/**","/api/login/**", "api/mail/**", "/auth/**", "/oauth2/**", "/error", "/api/auth/check").permitAll()
+                .requestMatchers(WHITE_LIST).permitAll()
                 .anyRequest().authenticated()
             )
-            .headers(headers -> headers
-                .frameOptions(frame -> frame.sameOrigin())
-                .contentSecurityPolicy(csp -> csp
-                    .policyDirectives("default-src 'self'; script-src 'self' https://trustedscripts.example.com"))
-                .httpStrictTransportSecurity(hsts -> hsts
-                    .includeSubDomains(true)
-                    .maxAgeInSeconds(31536000))
-                .referrerPolicy(referrer -> referrer.policy(ReferrerPolicy.SAME_ORIGIN))
-            )
+            .headers(headers -> configureSecurityHeaders(headers))
             .oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(endpoint -> endpoint
                     .userService(customOAuth2UserService)
@@ -68,8 +66,11 @@ public class SecurityConfig {
                 .successHandler(oAuth2SuccessHandler)
             )
             .logout(logout -> logout
-                .logoutSuccessUrl("/")
-                .deleteCookies("JSESSIONID", "access_token")
+                    .logoutSuccessHandler((request, response, auth) -> {
+                        SecurityContextHolder.clearContext();
+                        response.sendRedirect("/");
+                    })
+                    .deleteCookies("JSESSIONID", "access_token")
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(ex -> ex
@@ -77,20 +78,26 @@ public class SecurityConfig {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.getWriter().write("Unauthorized");
                 })
-                .accessDeniedHandler(customAccessDeniedHandler) // 권한 없는 유저가 접근
+                .accessDeniedHandler(customAccessDeniedHandler)
             )
         ;
 
         return http.build();
     }
 
+    private void configureSecurityHeaders(HeadersConfigurer<HttpSecurity> headers) {
+        headers
+                .frameOptions(frame -> frame.sameOrigin())
+                .contentSecurityPolicy(csp -> csp
+                        .policyDirectives("default-src 'self'"))
+                .referrerPolicy(referrer -> referrer.policy(ReferrerPolicy.SAME_ORIGIN));
+    }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:3000",
-                frontUri
-        ));
+        configuration.setAllowedOriginPatterns(List.of("http://localhost:3000", frontUri));
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

@@ -1,4 +1,4 @@
-package com.koa.RingDong.provider;
+package com.koa.RingDong.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -7,9 +7,7 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.koa.RingDong.entity.User;
-import com.koa.RingDong.service.CustomUserDetailsService;
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +21,7 @@ import java.util.Date;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class TokenProvider {
+public class JwtService {
 
     private final CustomUserDetailsService userDetailsService;
 
@@ -48,7 +46,7 @@ public class TokenProvider {
                 .sign(algorithm);
     }
 
-    public String getSubjectFromToken(String token) {
+    private String getSubjectFromToken(String token) {
         return JWT.require(algorithm)
                 .build()
                 .verify(token)
@@ -78,5 +76,5 @@ public class TokenProvider {
         }
         return false;
     }
-}
 
+}
