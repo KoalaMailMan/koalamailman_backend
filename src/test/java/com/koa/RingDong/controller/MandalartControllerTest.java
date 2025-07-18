@@ -1,24 +1,21 @@
 package com.koa.RingDong.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.koa.RingDong.dto.request.UpdateMainBlockRequest;
-import com.koa.RingDong.dto.request.UpdateSubBlockRequest;
-import com.koa.RingDong.dto.request.UpdateCellRequest;
-import com.koa.RingDong.dto.response.CellResponse;
-import com.koa.RingDong.dto.response.MainBlockResponse;
-import com.koa.RingDong.dto.response.SubBlockResponse;
-import com.koa.RingDong.entity.Status;
-import com.koa.RingDong.entity.ReminderInterval;
+import com.koa.RingDong.domain.mandalart.dto.UpdateMainBlockRequest;
+import com.koa.RingDong.domain.mandalart.dto.UpdateSubBlockRequest;
+import com.koa.RingDong.domain.mandalart.dto.UpdateCellRequest;
+import com.koa.RingDong.domain.mandalart.dto.CellResponse;
+import com.koa.RingDong.domain.mandalart.dto.MainBlockResponse;
+import com.koa.RingDong.domain.mandalart.dto.SubBlockResponse;
+import com.koa.RingDong.domain.mandalart.repository.Status;
+import com.koa.RingDong.domain.mandalart.repository.ReminderInterval;
 import com.koa.RingDong.security.WithMockCustomUser;
-import com.koa.RingDong.service.MandalartService;
+import com.koa.RingDong.domain.mandalart.service.MandalartService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
