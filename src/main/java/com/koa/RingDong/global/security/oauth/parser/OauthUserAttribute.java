@@ -1,7 +1,5 @@
 package com.koa.RingDong.global.security.oauth.parser;
 
-import com.koa.RingDong.global.security.oauth.parser.OauthAttributeParser;
-import com.koa.RingDong.global.security.oauth.parser.OauthUserInfo;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Map;
@@ -15,7 +13,7 @@ public class OauthUserAttribute {
         this.parser = parser;
     }
 
-    public OauthUserInfo toOauthUserInfo() {
+    public Map<String, Object> toOauthUserInfo() {
         return parser.parse(oAuth2User);
     }
 }

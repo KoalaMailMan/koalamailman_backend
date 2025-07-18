@@ -2,9 +2,6 @@ package com.koa.RingDong.global.security.oauth;
 
 import com.koa.RingDong.domain.user.repository.OAuthProvider;
 import com.koa.RingDong.domain.user.repository.User;
-import com.koa.RingDong.global.security.oauth.parser.OauthUserAttribute;
-import com.koa.RingDong.global.security.oauth.parser.OauthUserInfo;
-import com.koa.RingDong.global.security.oauth.parser.OauthAttributeParser;
 import com.koa.RingDong.global.security.oauth.parser.OauthAttributeParserFactory;
 import com.koa.RingDong.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,25 +31,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuthProvider provider = OAuthProvider.valueOf(registrationId.toUpperCase());
 
-        OauthAttributeParser parser = parserFactory.getParser(provider);
-        OauthUserAttribute attribute = new OauthUserAttribute(oAuth2User, parser);
-        OauthUserInfo userInfo = attribute.toOauthUserInfo();
+        Map<String, Object> customAttributes = OauthAttributeParserFactory.parse(provider, oAuth2User);
 
-        userRepository.findByOauthIdAndOauthProvider(userInfo.getOauthId(), provider)
+        userRepository.findByOauthIdAndOauthProvider((String) customAttributes.get("id"), provider)
             .orElseGet(() -> userRepository.save(
                     User.builder()
-                            .oauthId(userInfo.getOauthId())
+                            .oauthId((String) customAttributes.get("id"))
                             .oauthProvider(provider)
-                            .nickname(userInfo.getName())
-                            .email(userInfo.getEmail())
+                            .nickname((String) customAttributes.get("name"))
+                            .email((String) customAttributes.get("email"))
                             .build()
             ));
-
-        Map<String, Object> customAttributes = Map.of(
-                "id", userInfo.getOauthId(),
-                "nickname", userInfo.getName(),
-                "email", userInfo.getEmail()
-        );
 
         return new DefaultOAuth2User(
                 Set.of(new SimpleGrantedAuthority("ROLE_USER")),
