@@ -4,7 +4,7 @@ import com.koa.RingDong.domain.user.service.UserService;
 import com.koa.RingDong.domain.user.dto.UpdateUserRequest;
 import com.koa.RingDong.global.dto.ApiResponse;
 import com.koa.RingDong.domain.user.dto.UserResponse;
-import com.koa.RingDong.global.token.CustomUserDetails;
+import com.koa.RingDong.global.security.oauth.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

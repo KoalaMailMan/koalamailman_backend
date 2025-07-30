@@ -4,7 +4,7 @@ package com.koa.RingDong.domain.mandalart.controller;
 import com.koa.RingDong.domain.mandalart.service.MainBlockService;
 import com.koa.RingDong.global.dto.ApiResponse;
 import com.koa.RingDong.domain.mandalart.dto.MainBlockResponse;
-import com.koa.RingDong.global.token.CustomUserDetails;
+import com.koa.RingDong.global.security.oauth.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;

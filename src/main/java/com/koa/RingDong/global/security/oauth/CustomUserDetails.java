@@ -1,4 +1,4 @@
-package com.koa.RingDong.global.token;
+package com.koa.RingDong.global.security.oauth;
 
 import com.koa.RingDong.domain.user.repository.User;
 import org.springframework.security.core.GrantedAuthority;
