@@ -1,9 +1,8 @@
 package com.koa.RingDong.global.security.oauth;
 
 import com.koa.RingDong.domain.user.repository.OAuthProvider;
-import com.koa.RingDong.domain.user.repository.User;
+import com.koa.RingDong.domain.user.service.UserService;
 import com.koa.RingDong.global.security.oauth.parser.OauthAttributeParserFactory;
-import com.koa.RingDong.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -20,8 +19,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final UserRepository userRepository;
-    private final OauthAttributeParserFactory parserFactory;
+    private final UserService userService;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -32,16 +30,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuthProvider provider = OAuthProvider.valueOf(registrationId.toUpperCase());
 
         Map<String, Object> customAttributes = OauthAttributeParserFactory.parse(provider, oAuth2User);
-
-        userRepository.findByOauthIdAndOauthProvider((String) customAttributes.get("id"), provider)
-            .orElseGet(() -> userRepository.save(
-                    User.builder()
-                            .oauthId((String) customAttributes.get("id"))
-                            .oauthProvider(provider)
-                            .nickname((String) customAttributes.get("name"))
-                            .email((String) customAttributes.get("email"))
-                            .build()
-            ));
+        userService.findOrCreateFromOAuth(provider, customAttributes);
 
         return new DefaultOAuth2User(
                 Set.of(new SimpleGrantedAuthority("ROLE_USER")),

@@ -46,7 +46,7 @@ public class SecurityConfig {
     private String frontUri;
 
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/", "/auth/**", "/oauth2/**", "/error", "/api/auth/check"
+            "/", "/auth/**", "/oauth2/**", "/error", "/api/auth/check", "/api/chatbot"
     };
 
     private static final String OAUTH2_AUTHORIZATION_BASE_URI = "/auth/login/oauth2";
@@ -108,7 +108,7 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
