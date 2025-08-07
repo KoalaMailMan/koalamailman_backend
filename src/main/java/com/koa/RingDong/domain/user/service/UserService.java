@@ -18,18 +18,18 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public User findOrCreateFromOAuth(OAuthProvider provider, Map<String, Object> customAttributes) {
+    public void findOrCreateFromOAuth(OAuthProvider provider, Map<String, Object> customAttributes) {
         String oauthId = (String) customAttributes.get("id");
 
-        return userRepository.findByOauthIdAndOauthProvider(oauthId, provider)
-                .orElseGet(() -> userRepository.save(
-                        User.builder()
-                                .oauthId(oauthId)
-                                .oauthProvider(provider)
-                                .nickname((String) customAttributes.get("name"))
-                                .email((String) customAttributes.get("email"))
-                                .build()
-                ));
+        userRepository.findByOauthIdAndOauthProvider(oauthId, provider)
+            .orElseGet(() -> userRepository.save(
+                    User.builder()
+                            .oauthId(oauthId)
+                            .oauthProvider(provider)
+                            .nickname((String) customAttributes.get("name"))
+                            .email((String) customAttributes.get("email"))
+                            .build()
+            ));
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)

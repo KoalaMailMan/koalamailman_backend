@@ -37,7 +37,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
-    private final JwtAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     @Value("${app.oauth2.front-uri}")
     private String frontUri;
@@ -63,7 +63,7 @@ public class SecurityConfig {
             .headers(headers -> configureSecurityHeaders(headers))
             .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(ex -> ex
-                .authenticationEntryPoint(customAuthenticationEntryPoint)
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(customAccessDeniedHandler)
             )
         ;
