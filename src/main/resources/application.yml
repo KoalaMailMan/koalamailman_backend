@@ -85,6 +85,10 @@ huggingface:
     token: ${HF_API_TOKEN}
     model: microsoft/DialoGPT-medium
 
+openrouter:
+  api-key: ${OPENROUTER_API_KEY}
+  model: ${OPENROUTER_MODEL}
+
 logging:
   level:
     org.springframework.security: DEBUG
