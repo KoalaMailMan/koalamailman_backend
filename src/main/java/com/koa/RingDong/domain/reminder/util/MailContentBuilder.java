@@ -1,7 +1,7 @@
 package com.koa.RingDong.domain.reminder.util;
 
-import com.koa.RingDong.domain.mandalart.repository.MainBlock;
-import com.koa.RingDong.domain.mandalart.repository.SubBlock;
+import com.koa.RingDong.domain.mandalart.repository.CoreGoal;
+import com.koa.RingDong.domain.mandalart.repository.MainGoal;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -27,7 +27,7 @@ public class MailContentBuilder {
         return "RingDong! 당신의 목표 잊지 않으셨나요?";
     }
 
-    public String buildFullHtml(MainBlock mainBlock) {
+    public String buildFullHtml(CoreGoal coreGoal) {
         StringBuilder html = new StringBuilder();
 
         html.append("<div style='font-family:Arial,sans-serif; font-size:14px; color:#333;'>");
@@ -47,7 +47,7 @@ public class MailContentBuilder {
 
         html.append(buildHeader());
         html.append("<br/>");
-        html.append(buildMainHtml(mainBlock));
+        html.append(buildMainHtml(coreGoal));
         html.append("<br/>");
         html.append(buildFooter());
 
@@ -72,7 +72,7 @@ public class MailContentBuilder {
                 + "<a href='https://ringdong.kr' style='color:#007BFF; text-decoration:none;'>https://ringdong.kr</a>"
                 + "</div>";
     }
-    public String buildMainHtml(MainBlock mainBlock) {
+    public String buildMainHtml(CoreGoal coreGoal) {
         StringBuilder html = new StringBuilder();
 
         html.append("<div style='max-width:620px; margin:0 auto; padding:32px 16px; font-family:Noto Sans KR,Apple SD Gothic Neo,sans-serif;'>");
@@ -113,15 +113,15 @@ public class MailContentBuilder {
                 html.append("<a href='https://ringdong.kr' style='color:inherit; text-decoration:none;'>");
 
                 if (isCenter) {
-                    html.append("<b>").append(escape(mainBlock.getContent())).append("</b>");
+                    html.append("<b>").append(escape(coreGoal.getContent())).append("</b>");
                 } else {
                     int subPosition = mapCenterSurroundingCellToSubPosition(row, col);
-                    SubBlock sub = mainBlock.getSubBlocks().stream()
-                            .filter(sb -> sb.getPosition() == subPosition)
+                    MainGoal main = coreGoal.getMainGoals().stream()
+                            .filter(mg -> mg.getPosition() == subPosition)
                             .findFirst()
                             .orElse(null);
-                    if (sub != null) {
-                        html.append(escape(sub.getContent()));
+                    if (main != null) {
+                        html.append(escape(main.getContent()));
                     }
                 }
 

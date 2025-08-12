@@ -12,13 +12,13 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateMainBlockRequest {
+public class UpdateCoreGoalRequest {
     private String content;
     private Status status;
     @NotNull
     private ReminderInterval reminderInterval;
 
     @NotNull
-    @Size(min = 8, max = 8, message = "subBlock은 8개여야 합니다.")
-    private List<UpdateSubBlockRequest> subBlockRequests;
+    @Size(min = 8, max = 8, message = "mainGoal은 8개여야 합니다.")
+    private List<UpdateMainGoalRequest> mainGoalRequests;
 }

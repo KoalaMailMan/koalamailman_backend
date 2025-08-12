@@ -14,13 +14,13 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateSubBlockRequest {
-    private Long subId;
+public class UpdateMainGoalRequest {
+    private Long mainGoalId;
     @NotNull
     private Integer position;
     private String content;
     private Status status;
     @NotNull
-    @Size(min = 8, max = 8, message = "cell은 8개여야 합니다.")
-    private List<UpdateCellRequest> cells;
+    @Size(min = 8, max = 8, message = "subGoal은 8개여야 합니다.")
+    private List<UpdateSubGoalRequest> subGoals;
 }

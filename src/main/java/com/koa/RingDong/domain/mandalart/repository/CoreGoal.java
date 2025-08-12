@@ -1,6 +1,6 @@
 package com.koa.RingDong.domain.mandalart.repository;
 
-import com.koa.RingDong.domain.mandalart.dto.UpdateMainBlockRequest;
+import com.koa.RingDong.domain.mandalart.dto.UpdateCoreGoalRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,18 +10,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "main_block", indexes = {
+@Table(name = "core_goal", indexes = {
         @Index(
                 name = "idx_user_id",
                 columnList = "userId")
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MainBlock {
+public class CoreGoal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mainId;
+    private Long coreGoalId;
 
     @Column(nullable = false)
     private Long userId;
@@ -43,11 +43,11 @@ public class MainBlock {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "mainBlock", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<SubBlock> subBlocks = new HashSet<>();
+    @OneToMany(mappedBy = "coreGoal", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<MainGoal> mainGoals = new HashSet<>();
 
     @Builder
-    public MainBlock(Long userId, String content, ReminderInterval reminderInterval, LocalDateTime nextScheduledTime) {
+    public CoreGoal(Long userId, String content, ReminderInterval reminderInterval, LocalDateTime nextScheduledTime) {
         this.userId = userId;
         this.content = content;
         this.reminderInterval = reminderInterval;
@@ -55,7 +55,7 @@ public class MainBlock {
         this.nextScheduledTime = nextScheduledTime;
     }
 
-    public void updateMainBlockField(UpdateMainBlockRequest request, LocalDateTime nextScheduledTime) {
+    public void updateCoreGoal(UpdateCoreGoalRequest request, LocalDateTime nextScheduledTime) {
         this.content = request.getContent();
         this.status = request.getStatus();
         this.reminderInterval = request.getReminderInterval();
@@ -68,14 +68,14 @@ public class MainBlock {
 
     @Override
     public String toString() {
-        return "MainBlock{" +
-                "mainId=" + mainId +
+        return "CoreGoal{" +
+                "coreGoalId=" + coreGoalId +
                 ", userId=" + userId +
                 ", content='" + content + '\'' +
                 ", status=" + status +
                 ", reminderInterval=" + reminderInterval +
                 ", nextScheduledTime=" + nextScheduledTime +
-                ", subBlocks=" + subBlocks +
+                ", mainGoals=" + mainGoals +
                 '}';
     }
 }
