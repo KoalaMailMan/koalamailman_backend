@@ -1,4 +1,4 @@
-package com.koa.RingDong.global.security;
+package com.koa.RingDong.global.config;
 
 import com.koa.RingDong.global.security.filter.TokenAuthenticationFilter;
 import com.koa.RingDong.global.security.handler.CustomAccessDeniedHandler;
@@ -36,17 +36,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomOAuth2UserService customOAuth2UserService;
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
-    private final JwtAuthenticationEntryPoint customAuthenticationEntryPoint;
-    private final OAuth2SuccessHandler oAuth2SuccessHandler;
-    private final OAuth2FailureHandler oAuth2FailureHandler;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     @Value("${app.oauth2.front-uri}")
     private String frontUri;
 
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/", "/auth/**", "/oauth2/**", "/error", "/api/auth/check"
+            "/", "/auth/**", "/oauth2/**", "/error", "/api/auth/check", "/api/chatbot"
     };
 
     private static final String OAUTH2_AUTHORIZATION_BASE_URI = "/auth/login/oauth2";
@@ -64,26 +61,9 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .headers(headers -> configureSecurityHeaders(headers))
-            .oauth2Login(oauth2 -> oauth2
-                .authorizationEndpoint(endpoint -> endpoint
-                        .baseUri(OAUTH2_AUTHORIZATION_BASE_URI)
-                )
-                .userInfoEndpoint(endpoint -> endpoint
-                    .userService(customOAuth2UserService)
-                )
-                .successHandler(oAuth2SuccessHandler)
-                .failureHandler(oAuth2FailureHandler)
-            )
-            .logout(logout -> logout
-                    .logoutSuccessHandler((request, response, auth) -> {
-                        SecurityContextHolder.clearContext();
-                        response.sendRedirect(LOGOUT_URL);
-                    })
-                    .deleteCookies("JSESSIONID", "access_token")
-            )
             .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(ex -> ex
-                .authenticationEntryPoint(customAuthenticationEntryPoint)
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(customAccessDeniedHandler)
             )
         ;
@@ -108,15 +88,10 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Bean

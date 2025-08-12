@@ -8,14 +8,14 @@ import java.util.Map;
 public class GoogleAttributeParser implements OauthAttributeParser {
 
     @Override
-    public OauthUserInfo parse(OAuth2User oAuth2User) {
-        Map<String, Object> attributes = oAuth2User.getAttributes();
+    public Map<String, Object> parse(OAuth2User oAuth2User) {
+        Map<String, Object> original = oAuth2User.getAttributes();
 
-        return OauthUserInfo.builder()
-                .loginType(OAuthProvider.GOOGLE)
-                .oauthId((String) attributes.get("sub"))
-                .name((String) attributes.get("name"))
-                .email((String) attributes.get("email"))
-                .build();
+        return Map.of(
+                "id", original.get("sub"),
+                "email", original.get("email"),
+                "name", original.get("name"),
+                "provider", "google"
+        );
     }
 }

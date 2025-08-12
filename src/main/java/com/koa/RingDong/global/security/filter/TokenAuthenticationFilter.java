@@ -31,10 +31,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
             Authentication auth = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
-            log.debug("[JWT 필터] 인증 성공 - URI: {}", request.getRequestURI());
-
         } else {
-            log.warn("[JWT 필터] 유효하지 않은 토큰 - URI: {}", request.getRequestURI());
             SecurityContextHolder.clearContext();
         }
 

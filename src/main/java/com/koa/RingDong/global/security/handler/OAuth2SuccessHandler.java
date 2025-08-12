@@ -2,7 +2,7 @@ package com.koa.RingDong.global.security.handler;
 
 import com.koa.RingDong.domain.user.repository.OAuthProvider;
 import com.koa.RingDong.domain.user.repository.User;
-import com.koa.RingDong.domain.user.repository.UserRepository;
+import com.koa.RingDong.domain.user.service.UserService;
 import com.koa.RingDong.global.token.JwtProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,7 +26,7 @@ import java.time.Duration;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtProvider tokenService;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Value("${app.oauth2.front-uri}")
     private String frontUri;
@@ -43,9 +43,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         String oauthId = oAuth2User.getAttribute("id").toString();
 
-        User user = userRepository.findByOauthIdAndOauthProvider(oauthId, provider)
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-
+        User user = userService.getUserByOauthInfo(provider, oauthId);
         String jwtAccessToken = tokenService.generateAccessToken(user);
         log.info("[JWT 생성] userId: {}, token: {}", user.getId(), jwtAccessToken);
 
