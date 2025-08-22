@@ -1,4 +1,4 @@
-package com.koa.RingDong.global.security;
+package com.koa.RingDong.global.config;
 
 import com.koa.RingDong.global.security.filter.TokenAuthenticationFilter;
 import com.koa.RingDong.global.security.handler.CustomAccessDeniedHandler;
@@ -46,7 +46,7 @@ public class SecurityConfig {
     private String frontUri;
 
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/", "/auth/**", "/oauth2/**", "/error", "/api/auth/check", "/api/chatbot/**"
+            "/", "/auth/**", "/oauth2/**", "/error", "/api/auth/check"
     };
 
     private static final String OAUTH2_AUTHORIZATION_BASE_URI = "/auth/login/oauth2";
