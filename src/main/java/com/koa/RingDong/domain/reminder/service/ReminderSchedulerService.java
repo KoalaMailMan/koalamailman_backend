@@ -1,8 +1,8 @@
 package com.koa.RingDong.domain.reminder.service;
 
-import com.koa.RingDong.domain.mandalart.repository.MainBlock;
+import com.koa.RingDong.domain.mandalart.repository.CoreGoal;
 import com.koa.RingDong.domain.reminder.provider.ReminderTimeProvider;
-import com.koa.RingDong.domain.mandalart.repository.MainBlockRepository;
+import com.koa.RingDong.domain.mandalart.repository.CoreGoalRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class ReminderSchedulerService {
 
-    private final MainBlockRepository mainBlockRepository;
+    private final CoreGoalRepository coreGoalRepository;
     private final MailService mailService;
     private final ReminderTimeProvider reminderTimeProvider;
 
@@ -54,25 +54,25 @@ public class ReminderSchedulerService {
         LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
         LocalDateTime endOfToday = LocalDate.now().atTime(23, 59, 59);
 
-        List<MainBlock> targets = mainBlockRepository.findByNextScheduledTimeBefore(endOfToday.plusSeconds(1));
+        List<CoreGoal> targets = coreGoalRepository.findByNextScheduledTimeBefore(endOfToday.plusSeconds(1));
         log.info("[스케줄러] 📧오늘 또는 지난 메일 예약 대상 수: {}", targets.size());
 
-        for (MainBlock main : targets) {
-            if (main.getNextScheduledTime().isBefore(startOfToday)) {
-                log.info("[스케줄러] 🔄과거 시간 발견 - userId: {}, 원래 시간: {}", main.getUserId(), main.getNextScheduledTime());
+        for (CoreGoal core : targets) {
+            if (core.getNextScheduledTime().isBefore(startOfToday)) {
+                log.info("[스케줄러] 🔄과거 시간 발견 - userId: {}, 원래 시간: {}", core.getUserId(), core.getNextScheduledTime());
 
-                main.updateNextScheduledTime(reminderTimeProvider.generateRandomTime(main.getReminderInterval()));
+                core.updateNextScheduledTime(reminderTimeProvider.generateRandomTime(core.getReminderInterval()));
 
-                log.info("[스케줄러] 🆕새로 설정된 시간: {}", main.getNextScheduledTime());
+                log.info("[스케줄러] 🆕새로 설정된 시간: {}", core.getNextScheduledTime());
             }
 
-            if (!main.getNextScheduledTime().isBefore(startOfToday) &&
-                    !main.getNextScheduledTime().isAfter(endOfToday)) {
-                scheduleMailAt(main.getNextScheduledTime(), main.getUserId());
-                log.info("[스케줄러] ⏱️메일 예약 시작 - userId: {}, scheduledTime: {}", main.getUserId(), main.getNextScheduledTime());
+            if (!core.getNextScheduledTime().isBefore(startOfToday) &&
+                    !core.getNextScheduledTime().isAfter(endOfToday)) {
+                scheduleMailAt(core.getNextScheduledTime(), core.getUserId());
+                log.info("[스케줄러] ⏱️메일 예약 시작 - userId: {}, scheduledTime: {}", core.getUserId(), core.getNextScheduledTime());
             }
 
-            mainBlockRepository.save(main);
+            coreGoalRepository.save(core);
         }
     }
 

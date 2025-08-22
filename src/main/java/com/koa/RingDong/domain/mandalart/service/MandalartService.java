@@ -1,14 +1,14 @@
 package com.koa.RingDong.domain.mandalart.service;
 
-import com.koa.RingDong.domain.mandalart.dto.UpdateCellRequest;
-import com.koa.RingDong.domain.mandalart.dto.UpdateMainBlockRequest;
-import com.koa.RingDong.domain.mandalart.dto.UpdateSubBlockRequest;
-import com.koa.RingDong.domain.mandalart.dto.MainBlockResponse;
-import com.koa.RingDong.domain.mandalart.repository.Cell;
-import com.koa.RingDong.domain.mandalart.repository.MainBlock;
-import com.koa.RingDong.domain.mandalart.repository.SubBlock;
+import com.koa.RingDong.domain.mandalart.dto.UpdateSubGoalRequest;
+import com.koa.RingDong.domain.mandalart.dto.UpdateCoreGoalRequest;
+import com.koa.RingDong.domain.mandalart.dto.UpdateMainGoalRequest;
+import com.koa.RingDong.domain.mandalart.dto.CoreGoalResponse;
+import com.koa.RingDong.domain.mandalart.repository.SubGoal;
+import com.koa.RingDong.domain.mandalart.repository.CoreGoal;
+import com.koa.RingDong.domain.mandalart.repository.MainGoal;
 import com.koa.RingDong.domain.reminder.provider.ReminderTimeProvider;
-import com.koa.RingDong.domain.mandalart.repository.MainBlockRepository;
+import com.koa.RingDong.domain.mandalart.repository.CoreGoalRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,105 +25,133 @@ import java.util.Set;
 @Slf4j
 public class MandalartService {
 
-    private final MainBlockRepository mainBlockRepository;
+    private final CoreGoalRepository coreGoalRepository;
     private final ReminderTimeProvider reminderTimeProvider;
 
     @Transactional
-    public MainBlockResponse createMandalart(Long userId, UpdateMainBlockRequest request) {
-        log.info("[만다라트] 생성 createMandalart");
+    public CoreGoalResponse createMandalart(Long userId, UpdateCoreGoalRequest request) {
+        log.info("[만다라트] 생성 시작 - userId: {}", userId);
 
-        // 1. MainBlock 생성
-        MainBlock mainBlock = MainBlock.builder()
+        CoreGoal coreGoal = createCoreGoal(userId, request);
+        createMainGoalsWithSubGoals(coreGoal, request.getMainGoalRequests());
+        
+        CoreGoal saved = coreGoalRepository.save(coreGoal);
+        log.info("[만다라트] 생성 완료 - coreGoalId: {}", saved.getCoreGoalId());
+
+        return coreGoalRepository.findCoreGoalWithMainGoalsByUserId(userId)
+                .map(CoreGoalResponse::from)
+                .orElseThrow(() -> new IllegalStateException("만다라트 생성에 실패했습니다."));
+    }
+
+    private CoreGoal createCoreGoal(Long userId, UpdateCoreGoalRequest request) {
+        return CoreGoal.builder()
                 .userId(userId)
                 .content(request.getContent())
                 .reminderInterval(request.getReminderInterval())
                 .nextScheduledTime(reminderTimeProvider.generateRandomTime(request.getReminderInterval()))
                 .build();
+    }
 
-        Set<SubBlock> subBlocks = new HashSet<>();
+    private void createMainGoalsWithSubGoals(CoreGoal coreGoal, List<UpdateMainGoalRequest> mainGoalRequests) {
+        Set<MainGoal> mainGoals = new HashSet<>();
 
-        // 2. SubBlock 생성 (요청 기반으로)
-        for (UpdateSubBlockRequest subReq : request.getSubBlockRequests()) {
-            SubBlock subBlock = SubBlock.builder()
-                    .mainBlock(mainBlock)
-                    .position(subReq.getPosition())
-                    .content(subReq.getContent())
-                    .status(subReq.getStatus())
-                    .build();
-
-            Set<Cell> cells = new HashSet<>();
-
-            for (UpdateCellRequest cellReq : subReq.getCells()) {
-                Cell cell = Cell.builder()
-                        .subBlock(subBlock)
-                        .position(cellReq.getPosition())
-                        .content(cellReq.getContent())
-                        .status(cellReq.getStatus())
-                        .build();
-                cells.add(cell);
-            }
-
-            subBlock.getCells().addAll(cells);
-            subBlocks.add(subBlock);
+        for (UpdateMainGoalRequest mainGoalRequest : mainGoalRequests) {
+            MainGoal mainGoal = createMainGoal(coreGoal, mainGoalRequest);
+            createSubGoals(mainGoal, mainGoalRequest.getSubGoals());
+            mainGoals.add(mainGoal);
         }
 
-        mainBlock.getSubBlocks().addAll(subBlocks);
+        coreGoal.getMainGoals().addAll(mainGoals);
+    }
 
-        // 3. 저장
-        MainBlock saved = mainBlockRepository.save(mainBlock);
-        log.info("[만다라트] 생성 createMandalart" + saved.toString());
+    private MainGoal createMainGoal(CoreGoal coreGoal, UpdateMainGoalRequest mainGoalRequest) {
+        return MainGoal.builder()
+                .coreGoal(coreGoal)
+                .position(mainGoalRequest.getPosition())
+                .content(mainGoalRequest.getContent())
+                .status(mainGoalRequest.getStatus())
+                .build();
+    }
 
-        return mainBlockRepository.findFullMandalartByUserId(userId)
-                .map(MainBlockResponse::from)
-                .orElseThrow(() -> new IllegalStateException("Mandalart creation failed"));
+    private void createSubGoals(MainGoal mainGoal, List<UpdateSubGoalRequest> subGoalRequests) {
+        Set<SubGoal> subGoals = new HashSet<>();
+
+        for (UpdateSubGoalRequest subGoalRequest : subGoalRequests) {
+            SubGoal subGoal = SubGoal.builder()
+                    .mainGoal(mainGoal)
+                    .position(subGoalRequest.getPosition())
+                    .content(subGoalRequest.getContent())
+                    .status(subGoalRequest.getStatus())
+                    .build();
+            subGoals.add(subGoal);
+        }
+
+        mainGoal.getSubGoals().addAll(subGoals);
     }
 
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public MainBlockResponse getMandalart(Long userId) {
-        MainBlockResponse response = mainBlockRepository.findFullMandalartByUserId(userId)
-                .map(MainBlockResponse::from)
+    public CoreGoalResponse getMandalart(Long userId) {
+        CoreGoalResponse response = coreGoalRepository.findCoreGoalWithMainGoalsByUserId(userId)
+                .map(CoreGoalResponse::from)
                 .orElse(null);
 
-        log.info("[만다라트] 조회 getMandalart");
+        log.info("[만다라트] 조회 완료 - userId: {}", userId);
         return response;
     }
 
     @Transactional
-    public MainBlockResponse updateMandalart(Long userId, UpdateMainBlockRequest request) {
-        Optional<MainBlock> optional = mainBlockRepository.findFullMandalartByUserId(userId);
+    public CoreGoalResponse updateMandalart(Long userId, UpdateCoreGoalRequest request) {
+        Optional<CoreGoal> optional = coreGoalRepository.findCoreGoalWithMainGoalsByUserId(userId);
 
         if (optional.isEmpty()) {
-            log.info("[만다라트] 생성 updateMandalart - Mandalart 없는 경우 create");
-            return createMandalart(userId, request); // 여기선 바로 응답 리턴
+            log.info("[만다라트] 수정 - 기존 데이터 없음, 새로 생성 - userId: {}", userId);
+            return createMandalart(userId, request);
         }
 
-        log.info("[만다라트] 수정 updateMandalart - Mandalart 있는 경우 update");
-        MainBlock mainBlock = optional.get();
+        log.info("[만다라트] 수정 시작 - userId: {}", userId);
+        CoreGoal coreGoal = optional.get();
 
-        // MainBlock 업데이트
-        mainBlock.updateMainBlockField(request, reminderTimeProvider.generateRandomTime(request.getReminderInterval()));
+        updateCoreGoal(coreGoal, request);
+        updateMainGoals(coreGoal, request.getMainGoalRequests());
+        
+        log.info("[만다라트] 수정 완료 - userId: {}", userId);
+        
+        return coreGoalRepository.findCoreGoalWithMainGoalsByUserId(userId)
+                .map(CoreGoalResponse::from)
+                .orElseThrow(() -> new IllegalStateException("만다라트 수정에 실패했습니다."));
+    }
 
-        // SubBlock 업데이트
-        for (UpdateSubBlockRequest subReq : request.getSubBlockRequests()) {
-            SubBlock subBlock = mainBlock.getSubBlocks().stream()
-                    .filter(sb -> sb.getSubId().equals(subReq.getSubId()))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("SubBlock not found"));
-            subBlock.updateSubBlockField(subReq.getContent(), subReq.getStatus());
+    private void updateCoreGoal(CoreGoal coreGoal, UpdateCoreGoalRequest request) {
+        coreGoal.updateCoreGoal(request, reminderTimeProvider.generateRandomTime(request.getReminderInterval()));
+    }
 
-            // Cell 업데이트
-            for (UpdateCellRequest cellReq : subReq.getCells()) {
-                Cell cell = subBlock.getCells().stream()
-                        .filter(c -> c.getCellId().equals(cellReq.getCellId()))
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalArgumentException("Cell not found with ID: " + cellReq.getCellId()));
-
-                cell.updateCellField(cellReq.getContent(), cellReq.getStatus());
-            }
+    private void updateMainGoals(CoreGoal coreGoal, List<UpdateMainGoalRequest> mainGoalRequests) {
+        for (UpdateMainGoalRequest mainGoalRequest : mainGoalRequests) {
+            MainGoal mainGoal = findMainGoalById(coreGoal, mainGoalRequest.getMainGoalId());
+            mainGoal.updateMainGoal(mainGoalRequest.getContent(), mainGoalRequest.getStatus());
+            updateSubGoals(mainGoal, mainGoalRequest.getSubGoals());
         }
-        return mainBlockRepository.findFullMandalartByUserId(userId)
-                .map(MainBlockResponse::from)
-                .orElseThrow(() -> new IllegalStateException("Mandalart creation failed"));
+    }
+
+    private MainGoal findMainGoalById(CoreGoal coreGoal, Long mainGoalId) {
+        return coreGoal.getMainGoals().stream()
+                .filter(mg -> mg.getMainGoalId().equals(mainGoalId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("주요 목표를 찾을 수 없습니다. ID: " + mainGoalId));
+    }
+
+    private void updateSubGoals(MainGoal mainGoal, List<UpdateSubGoalRequest> subGoalRequests) {
+        for (UpdateSubGoalRequest subGoalRequest : subGoalRequests) {
+            SubGoal subGoal = findSubGoalById(mainGoal, subGoalRequest.getSubGoalId());
+            subGoal.updateSubGoal(subGoalRequest.getContent(), subGoalRequest.getStatus());
+        }
+    }
+
+    private SubGoal findSubGoalById(MainGoal mainGoal, Long subGoalId) {
+        return mainGoal.getSubGoals().stream()
+                .filter(sg -> sg.getSubGoalId().equals(subGoalId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("세부 목표를 찾을 수 없습니다. ID: " + subGoalId));
     }
 }

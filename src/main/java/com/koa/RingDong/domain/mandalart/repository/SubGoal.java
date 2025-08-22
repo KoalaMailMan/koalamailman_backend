@@ -8,25 +8,25 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "cell", indexes = {
+@Table(name = "sub_goal", indexes = {
         @Index(
-                name = "idx_sub_position",
-                columnList = "sub_id, position",
+                name = "idx_main_goal_position",
+                columnList = "main_goal_id, position",
                 unique = true
         )
 })
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Cell {
+public class SubGoal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cellId;
+    private Long subGoalId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sub_id", nullable = false)
-    private SubBlock subBlock;
+    @JoinColumn(name = "main_goal_id", nullable = false)
+    private MainGoal mainGoal;
 
     @Column(nullable = false)
     private Integer position;
@@ -43,14 +43,14 @@ public class Cell {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Cell(SubBlock subBlock, Integer position, String content, Status status) {
-        this.subBlock = subBlock;
+    public SubGoal(MainGoal mainGoal, Integer position, String content, Status status) {
+        this.mainGoal = mainGoal;
         this.position = position;
         this.content = content;
         this.status = status;
     }
 
-    public void updateCellField(String content, Status status) {
+    public void updateSubGoal(String content, Status status) {
         this.content = content;
         this.status = status;
     }

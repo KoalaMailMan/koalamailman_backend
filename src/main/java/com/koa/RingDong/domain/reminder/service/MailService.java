@@ -1,9 +1,9 @@
 package com.koa.RingDong.domain.reminder.service;
 
-import com.koa.RingDong.domain.mandalart.repository.MainBlock;
+import com.koa.RingDong.domain.mandalart.repository.CoreGoal;
 import com.koa.RingDong.domain.user.repository.User;
 import com.koa.RingDong.domain.reminder.provider.ReminderTimeProvider;
-import com.koa.RingDong.domain.mandalart.repository.MainBlockRepository;
+import com.koa.RingDong.domain.mandalart.repository.CoreGoalRepository;
 import com.koa.RingDong.domain.user.repository.UserRepository;
 import com.koa.RingDong.domain.reminder.util.MailContentBuilder;
 import com.sendgrid.Method;
@@ -30,7 +30,7 @@ public class MailService {
     private String apiKey;
 
     private final UserRepository userRepository;
-    private final MainBlockRepository mainBlockRepository;
+    private final CoreGoalRepository coreGoalRepository;
     private final ReminderTimeProvider reminderTimeProvider;
     private final MailContentBuilder mailContentBuilder;
 
@@ -41,19 +41,19 @@ public class MailService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자 ID: " + targetId));
 
         // contentText를 Mandalart 내용으로
-        MainBlock mainBlock = mainBlockRepository.findFullMandalartByUserId(targetId)
-                .orElseThrow(() -> new IllegalArgumentException("Main Block이 존재하지 않는 사용자 ID: " + targetId));
+        CoreGoal coreGoal = coreGoalRepository.findCoreGoalWithMainGoalsByUserId(targetId)
+                .orElseThrow(() -> new IllegalArgumentException("Core Goal이 존재하지 않는 사용자 ID: " + targetId));
 
         try {
             String title = mailContentBuilder.buildTitle();
-            String html = mailContentBuilder.buildFullHtml(mainBlock);
+            String html = mailContentBuilder.buildFullHtml(coreGoal);
             sendHTMLMail(user.getEmail(), title, html);
-            mainBlock.updateNextScheduledTime(reminderTimeProvider.generateRandomTime(mainBlock.getReminderInterval()));
+            coreGoal.updateNextScheduledTime(reminderTimeProvider.generateRandomTime(coreGoal.getReminderInterval()));
         } catch (IOException e) {
             log.error("[메일 전송] 전송 실패 - userId: {}, email: {}, 이유: {}", targetId, user.getEmail(), e.getMessage());
 
             // 메일 전송 실패 시 nextScheduledTime 내일로 다시 설정
-            mainBlock.updateNextScheduledTime(reminderTimeProvider.generateRandomTimeForTomorrow());
+            coreGoal.updateNextScheduledTime(reminderTimeProvider.generateRandomTimeForTomorrow());
 
             log.info("[메일 전송] 메일 재전송을 위한 nextScheduledTime 갱신 완료");
         }

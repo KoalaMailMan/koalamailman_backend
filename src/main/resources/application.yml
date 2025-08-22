@@ -78,3 +78,19 @@ sendgrid:
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION:3600000}
+
+huggingface:
+  api:
+    url: https://api-inference.huggingface.co/models
+    token: ${HF_API_TOKEN}
+    model: microsoft/DialoGPT-medium
+
+openrouter:
+  api-key: ${OPENROUTER_API_KEY}
+  model: ${OPENROUTER_MODEL}
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    com.koa.RingDong.global.security: DEBUG
+    org.springframework.web.reactive.function.client: DEBUG

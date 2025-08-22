@@ -7,8 +7,8 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateCellRequest {
-    private Long cellId;
+public class UpdateSubGoalRequest {
+    private Long subGoalId;
     @NonNull
     private Integer position;
     private String content;

@@ -1,15 +1,15 @@
 package com.koa.RingDong.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.koa.RingDong.domain.mandalart.dto.UpdateMainBlockRequest;
-import com.koa.RingDong.domain.mandalart.dto.UpdateSubBlockRequest;
-import com.koa.RingDong.domain.mandalart.dto.UpdateCellRequest;
-import com.koa.RingDong.domain.mandalart.dto.CellResponse;
-import com.koa.RingDong.domain.mandalart.dto.MainBlockResponse;
-import com.koa.RingDong.domain.mandalart.dto.SubBlockResponse;
+import com.koa.RingDong.domain.mandalart.dto.UpdateCoreGoalRequest;
+import com.koa.RingDong.domain.mandalart.dto.UpdateMainGoalRequest;
+import com.koa.RingDong.domain.mandalart.dto.UpdateSubGoalRequest;
+import com.koa.RingDong.domain.mandalart.dto.SubGoalResponse;
+import com.koa.RingDong.domain.mandalart.dto.CoreGoalResponse;
+import com.koa.RingDong.domain.mandalart.dto.MainGoalResponse;
 import com.koa.RingDong.domain.mandalart.repository.Status;
 import com.koa.RingDong.domain.mandalart.repository.ReminderInterval;
-import com.koa.RingDong.security.WithMockCustomUser;
+
 import com.koa.RingDong.domain.mandalart.service.MandalartService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,6 @@ class MandalartControllerTest {
 
     @Test
     @DisplayName("만다라트 생성")
-    @WithMockCustomUser(userId = 1L)
     void createMandalart() throws Exception {
         mockMvc.perform(post("/api/mandalart"))
                 .andExpect(status().isOk());
@@ -49,35 +48,34 @@ class MandalartControllerTest {
 
     @Test
     @DisplayName("만다라트 전체 조회")
-    @WithMockCustomUser(userId = 1L)
     void getMandalart() throws Exception {
-        // CellResponse 생성
-        CellResponse cellResponse = CellResponse.builder()
+        // SubGoalResponse 생성
+        SubGoalResponse subGoalResponse = SubGoalResponse.builder()
                 .position(0)
-                .content("셀 내용")
+                .content("세부 목표 내용")
                 .status(Status.UNDONE)
                 .build();
 
-        // SubBlockResponse 생성
-        SubBlockResponse subBlockResponse = SubBlockResponse.builder()
-                .subId(1L)
-                .content("서브 내용")
+        // MainGoalResponse 생성
+        MainGoalResponse mainGoalResponse = MainGoalResponse.builder()
+                .mainGoalId(1L)
+                .content("주요 목표 내용")
                 .status(Status.UNDONE)
-                .cells(List.of(cellResponse))
+                .subGoals(List.of(subGoalResponse))
                 .build();
 
-        // MainBlockResponse 생성
-        MainBlockResponse mainBlockResponse = MainBlockResponse.builder()
-                .mainId(1L)
-                .content("메인 내용")
+        // CoreGoalResponse 생성
+        CoreGoalResponse coreGoalResponse = CoreGoalResponse.builder()
+                .coreGoalId(1L)
+                .content("핵심 목표 내용")
                 .status(Status.UNDONE)
                 .reminderInterval(ReminderInterval.ONE_WEEK)
-                .subBlocks(List.of(subBlockResponse))
+                .mainGoals(List.of(mainGoalResponse))
                 .build();
 
         // Mock Service 동작 정의
         Mockito.when(mandalartService.getMandalart(1L))
-                .thenReturn(mainBlockResponse);
+                .thenReturn(coreGoalResponse);
 
         // 실제 호출
         mockMvc.perform(get("/api/mandalart"))
@@ -87,32 +85,31 @@ class MandalartControllerTest {
 
     @Test
     @DisplayName("만다라트 전체 수정")
-    @WithMockCustomUser(userId = 1L)
     void updateMandalart() throws Exception {
-        Long mainId = 1L;
+        Long coreGoalId = 1L;
 
         // 예시 request 생성
-        UpdateCellRequest cellRequest = UpdateCellRequest.builder()
+        UpdateSubGoalRequest subGoalRequest = UpdateSubGoalRequest.builder()
                 .position(0)
-                .content("셀 내용")
+                .content("세부 목표 내용")
                 .status(null)
                 .build();
 
-        UpdateSubBlockRequest subBlockRequest = UpdateSubBlockRequest.builder()
-                .subId(1L)
-                .content("서브 내용")
+        UpdateMainGoalRequest mainGoalRequest = UpdateMainGoalRequest.builder()
+                .mainGoalId(1L)
+                .content("주요 목표 내용")
                 .status(null)
-                .cells(List.of(cellRequest))
+                .subGoals(List.of(subGoalRequest))
                 .build();
 
-        UpdateMainBlockRequest request = UpdateMainBlockRequest.builder()
-                .content("메인 내용")
+        UpdateCoreGoalRequest request = UpdateCoreGoalRequest.builder()
+                .content("핵심 목표 내용")
                 .status(null)
                 .reminderInterval(null)
-                .subBlockRequests(List.of(subBlockRequest))
+                .mainGoalRequests(List.of(mainGoalRequest))
                 .build();
 
-        mockMvc.perform(patch("/api/mandalart/{mainId}", mainId)
+        mockMvc.perform(patch("/api/mandalart")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
