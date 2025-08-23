@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -25,7 +26,15 @@ public class OAuth2Config {
     private static final String LOGOUT_URL = "/";
 
     @Bean
+    @Order(1)
     public SecurityFilterChain oauth2SecurityFilterChain(HttpSecurity http) throws Exception {
+
+        http.securityMatcher(
+                OAUTH2_AUTHORIZATION_BASE_URI + "/**",
+                "/oauth2/**",
+                "/login/**"
+        );
+
         http
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(endpoint -> endpoint
