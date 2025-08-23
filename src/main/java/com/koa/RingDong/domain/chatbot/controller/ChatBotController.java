@@ -1,18 +1,31 @@
 package com.koa.RingDong.domain.chatbot.controller;
 
-import com.koa.RingDong.domain.chatbot.dto.ChatRequest;
-import com.koa.RingDong.domain.chatbot.service.OpenRouterService;
+import com.koa.RingDong.domain.chatbot.service.ChatService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/chatbot")
+@RequestMapping("/api/chat")
 public class ChatBotController {
-    private final OpenRouterService openRouterService;
+    private final ChatService chatService;
 
-    @PostMapping("/chat")
-    public String chat(@RequestBody ChatRequest request) {
-        return openRouterService.callLLM(request.message());
+
+    @GetMapping(value = "/reference/main", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    Flux<String> generationStreamingMainGoal(
+            @RequestParam("category") String category,
+            @RequestParam("conversationId") String conversationId
+    ) {
+        return chatService.referenceMainGoalByCategory(category, conversationId);
+    }
+
+    @GetMapping(value = "/reference/sub", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    Flux<String> generationStreamingSubGoal(
+            @RequestParam("goal") String mainGoal,
+            @RequestParam("conversationId") String conversationId
+    ) {
+        return chatService.referenceSubGoalByMainGoal(mainGoal, conversationId);
     }
 }
