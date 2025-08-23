@@ -50,10 +50,10 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse updateUserNickname(Long userId, String nickname){
+    public UserResponse updateUserNickname(Long userId, String nickname) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
-        user.setNickname(nickname);
+        user.updateNickname(nickname);
 
         return UserResponse.builder()
                 .nickname(user.getNickname())
@@ -61,4 +61,10 @@ public class UserService {
                 .build();
     }
 
+    @Transactional
+    public void updateUserProfile(Long userId, String ageGroup, String gender, String job) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+        user.updateProfile(ageGroup, gender, job);
+    }
 }

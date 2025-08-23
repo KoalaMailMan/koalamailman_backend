@@ -1,5 +1,6 @@
 package com.koa.RingDong.domain.user.controller;
 
+import com.koa.RingDong.domain.user.dto.UpdateUserProfileRequest;
 import com.koa.RingDong.domain.user.service.UserService;
 import com.koa.RingDong.domain.user.dto.UpdateUserRequest;
 import com.koa.RingDong.global.dto.ApiResponse;
@@ -40,4 +41,12 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success("유저 닉네임 수정 성공", response));
     }
 
+    @Operation(summary = "유저 프로필(연령대, 성별, 직업) 수정")
+    @PatchMapping("/profile")
+    public void updateUserProfile(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody @Valid UpdateUserProfileRequest request
+            ) {
+        userService.updateUserProfile(userDetails.getUserId(), request.getAgeGroup(), request.getGender(), request.getJob());
+    }
 }

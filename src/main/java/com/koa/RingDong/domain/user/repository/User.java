@@ -31,6 +31,15 @@ public class User {
     @Column
     private String email;
 
+    @Column
+    private String gender;
+
+    @Column
+    private String ageGroup;
+
+    @Column
+    private String job;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private Date createdAt;
@@ -41,9 +50,25 @@ public class User {
         this.oauthProvider = oauthProvider;
         this.nickname = nickname;
         this.email = email;
+        this.gender = null;
+        this.ageGroup = null;
+        this.job = null;
     }
 
-    public void setNickname(String nickname) {
+    public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
+
+    public void updateProfile(String ageGroup, String gender, String job) {
+        this.ageGroup = ageGroup;
+        this.gender = gender;
+        this.job = job;
+    }
+    public void updateGender(String gender) { this.gender = gender;}
+
+    public void updateAgeGroup(String ageGroup) { this.ageGroup = ageGroup;}
+
+    public void updateJob(String job) { this.job = job;}
+
+
 }
