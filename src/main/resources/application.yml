@@ -72,6 +72,14 @@ spring:
         format_sql: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
 
+  ai:
+    openai:
+      api-key: ${OPENROUTER_API_KEY}
+      base-url: https://openrouter.ai/api
+      chat:
+        options:
+          model: ${OPENROUTER_MODEL:mistralai/mistral-7b-instruct:free}
+
 sendgrid:
   api-key: ${SENDGRID_API_KEY}
 
@@ -84,10 +92,6 @@ huggingface:
     url: https://api-inference.huggingface.co/models
     token: ${HF_API_TOKEN}
     model: microsoft/DialoGPT-medium
-
-openrouter:
-  api-key: ${OPENROUTER_API_KEY}
-  model: ${OPENROUTER_MODEL}
 
 logging:
   level:
