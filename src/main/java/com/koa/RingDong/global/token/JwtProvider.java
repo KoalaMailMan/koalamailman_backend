@@ -54,10 +54,15 @@ public class JwtProvider {
                 .getSubject();
     }
 
-    public Authentication getAuthentication(String token) {
+    public UsernamePasswordAuthenticationToken getAuthentication(String token) {
         String userId = getSubjectFromToken(token);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(String.valueOf(userId));
-        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
+
+        return new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.getAuthorities()
+        );
     }
 
     public boolean validateToken(String token) {
