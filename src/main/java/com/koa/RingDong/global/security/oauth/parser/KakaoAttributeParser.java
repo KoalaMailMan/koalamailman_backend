@@ -13,7 +13,7 @@ public class KakaoAttributeParser implements OauthAttributeParser {
         Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
 
         return Map.of(
-                "id", String.valueOf(attributes.get("id")),
+                "providerId", String.valueOf(attributes.get("id")),
                 "email", kakaoAccount.get("email"),
                 "name", profile.get("nickname"),
                 "provider", "google"

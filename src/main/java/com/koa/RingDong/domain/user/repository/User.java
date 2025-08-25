@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "user", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"oauthId", "oauthProvider"})
+        @UniqueConstraint(columnNames = {"providerId", "oauthProvider"})
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,17 +18,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String oauthId; // 각 플랫폼의 고유 id
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private OAuthProvider oauthProvider;  // KAKAO, NAVER
+    private OAuthProvider oauthProvider;
+
+    @Column(nullable = false)
+    private String providerId;
 
     @Column(nullable = false)
     private String nickname;
 
-    @Column
+    @Column(nullable = false)
     private String email;
 
     @Column
@@ -45,9 +45,9 @@ public class User {
     private Date createdAt;
 
     @Builder
-    public User(String oauthId, OAuthProvider oauthProvider, String nickname, String email) {
-        this.oauthId = oauthId;
+    public User(OAuthProvider oauthProvider, String providerId, String nickname, String email) {
         this.oauthProvider = oauthProvider;
+        this.providerId = providerId;
         this.nickname = nickname;
         this.email = email;
         this.gender = null;

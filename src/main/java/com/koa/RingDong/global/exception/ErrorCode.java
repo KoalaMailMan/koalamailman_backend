@@ -44,7 +44,7 @@ public enum ErrorCode {
      */
     GENDER_MISMATCH(HttpStatus.UNPROCESSABLE_ENTITY, String.format("잘못된 gender입니다. expected: %s", Gender.getNames())),
     AGEGROUP_MISMATCH(HttpStatus.UNPROCESSABLE_ENTITY,
-            String.format("잘못된 ageGroup입니다. expected: %s (소문자 가능)", AgeGroup.getNames())),
+            String.format("잘못된 ageGroup입니다. expected: %s", AgeGroup.getNames())),
 
 
     /**

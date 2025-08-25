@@ -18,16 +18,15 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void findOrCreateFromOAuth(OAuthProvider provider, Map<String, Object> customAttributes) {
-        String oauthId = (String) customAttributes.get("id");
+    public User findOrCreate(OAuthProvider provider, String providerId, String name, String email) {
 
-        userRepository.findByOauthIdAndOauthProvider(oauthId, provider)
+        return userRepository.findByProviderIdAndOauthProvider(providerId, provider)
             .orElseGet(() -> userRepository.save(
                     User.builder()
-                            .oauthId(oauthId)
                             .oauthProvider(provider)
-                            .nickname((String) customAttributes.get("name"))
-                            .email((String) customAttributes.get("email"))
+                            .providerId(providerId)
+                            .nickname(name)
+                            .email(email)
                             .build()
             ));
     }
@@ -37,12 +36,12 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        return UserResponse.of(user.getNickname(), user.getEmail());
+        return UserResponse.of(user);
     }
 
     @Transactional(readOnly = true)
-    public User getUserByOauthInfo(OAuthProvider provider, String oauthId) {
-        return userRepository.findByOauthIdAndOauthProvider(oauthId, provider)
+    public User getUserByOauthInfo(OAuthProvider provider, String providerId) {
+        return userRepository.findByProviderIdAndOauthProvider(providerId, provider)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 

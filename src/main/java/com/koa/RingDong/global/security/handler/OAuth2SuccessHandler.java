@@ -41,9 +41,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
         OAuthProvider provider = OAuthProvider.valueOf(registrationId.toUpperCase());
 
-        String oauthId = oAuth2User.getAttribute("id").toString();
+        User user = userService.findOrCreate(provider, oAuth2User.getAttribute("nickname"), oAuth2User.getAttribute("email"), String.valueOf(oAuth2User.getAttribute("id")));
 
-        User user = userService.getUserByOauthInfo(provider, oauthId);
         String jwtAccessToken = tokenService.generateAccessToken(user);
         log.info("[JWT 생성] userId: {}, token: {}", user.getId(), jwtAccessToken);
 

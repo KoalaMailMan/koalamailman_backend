@@ -1,6 +1,7 @@
 package com.koa.RingDong.global.security.oauth;
 
 import com.koa.RingDong.domain.user.repository.OAuthProvider;
+import com.koa.RingDong.domain.user.repository.User;
 import com.koa.RingDong.domain.user.service.UserService;
 import com.koa.RingDong.global.security.oauth.parser.OauthAttributeParserFactory;
 import lombok.RequiredArgsConstructor;
@@ -25,14 +26,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         OAuthProvider provider = OAuthProvider.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
-
         Map<String, Object> customAttributes = OauthAttributeParserFactory.parse(provider, oAuth2User);
-        userService.findOrCreateFromOAuth(provider, customAttributes);
+
+        userService.findOrCreate(provider, (String) customAttributes.get("providerId"), (String) customAttributes.get("nickname"), (String) customAttributes.get("email"));
 
         return new DefaultOAuth2User(
-                Set.of(new SimpleGrantedAuthority("ROLE_USER")),
+                Set.of(new SimpleGrantedAuthority("USER")),
                 customAttributes,
-                "id"
+                "providerId"
         );
     }
 }

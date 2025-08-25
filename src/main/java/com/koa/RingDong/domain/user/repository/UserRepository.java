@@ -7,5 +7,5 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByOauthIdAndOauthProvider(String oauthId, OAuthProvider oauthProvider);
+    Optional<User> findByProviderIdAndOauthProvider(String providerId, OAuthProvider oAuthProvider);
 }

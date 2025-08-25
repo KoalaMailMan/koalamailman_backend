@@ -1,11 +1,12 @@
 package com.koa.RingDong.domain.user.dto;
 
+import com.koa.RingDong.domain.user.repository.User;
+
 public record UserResponse (String nickname, String email) {
 
     public static UserResponse of(
-            final String nickname,
-            final String email
+            final User user
     ) {
-        return new UserResponse(nickname, email);
+        return new UserResponse(user.getNickname(), user.getEmail());
     }
 }

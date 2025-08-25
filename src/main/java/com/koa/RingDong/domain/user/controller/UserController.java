@@ -7,20 +7,17 @@ import com.koa.RingDong.domain.user.dto.UserResponse;
 import com.koa.RingDong.global.dto.SuccessResponse;
 import com.koa.RingDong.global.exception.SuccessCode;
 import com.koa.RingDong.global.security.oauth.CustomUserDetails;
-import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@SecurityRequirement(name = "Authorization")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 public class UserController implements UserControllerDocs {
     private final UserService userService;
-
 
     @GetMapping
     @Override
@@ -33,12 +30,15 @@ public class UserController implements UserControllerDocs {
         );
     }
 
-    @Operation(summary = "유저 프로필(연령대, 성별, 직업) 수정")
     @PatchMapping("/profile")
-    public void updateUserProfile(
+    @Override
+    public SuccessResponse updateUserProfile(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody @Valid UpdateUserProfileRequest request
             ) {
         userService.updateUserProfile(userDetails.getUserId(), request.ageGroup(), request.gender(), request.job());
+        return SuccessResponse.success(
+                SuccessCode.UPDATE_USER_PROFILE_SUCCESS
+        );
     }
 }

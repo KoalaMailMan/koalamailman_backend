@@ -11,10 +11,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 
+@SecurityRequirement(name = "Authorization")
 @Tag(name = "사용자", description = "사용자 관련 API입니다.")
 public interface UserControllerDocs {
     @Operation(summary = "유저 정보 조회")
@@ -36,7 +38,7 @@ public interface UserControllerDocs {
             @ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
-    void updateUserProfile(
+    SuccessResponse updateUserProfile(
             @Parameter(hidden = true)
             @AuthenticationPrincipal CustomUserDetails userDetails,
             final UpdateUserProfileRequest request

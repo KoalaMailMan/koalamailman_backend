@@ -12,7 +12,7 @@ public class NaverAttributeParser implements OauthAttributeParser {
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
 
         return Map.of(
-                "id", (String) response.get("id"),
+                "providerId", (String) response.get("id"),
                 "email", (String) response.get("email"),
                 "name", (String) response.get("name"),
                 "provider", "naver"
