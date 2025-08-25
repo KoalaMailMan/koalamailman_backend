@@ -32,10 +32,10 @@ public class User {
     private String email;
 
     @Column
-    private String gender;
+    private Gender gender;
 
     @Column
-    private String ageGroup;
+    private AgeGroup ageGroup;
 
     @Column
     private String job;
@@ -55,20 +55,9 @@ public class User {
         this.job = null;
     }
 
-    public void updateNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public void updateProfile(String ageGroup, String gender, String job) {
-        this.ageGroup = ageGroup;
+    public void updateProfile(Gender gender, AgeGroup ageGroup, String job) {
         this.gender = gender;
+        this.ageGroup = ageGroup;
         this.job = job;
     }
-    public void updateGender(String gender) { this.gender = gender;}
-
-    public void updateAgeGroup(String ageGroup) { this.ageGroup = ageGroup;}
-
-    public void updateJob(String job) { this.job = job;}
-
-
 }

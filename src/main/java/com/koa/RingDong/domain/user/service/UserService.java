@@ -1,9 +1,9 @@
 package com.koa.RingDong.domain.user.service;
 
-import com.koa.RingDong.domain.user.repository.OAuthProvider;
-import com.koa.RingDong.domain.user.repository.User;
+import com.koa.RingDong.domain.user.repository.*;
 import com.koa.RingDong.domain.user.dto.UserResponse;
-import com.koa.RingDong.domain.user.repository.UserRepository;
+import com.koa.RingDong.global.exception.ErrorCode;
+import com.koa.RingDong.global.exception.model.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -35,36 +35,21 @@ public class UserService {
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public UserResponse getUserById(Long userId){
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        return UserResponse.builder()
-                .nickname(user.getNickname())
-                .email(user.getEmail())
-                .build();
+        return UserResponse.of(user.getNickname(), user.getEmail());
     }
 
     @Transactional(readOnly = true)
     public User getUserByOauthInfo(OAuthProvider provider, String oauthId) {
         return userRepository.findByOauthIdAndOauthProvider(oauthId, provider)
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 
     @Transactional
-    public UserResponse updateUserNickname(Long userId, String nickname) {
+    public void updateUserProfile(Long userId, AgeGroup ageGroup, Gender gender, String job) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
-        user.updateNickname(nickname);
-
-        return UserResponse.builder()
-                .nickname(user.getNickname())
-                .email(user.getEmail())
-                .build();
-    }
-
-    @Transactional
-    public void updateUserProfile(Long userId, String ageGroup, String gender, String job) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
-        user.updateProfile(ageGroup, gender, job);
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        user.updateProfile(gender, ageGroup, job);
     }
 }
