@@ -4,7 +4,6 @@ import com.koa.RingDong.domain.user.repository.OAuthProvider;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
-import java.util.EnumMap;
 import java.util.Map;
 
 @Component

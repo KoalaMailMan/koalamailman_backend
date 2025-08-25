@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "user", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"oauthId", "oauthProvider"})
+        @UniqueConstraint(columnNames = {"providerId", "oauthProvider"})
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,24 +18,24 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String oauthId; // 각 플랫폼의 고유 id
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private OAuthProvider oauthProvider;  // KAKAO, NAVER
+    private OAuthProvider oauthProvider;
+
+    @Column(nullable = false)
+    private String providerId;
 
     @Column(nullable = false)
     private String nickname;
 
-    @Column
+    @Column(nullable = false)
     private String email;
 
     @Column
-    private String gender;
+    private Gender gender;
 
     @Column
-    private String ageGroup;
+    private AgeGroup ageGroup;
 
     @Column
     private String job;
@@ -45,9 +45,9 @@ public class User {
     private Date createdAt;
 
     @Builder
-    public User(String oauthId, OAuthProvider oauthProvider, String nickname, String email) {
-        this.oauthId = oauthId;
+    public User(OAuthProvider oauthProvider, String providerId, String nickname, String email) {
         this.oauthProvider = oauthProvider;
+        this.providerId = providerId;
         this.nickname = nickname;
         this.email = email;
         this.gender = null;
@@ -55,20 +55,9 @@ public class User {
         this.job = null;
     }
 
-    public void updateNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public void updateProfile(String ageGroup, String gender, String job) {
-        this.ageGroup = ageGroup;
+    public void updateProfile(Gender gender, AgeGroup ageGroup, String job) {
         this.gender = gender;
+        this.ageGroup = ageGroup;
         this.job = job;
     }
-    public void updateGender(String gender) { this.gender = gender;}
-
-    public void updateAgeGroup(String ageGroup) { this.ageGroup = ageGroup;}
-
-    public void updateJob(String job) { this.job = job;}
-
-
 }

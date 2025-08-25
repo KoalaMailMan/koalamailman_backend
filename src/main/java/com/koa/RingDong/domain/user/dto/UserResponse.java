@@ -1,12 +1,12 @@
 package com.koa.RingDong.domain.user.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import com.koa.RingDong.domain.user.repository.User;
 
-@Builder
-@Getter
-public class UserResponse {
+public record UserResponse (String nickname, String email) {
 
-    private String nickname;
-    private String email;
+    public static UserResponse of(
+            final User user
+    ) {
+        return new UserResponse(user.getNickname(), user.getEmail());
+    }
 }
