@@ -1,8 +1,14 @@
 package com.koa.RingDong.domain.chatbot.controller;
 
 import com.koa.RingDong.domain.chatbot.service.ChatService;
+import com.koa.RingDong.domain.chatbot.service.ProfileSessionService;
+import com.koa.RingDong.domain.chatbot.session.ProfileSession;
+import com.koa.RingDong.global.security.oauth.CustomUserDetails;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
@@ -11,21 +17,30 @@ import reactor.core.publisher.Flux;
 @RequestMapping("/api/chat")
 public class ChatBotController {
     private final ChatService chatService;
+    private final ProfileSessionService profileSessionService;
 
+
+    @PostMapping("/init")
+    public void init(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            HttpSession httpSession
+    ) {
+        profileSessionService.initProfileToSession(userDetails.getUserId(), httpSession);
+    }
 
     @GetMapping(value = "/reference/main", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     Flux<String> generationStreamingMainGoal(
             @RequestParam("category") String category,
-            @RequestParam("conversationId") String conversationId
+            HttpSession session
     ) {
-        return chatService.referenceMainGoalByCategory(category, conversationId);
+        return chatService.referenceMainGoalByCategory(category, (ProfileSession) session.getAttribute("session:profile:"));
     }
 
     @GetMapping(value = "/reference/sub", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     Flux<String> generationStreamingSubGoal(
             @RequestParam("goal") String mainGoal,
-            @RequestParam("conversationId") String conversationId
+            HttpSession session
     ) {
-        return chatService.referenceSubGoalByMainGoal(mainGoal, conversationId);
+        return chatService.referenceSubGoalByMainGoal(mainGoal, (ProfileSession) session.getAttribute("session:profile:"));
     }
 }
