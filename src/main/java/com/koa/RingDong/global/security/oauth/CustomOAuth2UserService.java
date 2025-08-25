@@ -28,7 +28,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuthProvider provider = OAuthProvider.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
         Map<String, Object> customAttributes = OauthAttributeParserFactory.parse(provider, oAuth2User);
 
-        userService.findOrCreate(provider, (String) customAttributes.get("providerId"), (String) customAttributes.get("nickname"), (String) customAttributes.get("email"));
+        userService.findOrCreate(provider, (String) customAttributes.get("providerId"), (String) customAttributes.get("name"), (String) customAttributes.get("email"));
 
         return new DefaultOAuth2User(
                 Set.of(new SimpleGrantedAuthority("USER")),
