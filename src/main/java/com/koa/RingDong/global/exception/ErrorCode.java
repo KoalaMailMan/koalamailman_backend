@@ -40,7 +40,7 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "허용되지 않은 메소드입니다."),
 
     /**
-     * 422 UNPEOCESSABLE_ENTITY
+     * 422 UNPROCESSABLE_ENTITY
      */
     GENDER_MISMATCH(HttpStatus.UNPROCESSABLE_ENTITY, String.format("잘못된 gender입니다. expected: %s", Gender.getNames())),
     AGEGROUP_MISMATCH(HttpStatus.UNPROCESSABLE_ENTITY,
