@@ -1,4 +1,4 @@
-package com.koa.RingDong.domain.mandalart.repository;
+package com.koa.RingDong.domain.mandalart.repository.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

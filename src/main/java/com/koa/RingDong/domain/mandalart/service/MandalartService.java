@@ -4,9 +4,9 @@ import com.koa.RingDong.domain.mandalart.dto.UpdateSubGoalRequest;
 import com.koa.RingDong.domain.mandalart.dto.UpdateCoreGoalRequest;
 import com.koa.RingDong.domain.mandalart.dto.UpdateMainGoalRequest;
 import com.koa.RingDong.domain.mandalart.dto.CoreGoalResponse;
-import com.koa.RingDong.domain.mandalart.repository.SubGoal;
-import com.koa.RingDong.domain.mandalart.repository.CoreGoal;
-import com.koa.RingDong.domain.mandalart.repository.MainGoal;
+import com.koa.RingDong.domain.mandalart.repository.entity.SubGoal;
+import com.koa.RingDong.domain.mandalart.repository.entity.CoreGoal;
+import com.koa.RingDong.domain.mandalart.repository.entity.MainGoal;
 import com.koa.RingDong.domain.reminder.provider.ReminderTimeProvider;
 import com.koa.RingDong.domain.mandalart.repository.CoreGoalRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,13 +30,11 @@ public class MandalartService {
 
     @Transactional
     public CoreGoalResponse createMandalart(Long userId, UpdateCoreGoalRequest request) {
-        log.info("[만다라트] 생성 시작 - userId: {}", userId);
 
         CoreGoal coreGoal = createCoreGoal(userId, request);
         createMainGoalsWithSubGoals(coreGoal, request.getMainGoalRequests());
         
         CoreGoal saved = coreGoalRepository.save(coreGoal);
-        log.info("[만다라트] 생성 완료 - coreGoalId: {}", saved.getCoreGoalId());
 
         return coreGoalRepository.findCoreGoalWithMainGoalsByUserId(userId)
                 .map(CoreGoalResponse::from)
@@ -96,7 +94,6 @@ public class MandalartService {
                 .map(CoreGoalResponse::from)
                 .orElse(null);
 
-        log.info("[만다라트] 조회 완료 - userId: {}", userId);
         return response;
     }
 

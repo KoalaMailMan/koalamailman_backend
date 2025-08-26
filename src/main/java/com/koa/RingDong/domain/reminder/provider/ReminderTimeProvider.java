@@ -1,6 +1,6 @@
 package com.koa.RingDong.domain.reminder.provider;
 
-import com.koa.RingDong.domain.mandalart.repository.ReminderInterval;
+import com.koa.RingDong.domain.mandalart.repository.entity.ReminderInterval;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;

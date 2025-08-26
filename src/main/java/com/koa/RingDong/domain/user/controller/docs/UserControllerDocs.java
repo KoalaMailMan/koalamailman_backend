@@ -16,7 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 
-@SecurityRequirement(name = "Authorization")
+//@SecurityRequirement(name = "Authorization")
 @Tag(name = "사용자", description = "사용자 관련 API입니다.")
 public interface UserControllerDocs {
     @Operation(summary = "유저 정보 조회")

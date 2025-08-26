@@ -1,7 +1,7 @@
 package com.koa.RingDong.domain.mandalart.dto;
 
-import com.koa.RingDong.domain.mandalart.repository.SubGoal;
-import com.koa.RingDong.domain.mandalart.repository.Status;
+import com.koa.RingDong.domain.mandalart.repository.entity.SubGoal;
+import com.koa.RingDong.domain.mandalart.repository.entity.Status;
 import lombok.Builder;
 import lombok.Getter;
 

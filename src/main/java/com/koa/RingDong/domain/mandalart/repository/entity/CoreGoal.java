@@ -1,4 +1,4 @@
-package com.koa.RingDong.domain.mandalart.repository;
+package com.koa.RingDong.domain.mandalart.repository.entity;
 
 import com.koa.RingDong.domain.mandalart.dto.UpdateCoreGoalRequest;
 import jakarta.persistence.*;
@@ -57,25 +57,11 @@ public class CoreGoal {
 
     public void updateCoreGoal(UpdateCoreGoalRequest request, LocalDateTime nextScheduledTime) {
         this.content = request.getContent();
-        this.status = request.getStatus();
         this.reminderInterval = request.getReminderInterval();
         this.nextScheduledTime = nextScheduledTime;
     }
 
     public void updateNextScheduledTime(LocalDateTime nextScheduledTime) {
         this.nextScheduledTime = nextScheduledTime;
-    }
-
-    @Override
-    public String toString() {
-        return "CoreGoal{" +
-                "coreGoalId=" + coreGoalId +
-                ", userId=" + userId +
-                ", content='" + content + '\'' +
-                ", status=" + status +
-                ", reminderInterval=" + reminderInterval +
-                ", nextScheduledTime=" + nextScheduledTime +
-                ", mainGoals=" + mainGoals +
-                '}';
     }
 }

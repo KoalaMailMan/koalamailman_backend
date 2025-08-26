@@ -1,8 +1,8 @@
 package com.koa.RingDong.domain.mandalart.dto;
 
-import com.koa.RingDong.domain.mandalart.repository.CoreGoal;
-import com.koa.RingDong.domain.mandalart.repository.ReminderInterval;
-import com.koa.RingDong.domain.mandalart.repository.Status;
+import com.koa.RingDong.domain.mandalart.repository.entity.CoreGoal;
+import com.koa.RingDong.domain.mandalart.repository.entity.ReminderInterval;
+import com.koa.RingDong.domain.mandalart.repository.entity.Status;
 import lombok.Builder;
 import lombok.Getter;
 

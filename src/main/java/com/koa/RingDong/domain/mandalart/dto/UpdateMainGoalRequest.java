@@ -1,6 +1,6 @@
 package com.koa.RingDong.domain.mandalart.dto;
 
-import com.koa.RingDong.domain.mandalart.repository.Status;
+import com.koa.RingDong.domain.mandalart.repository.entity.Status;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -14,13 +14,14 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateMainGoalRequest {
-    private Long mainGoalId;
+public record UpdateMainGoalRequest (
+    Long mainGoalId,
     @NotNull
-    private Integer position;
-    private String content;
-    private Status status;
+    Integer position,
+    String content,
+    Status status,
     @NotNull
     @Size(min = 8, max = 8, message = "subGoal은 8개여야 합니다.")
-    private List<UpdateSubGoalRequest> subGoals;
+    List<UpdateSubGoalRequest> subGoals
+) {
 }

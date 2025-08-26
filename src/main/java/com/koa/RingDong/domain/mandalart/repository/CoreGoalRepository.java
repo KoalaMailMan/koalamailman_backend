@@ -1,6 +1,6 @@
 package com.koa.RingDong.domain.mandalart.repository;
 
-import com.koa.RingDong.domain.mandalart.repository.CoreGoal;
+import com.koa.RingDong.domain.mandalart.repository.entity.CoreGoal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

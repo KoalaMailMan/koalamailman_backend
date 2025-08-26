@@ -2,8 +2,8 @@ package com.koa.RingDong.domain.mandalart.service;
 
 import com.koa.RingDong.domain.mandalart.dto.CoreGoalResponse;
 import com.koa.RingDong.domain.mandalart.dto.MainGoalResponse;
-import com.koa.RingDong.domain.mandalart.repository.CoreGoal;
-import com.koa.RingDong.domain.mandalart.repository.MainGoal;
+import com.koa.RingDong.domain.mandalart.repository.entity.CoreGoal;
+import com.koa.RingDong.domain.mandalart.repository.entity.MainGoal;
 import com.koa.RingDong.domain.mandalart.repository.MainGoalRepository;
 import com.koa.RingDong.domain.mandalart.repository.CoreGoalRepository;
 import lombok.RequiredArgsConstructor;

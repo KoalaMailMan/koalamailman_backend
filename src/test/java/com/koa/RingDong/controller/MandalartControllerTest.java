@@ -7,8 +7,8 @@ import com.koa.RingDong.domain.mandalart.dto.UpdateSubGoalRequest;
 import com.koa.RingDong.domain.mandalart.dto.SubGoalResponse;
 import com.koa.RingDong.domain.mandalart.dto.CoreGoalResponse;
 import com.koa.RingDong.domain.mandalart.dto.MainGoalResponse;
-import com.koa.RingDong.domain.mandalart.repository.Status;
-import com.koa.RingDong.domain.mandalart.repository.ReminderInterval;
+import com.koa.RingDong.domain.mandalart.repository.entity.Status;
+import com.koa.RingDong.domain.mandalart.repository.entity.ReminderInterval;
 
 import com.koa.RingDong.domain.mandalart.service.MandalartService;
 import org.junit.jupiter.api.DisplayName;
