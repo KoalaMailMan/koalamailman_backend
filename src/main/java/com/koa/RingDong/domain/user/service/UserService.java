@@ -18,13 +18,13 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public User findOrCreate(OAuthProvider provider, String providerId, String name, String email) {
+    public User findOrCreate(OAuthProvider provider, String oauthId, String name, String email) {
 
-        return userRepository.findByProviderIdAndOauthProvider(providerId, provider)
+        return userRepository.findByOauthIdAndOauthProvider(oauthId, provider)
             .orElseGet(() -> userRepository.save(
                     User.builder()
                             .oauthProvider(provider)
-                            .providerId(providerId)
+                            .oauthId(oauthId)
                             .nickname(name)
                             .email(email)
                             .build()
@@ -41,7 +41,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User getUserByOauthInfo(OAuthProvider provider, String providerId) {
-        return userRepository.findByProviderIdAndOauthProvider(providerId, provider)
+        return userRepository.findByOauthIdAndOauthProvider(providerId, provider)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 

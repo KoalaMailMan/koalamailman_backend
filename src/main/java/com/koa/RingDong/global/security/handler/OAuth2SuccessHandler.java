@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -41,8 +42,13 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
         OAuthProvider provider = OAuthProvider.valueOf(registrationId.toUpperCase());
 
-        User user = userService.findOrCreate(provider, String.valueOf(oAuth2User.getAttribute("providerId")), oAuth2User.getAttribute("name"), oAuth2User.getAttribute("email"));
+        Map<String, Object> attrs = oAuth2User.getAttributes();
+        String providerId = String.valueOf(attrs.get("providerId")); // 또는 google은 보통 "sub"
+        String name       = (String) attrs.get("name");
+        String email      = (String) attrs.get("email");
 
+
+        User user = userService.findOrCreate(provider, providerId, name, email);
         String jwtAccessToken = tokenService.generateAccessToken(user);
         log.info("[JWT 생성] userId: {}, token: {}", user.getId(), jwtAccessToken);
 
