@@ -9,6 +9,10 @@ import lombok.*;
                 name = "idx_user_id",
                 columnList = "userId"
         )
+},
+        uniqueConstraints = {
+        @UniqueConstraint(name = "uq_mandalart_user",
+                columnNames = {"userId"})
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -3,7 +3,6 @@ package com.koa.RingDong.domain.mandalart.dto;
 import com.koa.RingDong.domain.mandalart.dto.request.UpdateCoreGoalRequest;
 import com.koa.RingDong.domain.mandalart.repository.entity.GoalEntity;
 import com.koa.RingDong.domain.mandalart.repository.entity.GoalLevel;
-import jakarta.validation.constraints.Size;
 
 import java.util.*;
 
@@ -46,7 +45,7 @@ public record CoreGoalDto(
         List<GoalEntity> allMains = goalsByLevel.getOrDefault(GoalLevel.MAIN, new ArrayList<>());
         List<GoalEntity> coreMains = new ArrayList<>();
         for (GoalEntity main : allMains) {
-            if (Objects.equals(main.getParentId(), core.getGoalId())) {
+            if (Objects.equals(main.getParentPosition(), core.getGoalId())) {
                 coreMains.add(main);
             }
         }
@@ -56,8 +55,8 @@ public record CoreGoalDto(
         Map<Long, List<SubGoalDto>> subsByMainId = new HashMap<>();
 
         for (GoalEntity sub : allSubs) {
-            Long mainId = sub.getParentId();
-            subsByMainId.computeIfAbsent(mainId, k -> new ArrayList<>())
+            Integer mainPosition = sub.getParentPosition();
+            subsByMainId.computeIfAbsent(Long.valueOf(mainPosition), k -> new ArrayList<>())
                     .add(new SubGoalDto(sub.getGoalId(), sub.getPosition(), sub.getContent()));
         }
 

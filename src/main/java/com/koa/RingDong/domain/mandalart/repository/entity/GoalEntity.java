@@ -8,13 +8,22 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PRIVATE)
-@Table(name = "goal", indexes = {
-        @Index(
-                name = "idx_mandalart_id",
-                columnList = "mandalartId"
-        )
-})
+@Table(name = "goal",
+        indexes = {
+            @Index(
+                    name = "idx_mandalart_id",
+                    columnList = "mandalartId"
+            )
+        },
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uq_mandalart",
+                        columnNames = {"mandalartId", "level", "parentPosition", "position"})
+        }
+
+)
 public class GoalEntity {
+
+    public static final int CORE_POSITION = 0;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,10 +36,11 @@ public class GoalEntity {
     @Column(nullable = false)
     private GoalLevel level;
 
-    private Long parentId;
-
     @Column(nullable = false)
-    private Integer position;
+    private Integer position; // CORE: 0, MAIN: 1~8, SUB: 1~8
+
+    @Column
+    private Integer parentPosition; // CORE: null, MAIN: 0, SUB: 1~8
 
     @Column(length = 40)
     private String content;
@@ -47,22 +57,21 @@ public class GoalEntity {
         return GoalEntity.builder()
                 .mandalartId(mandalartId)
                 .level(GoalLevel.CORE)
-                .parentId(null)
-                .position(0)
+                .parentPosition(null)
+                .position(CORE_POSITION)
                 .content(content)
                 .build();
     }
 
     public static GoalEntity createMainGoal(
             Long mandalartId,
-            Long coreId,
             Integer position,
             String content
     ) {
         return GoalEntity.builder()
                 .mandalartId(mandalartId)
                 .level(GoalLevel.MAIN)
-                .parentId(coreId)
+                .parentPosition(CORE_POSITION)
                 .position(position)
                 .content(content)
                 .build();
@@ -70,14 +79,14 @@ public class GoalEntity {
 
     public static GoalEntity createSubGoal(
             Long mandalartId,
-            Long mainId,
+            Integer mainPosition,
             Integer position,
             String content
     ) {
         return GoalEntity.builder()
                 .mandalartId(mandalartId)
                 .level(GoalLevel.SUB)
-                .parentId(mainId)
+                .parentPosition(mainPosition)
                 .position(position)
                 .content(content)
                 .build();
