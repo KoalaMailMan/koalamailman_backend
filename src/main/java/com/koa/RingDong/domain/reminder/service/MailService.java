@@ -1,6 +1,6 @@
 package com.koa.RingDong.domain.reminder.service;
 
-import com.koa.RingDong.domain.mandalart.repository.CoreGoal;
+import com.koa.RingDong.domain.mandalart.repository.entity.CoreGoal;
 import com.koa.RingDong.domain.user.repository.User;
 import com.koa.RingDong.domain.reminder.provider.ReminderTimeProvider;
 import com.koa.RingDong.domain.mandalart.repository.CoreGoalRepository;

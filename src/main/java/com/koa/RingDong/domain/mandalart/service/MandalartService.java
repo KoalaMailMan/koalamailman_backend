@@ -1,157 +1,129 @@
 package com.koa.RingDong.domain.mandalart.service;
 
-import com.koa.RingDong.domain.mandalart.dto.UpdateSubGoalRequest;
-import com.koa.RingDong.domain.mandalart.dto.UpdateCoreGoalRequest;
-import com.koa.RingDong.domain.mandalart.dto.UpdateMainGoalRequest;
-import com.koa.RingDong.domain.mandalart.dto.CoreGoalResponse;
-import com.koa.RingDong.domain.mandalart.repository.SubGoal;
-import com.koa.RingDong.domain.mandalart.repository.CoreGoal;
-import com.koa.RingDong.domain.mandalart.repository.MainGoal;
-import com.koa.RingDong.domain.reminder.provider.ReminderTimeProvider;
-import com.koa.RingDong.domain.mandalart.repository.CoreGoalRepository;
+import com.koa.RingDong.domain.mandalart.dto.CoreGoalDto;
+import com.koa.RingDong.domain.mandalart.dto.MainGoalDto;
+import com.koa.RingDong.domain.mandalart.dto.SubGoalDto;
+import com.koa.RingDong.domain.mandalart.repository.GoalRepository;
+import com.koa.RingDong.domain.mandalart.repository.MandalartRepository;
+import com.koa.RingDong.domain.mandalart.repository.entity.GoalEntity;
+import com.koa.RingDong.domain.mandalart.repository.entity.MandalartEntity;
+import com.koa.RingDong.global.exception.ErrorCode;
+import com.koa.RingDong.global.exception.model.NotFoundException;
+import com.koa.RingDong.global.exception.model.UnauthorizedException;
+import com.koa.RingDong.global.exception.model.DuplicateGoalPositionException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class MandalartService {
 
-    private final CoreGoalRepository coreGoalRepository;
-    private final ReminderTimeProvider reminderTimeProvider;
+    private final MandalartRepository mandalartRepository;
+    private final GoalRepository goalRepository;
 
     @Transactional
-    public CoreGoalResponse createMandalart(Long userId, UpdateCoreGoalRequest request) {
-        log.info("[만다라트] 생성 시작 - userId: {}", userId);
-
-        CoreGoal coreGoal = createCoreGoal(userId, request);
-        createMainGoalsWithSubGoals(coreGoal, request.getMainGoalRequests());
-        
-        CoreGoal saved = coreGoalRepository.save(coreGoal);
-        log.info("[만다라트] 생성 완료 - coreGoalId: {}", saved.getCoreGoalId());
-
-        return coreGoalRepository.findCoreGoalWithMainGoalsByUserId(userId)
-                .map(CoreGoalResponse::from)
-                .orElseThrow(() -> new IllegalStateException("만다라트 생성에 실패했습니다."));
-    }
-
-    private CoreGoal createCoreGoal(Long userId, UpdateCoreGoalRequest request) {
-        return CoreGoal.builder()
-                .userId(userId)
-                .content(request.getContent())
-                .reminderInterval(request.getReminderInterval())
-                .nextScheduledTime(reminderTimeProvider.generateRandomTime(request.getReminderInterval()))
-                .build();
-    }
-
-    private void createMainGoalsWithSubGoals(CoreGoal coreGoal, List<UpdateMainGoalRequest> mainGoalRequests) {
-        Set<MainGoal> mainGoals = new HashSet<>();
-
-        for (UpdateMainGoalRequest mainGoalRequest : mainGoalRequests) {
-            MainGoal mainGoal = createMainGoal(coreGoal, mainGoalRequest);
-            createSubGoals(mainGoal, mainGoalRequest.getSubGoals());
-            mainGoals.add(mainGoal);
-        }
-
-        coreGoal.getMainGoals().addAll(mainGoals);
-    }
-
-    private MainGoal createMainGoal(CoreGoal coreGoal, UpdateMainGoalRequest mainGoalRequest) {
-        return MainGoal.builder()
-                .coreGoal(coreGoal)
-                .position(mainGoalRequest.getPosition())
-                .content(mainGoalRequest.getContent())
-                .status(mainGoalRequest.getStatus())
-                .build();
-    }
-
-    private void createSubGoals(MainGoal mainGoal, List<UpdateSubGoalRequest> subGoalRequests) {
-        Set<SubGoal> subGoals = new HashSet<>();
-
-        for (UpdateSubGoalRequest subGoalRequest : subGoalRequests) {
-            SubGoal subGoal = SubGoal.builder()
-                    .mainGoal(mainGoal)
-                    .position(subGoalRequest.getPosition())
-                    .content(subGoalRequest.getContent())
-                    .status(subGoalRequest.getStatus())
-                    .build();
-            subGoals.add(subGoal);
-        }
-
-        mainGoal.getSubGoals().addAll(subGoals);
-    }
-
-
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public CoreGoalResponse getMandalart(Long userId) {
-        CoreGoalResponse response = coreGoalRepository.findCoreGoalWithMainGoalsByUserId(userId)
-                .map(CoreGoalResponse::from)
-                .orElse(null);
-
-        log.info("[만다라트] 조회 완료 - userId: {}", userId);
-        return response;
+    public CoreGoalDto createMandalart(Long userId, CoreGoalDto coreGoalDto) {
+        MandalartEntity mandalart = findMandalartOrCreate(userId);
+        return saveGoals(mandalart.getId(), coreGoalDto);
     }
 
     @Transactional
-    public CoreGoalResponse updateMandalart(Long userId, UpdateCoreGoalRequest request) {
-        Optional<CoreGoal> optional = coreGoalRepository.findCoreGoalWithMainGoalsByUserId(userId);
+    public CoreGoalDto updateMandalart(Long userId, CoreGoalDto dto) {
+        MandalartEntity mandalart = findMandalartOrNotFound(userId);
+        return saveGoals(mandalart.getId(), dto);
+    }
 
-        if (optional.isEmpty()) {
-            log.info("[만다라트] 수정 - 기존 데이터 없음, 새로 생성 - userId: {}", userId);
-            return createMandalart(userId, request);
+    @Transactional(readOnly = true)
+    public CoreGoalDto getMandalart(Long userId) {
+        MandalartEntity mandalart = findMandalartOrNotFound(userId);
+        List<GoalEntity> goals = goalRepository.findAllByMandalartId(mandalart.getId());
+        return CoreGoalDto.fromEntities(goals);
+    }
+
+    private MandalartEntity findMandalartOrCreate(Long userId) {
+        return mandalartRepository.findByUserId(userId)
+                .orElseGet(() -> mandalartRepository.save(MandalartEntity.create(userId)));
+    }
+
+    private MandalartEntity findMandalartOrNotFound(Long userId) {
+        MandalartEntity mandalart = mandalartRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.MANDALART_NOT_FOUND));
+
+        if (!mandalart.getUserId().equals(userId)) {
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED);
         }
-
-        log.info("[만다라트] 수정 시작 - userId: {}", userId);
-        CoreGoal coreGoal = optional.get();
-
-        updateCoreGoal(coreGoal, request);
-        updateMainGoals(coreGoal, request.getMainGoalRequests());
-        
-        log.info("[만다라트] 수정 완료 - userId: {}", userId);
-        
-        return coreGoalRepository.findCoreGoalWithMainGoalsByUserId(userId)
-                .map(CoreGoalResponse::from)
-                .orElseThrow(() -> new IllegalStateException("만다라트 수정에 실패했습니다."));
+        return mandalart;
     }
 
-    private void updateCoreGoal(CoreGoal coreGoal, UpdateCoreGoalRequest request) {
-        coreGoal.updateCoreGoal(request, reminderTimeProvider.generateRandomTime(request.getReminderInterval()));
+    private CoreGoalDto saveGoals(Long mandalartId, CoreGoalDto coreDto) {
+        Map<Long, GoalEntity> existingGoalsById = goalRepository.findAllByMandalartId(mandalartId)
+                .stream()
+                .collect(Collectors.toMap(GoalEntity::getGoalId, goal -> goal));
+
+        List<GoalEntity> pengdingGoalsToSave = new ArrayList<>();
+        upsertCoreHierarchy(mandalartId, coreDto, existingGoalsById, pengdingGoalsToSave);
+
+        if (!pengdingGoalsToSave.isEmpty()) goalRepository.saveAll(pengdingGoalsToSave);
+
+        List<GoalEntity> allGoals = new ArrayList<>(existingGoalsById.values());
+        allGoals.addAll(pengdingGoalsToSave);
+
+        return CoreGoalDto.fromEntities(allGoals);
     }
 
-    private void updateMainGoals(CoreGoal coreGoal, List<UpdateMainGoalRequest> mainGoalRequests) {
-        for (UpdateMainGoalRequest mainGoalRequest : mainGoalRequests) {
-            MainGoal mainGoal = findMainGoalById(coreGoal, mainGoalRequest.getMainGoalId());
-            mainGoal.updateMainGoal(mainGoalRequest.getContent(), mainGoalRequest.getStatus());
-            updateSubGoals(mainGoal, mainGoalRequest.getSubGoals());
+    private GoalEntity getGoalByIdOrNotFound(Map<Long, GoalEntity> goalsById, Long goalId) {
+        GoalEntity goalEntity = goalsById.get(goalId);
+        if (goalEntity == null) throw new NotFoundException(ErrorCode.GOAL_NOT_FOUND);
+        return goalEntity;
+    }
+
+    private void upsertCoreHierarchy(Long mandalartId, CoreGoalDto coreDto, Map<Long, GoalEntity> existingGoalsById, List<GoalEntity> goalsToSave) {
+
+        if (coreDto.id() != null) {
+            GoalEntity core = getGoalByIdOrNotFound(existingGoalsById, coreDto.id());
+            core.updateGoalInfo(coreDto.content());
+        } else {
+            goalsToSave.add(GoalEntity.createCoreGoal(mandalartId, coreDto.content()));
+        }
+        upsertMainHierarchy(mandalartId, coreDto.mains(), existingGoalsById, goalsToSave);
+    }
+
+    private void upsertMainHierarchy(Long mandalartId, List<MainGoalDto> mainDtos, Map<Long, GoalEntity> existingGoals, List<GoalEntity> goalsToSave) {
+        Set<Integer> mainPositions = new HashSet<>();
+        for (MainGoalDto mainDto : mainDtos) {
+            if (!mainPositions.add(mainDto.position())) {
+                throw new DuplicateGoalPositionException(ErrorCode.DUPLICATE_GOAL_POSITION);
+            }
+
+            GoalEntity main;
+            if (mainDto.id() != null) {
+                main = getGoalByIdOrNotFound(existingGoals, mainDto.id());
+                main.updateGoalInfo(mainDto.content());
+            } else {
+                main = GoalEntity.createMainGoal(mandalartId, mainDto.position(), mainDto.content());
+                goalsToSave.add(main);
+            }
+            upsertSub(mandalartId, mainDto.subs(), main.getPosition(), existingGoals, goalsToSave);
         }
     }
 
-    private MainGoal findMainGoalById(CoreGoal coreGoal, Long mainGoalId) {
-        return coreGoal.getMainGoals().stream()
-                .filter(mg -> mg.getMainGoalId().equals(mainGoalId))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("주요 목표를 찾을 수 없습니다. ID: " + mainGoalId));
-    }
+    private void upsertSub(Long mandalartId, List<SubGoalDto> subDtos, Integer mainPosition, Map<Long, GoalEntity> existingGoals, List<GoalEntity> goalsToSave) {
+        Set<Integer> subPositions = new HashSet<>();
+        for (SubGoalDto subDto : subDtos) {
+            if (!subPositions.add(subDto.position())) {
+                throw new DuplicateGoalPositionException(ErrorCode.DUPLICATE_GOAL_POSITION);
+            }
 
-    private void updateSubGoals(MainGoal mainGoal, List<UpdateSubGoalRequest> subGoalRequests) {
-        for (UpdateSubGoalRequest subGoalRequest : subGoalRequests) {
-            SubGoal subGoal = findSubGoalById(mainGoal, subGoalRequest.getSubGoalId());
-            subGoal.updateSubGoal(subGoalRequest.getContent(), subGoalRequest.getStatus());
+            if (subDto.id() != null) {
+                GoalEntity sub = getGoalByIdOrNotFound(existingGoals, subDto.id());
+                sub.updateGoalInfo(subDto.content());
+            } else {
+                goalsToSave.add(GoalEntity.createSubGoal(mandalartId, mainPosition, subDto.position(), subDto.content()));
+            }
         }
-    }
-
-    private SubGoal findSubGoalById(MainGoal mainGoal, Long subGoalId) {
-        return mainGoal.getSubGoals().stream()
-                .filter(sg -> sg.getSubGoalId().equals(subGoalId))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("세부 목표를 찾을 수 없습니다. ID: " + subGoalId));
     }
 }

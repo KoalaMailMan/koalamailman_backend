@@ -32,6 +32,8 @@ public enum ErrorCode {
      * 404 NOT FOUND
      **/
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."),
+    MANDALART_NOT_FOUND(HttpStatus.NOT_FOUND, "만다라트를 찾을 수 없습니다."),
+    GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "목표를 찾을 수 없습니다."),
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "리소스를 찾을 수 없습니다."),
 
     /**
@@ -43,8 +45,11 @@ public enum ErrorCode {
      * 422 UNPROCESSABLE_ENTITY
      */
     GENDER_MISMATCH(HttpStatus.UNPROCESSABLE_ENTITY, String.format("잘못된 gender입니다. expected: %s", Gender.getNames())),
-    AGEGROUP_MISMATCH(HttpStatus.UNPROCESSABLE_ENTITY,
-            String.format("잘못된 ageGroup입니다. expected: %s", AgeGroup.getNames())),
+    AGEGROUP_MISMATCH(HttpStatus.UNPROCESSABLE_ENTITY, String.format("잘못된 ageGroup입니다. expected: %s", AgeGroup.getNames())),
+
+    DUPLICATE_GOAL_POSITION(HttpStatus.UNPROCESSABLE_ENTITY, "목표 위치가 중복되었습니다."),
+
+
 
 
     /**

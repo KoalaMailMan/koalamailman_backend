@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "user", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"providerId", "oauthProvider"})
+        @UniqueConstraint(columnNames = {"oauthId", "oauthProvider"})
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,7 +23,7 @@ public class User {
     private OAuthProvider oauthProvider;
 
     @Column(nullable = false)
-    private String providerId;
+    private String oauthId;
 
     @Column(nullable = false)
     private String nickname;
@@ -45,9 +45,9 @@ public class User {
     private Date createdAt;
 
     @Builder
-    public User(OAuthProvider oauthProvider, String providerId, String nickname, String email) {
+    public User(OAuthProvider oauthProvider, String oauthId, String nickname, String email) {
         this.oauthProvider = oauthProvider;
-        this.providerId = providerId;
+        this.oauthId = oauthId;
         this.nickname = nickname;
         this.email = email;
         this.gender = null;
