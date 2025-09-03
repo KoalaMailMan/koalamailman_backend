@@ -8,10 +8,12 @@ import com.koa.RingDong.domain.mandalart.repository.MandalartRepository;
 import com.koa.RingDong.domain.mandalart.repository.entity.GoalEntity;
 import com.koa.RingDong.domain.mandalart.repository.entity.MandalartEntity;
 import com.koa.RingDong.global.exception.ErrorCode;
+import com.koa.RingDong.global.exception.model.BaseException;
 import com.koa.RingDong.global.exception.model.NotFoundException;
 import com.koa.RingDong.global.exception.model.UnauthorizedException;
 import com.koa.RingDong.global.exception.model.DuplicateGoalPositionException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,8 +69,13 @@ public class MandalartService {
         List<GoalEntity> pengdingGoalsToSave = new ArrayList<>();
         upsertCoreHierarchy(mandalartId, coreDto, existingGoalsById, pengdingGoalsToSave);
 
-        if (!pengdingGoalsToSave.isEmpty()) goalRepository.saveAll(pengdingGoalsToSave);
-
+        if (!pengdingGoalsToSave.isEmpty()) {
+            try {
+                goalRepository.saveAll(pengdingGoalsToSave);
+            } catch (DataIntegrityViolationException e) {
+                throw new BaseException(ErrorCode.DUPLICATE_GOAL_POSITION);
+            }
+        }
         List<GoalEntity> allGoals = new ArrayList<>(existingGoalsById.values());
         allGoals.addAll(pengdingGoalsToSave);
 
