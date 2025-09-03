@@ -12,12 +12,12 @@ import lombok.*;
         indexes = {
             @Index(
                     name = "idx_mandalart_id",
-                    columnList = "mandalartId"
+                    columnList = "mandalart_id"
             )
         },
         uniqueConstraints = {
                 @UniqueConstraint(name = "uq_mandalart",
-                        columnNames = {"mandalartId", "level", "parentPosition", "position"})
+                        columnNames = {"mandalart_id", "level", "parent_position", "position"})
         }
 
 )
@@ -27,22 +27,23 @@ public class GoalEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "goal_id")
     private Long goalId;
 
-    @Column(nullable = false)
+    @Column(name = "mandalart_id", nullable = false)
     private Long mandalartId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "level", nullable = false)
     private GoalLevel level;
 
-    @Column(nullable = false)
+    @Column(name = "position", nullable = false)
     private Integer position; // CORE: 0, MAIN: 1~8, SUB: 1~8
 
-    @Column
+    @Column(name = "parent_position")
     private Integer parentPosition; // CORE: null, MAIN: 0, SUB: 1~8
 
-    @Column(length = 40)
+    @Column(name = "content", length = 40)
     private String content;
 
 //    @Enumerated(EnumType.STRING)
