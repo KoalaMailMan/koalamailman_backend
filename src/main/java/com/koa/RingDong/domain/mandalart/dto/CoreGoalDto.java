@@ -37,7 +37,7 @@ public record CoreGoalDto(
         // 2. CORE 목표 찾기
         List<GoalEntity> coreGoals = goalsByLevel.getOrDefault(GoalLevel.CORE, new ArrayList<>());
         if (coreGoals.isEmpty()) {
-            throw new IllegalStateException("CORE goal not found");
+            //throw new IllegalStateException("CORE goal not found");
         }
         GoalEntity core = coreGoals.get(0);
 
@@ -45,7 +45,7 @@ public record CoreGoalDto(
         List<GoalEntity> allMains = goalsByLevel.getOrDefault(GoalLevel.MAIN, new ArrayList<>());
         List<GoalEntity> coreMains = new ArrayList<>();
         for (GoalEntity main : allMains) {
-            if (Objects.equals(main.getParentPosition(), core.getGoalId())) {
+            if (Objects.equals(main.getParentPosition(), core.getPosition())) {
                 coreMains.add(main);
             }
         }
@@ -55,8 +55,10 @@ public record CoreGoalDto(
         Map<Long, List<SubGoalDto>> subsByMainId = new HashMap<>();
 
         for (GoalEntity sub : allSubs) {
-            Integer mainPosition = sub.getParentPosition();
-            subsByMainId.computeIfAbsent(Long.valueOf(mainPosition), k -> new ArrayList<>())
+            if (sub.getParentPosition() == null) continue;
+            Long mainGoalId = Long.valueOf(sub.getParentPosition());
+            subsByMainId
+                    .computeIfAbsent(mainGoalId, k -> new ArrayList<>())
                     .add(new SubGoalDto(sub.getGoalId(), sub.getPosition(), sub.getContent()));
         }
 
