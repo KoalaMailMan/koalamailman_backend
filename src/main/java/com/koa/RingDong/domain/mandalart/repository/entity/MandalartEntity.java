@@ -7,12 +7,12 @@ import lombok.*;
 @Table(name = "mandalart", indexes = {
         @Index(
                 name = "idx_user_id",
-                columnList = "userId"
+                columnList = "user_id"
         )
 },
         uniqueConstraints = {
         @UniqueConstraint(name = "uq_mandalart_user",
-                columnNames = {"userId"})
+                columnNames = {"user_id"})
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
