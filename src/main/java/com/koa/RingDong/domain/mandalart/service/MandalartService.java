@@ -66,18 +66,18 @@ public class MandalartService {
                 .stream()
                 .collect(Collectors.toMap(GoalEntity::getGoalId, goal -> goal));
 
-        List<GoalEntity> pengdingGoalsToSave = new ArrayList<>();
-        upsertCoreHierarchy(mandalartId, coreDto, existingGoalsById, pengdingGoalsToSave);
+        List<GoalEntity> pendingGoalsToSave = new ArrayList<>();
+        upsertCoreHierarchy(mandalartId, coreDto, existingGoalsById, pendingGoalsToSave);
 
-        if (!pengdingGoalsToSave.isEmpty()) {
+        if (!pendingGoalsToSave.isEmpty()) {
             try {
-                goalRepository.saveAll(pengdingGoalsToSave);
+                goalRepository.saveAll(pendingGoalsToSave);
             } catch (DataIntegrityViolationException e) {
                 throw new BaseException(ErrorCode.DUPLICATE_GOAL_POSITION);
             }
         }
         List<GoalEntity> allGoals = new ArrayList<>(existingGoalsById.values());
-        allGoals.addAll(pengdingGoalsToSave);
+        allGoals.addAll(pendingGoalsToSave);
 
         return CoreGoalDto.fromEntities(allGoals);
     }
