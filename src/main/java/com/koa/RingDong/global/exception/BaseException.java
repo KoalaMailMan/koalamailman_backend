@@ -1,4 +1,4 @@
-package com.koa.RingDong.global.exception.model;
+package com.koa.RingDong.global.exception;
 
 import com.koa.RingDong.global.exception.ErrorCode;
 import lombok.Getter;

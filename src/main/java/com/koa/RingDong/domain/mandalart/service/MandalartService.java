@@ -8,10 +8,7 @@ import com.koa.RingDong.domain.mandalart.repository.MandalartRepository;
 import com.koa.RingDong.domain.mandalart.repository.entity.GoalEntity;
 import com.koa.RingDong.domain.mandalart.repository.entity.MandalartEntity;
 import com.koa.RingDong.global.exception.ErrorCode;
-import com.koa.RingDong.global.exception.model.BaseException;
-import com.koa.RingDong.global.exception.model.NotFoundException;
-import com.koa.RingDong.global.exception.model.UnauthorizedException;
-import com.koa.RingDong.global.exception.model.DuplicateGoalPositionException;
+import com.koa.RingDong.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -53,10 +50,10 @@ public class MandalartService {
 
     private MandalartEntity findMandalartOrNotFound(Long userId) {
         MandalartEntity mandalart = mandalartRepository.findByUserId(userId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.MANDALART_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(ErrorCode.MANDALART_NOT_FOUND));
 
         if (!mandalart.getUserId().equals(userId)) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED);
+            throw new BaseException(ErrorCode.UNAUTHORIZED);
         }
         return mandalart;
     }
@@ -84,7 +81,7 @@ public class MandalartService {
 
     private GoalEntity getGoalByIdOrNotFound(Map<Long, GoalEntity> goalsById, Long goalId) {
         GoalEntity goalEntity = goalsById.get(goalId);
-        if (goalEntity == null) throw new NotFoundException(ErrorCode.GOAL_NOT_FOUND);
+        if (goalEntity == null) throw new BaseException(ErrorCode.GOAL_NOT_FOUND);
         return goalEntity;
     }
 
@@ -103,7 +100,7 @@ public class MandalartService {
         Set<Integer> mainPositions = new HashSet<>();
         for (MainGoalDto mainDto : mainDtos) {
             if (!mainPositions.add(mainDto.position())) {
-                throw new DuplicateGoalPositionException(ErrorCode.DUPLICATE_GOAL_POSITION);
+                throw new BaseException(ErrorCode.DUPLICATE_GOAL_POSITION);
             }
 
             GoalEntity main;
@@ -122,7 +119,7 @@ public class MandalartService {
         Set<Integer> subPositions = new HashSet<>();
         for (SubGoalDto subDto : subDtos) {
             if (!subPositions.add(subDto.position())) {
-                throw new DuplicateGoalPositionException(ErrorCode.DUPLICATE_GOAL_POSITION);
+                throw new BaseException(ErrorCode.DUPLICATE_GOAL_POSITION);
             }
 
             if (subDto.id() != null) {
