@@ -10,6 +10,8 @@ public record UpdateCoreGoalRequest(
         @Size(max = 40, message = "최대 입력 길이(40자)를 초과했습니다.")
         @Schema(description = "Core goal 내용")
         String content,
+
+        @Size(min = 0, max = 8)
         List<UpdateMainGoalRequest> mainGoalRequests
 ) {
 }
