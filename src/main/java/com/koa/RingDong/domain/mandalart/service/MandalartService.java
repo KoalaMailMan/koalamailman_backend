@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,108 +25,92 @@ public class MandalartService {
 
     @Transactional
     public CoreGoalDto createMandalart(Long userId, CoreGoalDto coreGoalDto) {
-        MandalartEntity mandalart = findOrCreateMandalart(userId);
-        return findOrCreateGoals(mandalart.getId(), coreGoalDto);
+        MandalartEntity mandalart = mandalartRepository.findByUserId(userId)
+                .orElseGet(() -> mandalartRepository.save(MandalartEntity.create(userId)));
+
+        return createAndUpdateGoals(mandalart, coreGoalDto);
     }
 
     @Transactional
-    public CoreGoalDto updateMandalart(Long userId, CoreGoalDto dto) {
-        MandalartEntity mandalart = findMandalart(userId);
-        return findOrCreateGoals(mandalart.getId(), dto);
+    public CoreGoalDto updateMandalart(Long mandalartId, CoreGoalDto dto) {
+        MandalartEntity mandalart = mandalartRepository.findById(mandalartId)
+                .orElseThrow(() -> new BaseException(ErrorCode.MANDALART_NOT_FOUND));
+
+        return createAndUpdateGoals(mandalart, dto);
     }
 
     @Transactional(readOnly = true)
     public CoreGoalDto getMandalart(Long userId) {
-        MandalartEntity mandalart = findMandalart(userId);
-        List<GoalEntity> goals = goalRepository.findAllByMandalartId(mandalart.getId());
+        List<GoalEntity> goals = goalRepository.findGoalsByUserId(userId);
         return CoreGoalDto.fromEntities(goals);
     }
 
-    private MandalartEntity findOrCreateMandalart(Long userId) {
-        return mandalartRepository.findByUserId(userId)
-                .orElseGet(() -> mandalartRepository.save(MandalartEntity.create(userId)));
-    }
-
-    private MandalartEntity findMandalart(Long userId) {
-        MandalartEntity mandalart = mandalartRepository.findByUserId(userId)
-                .orElseThrow(() -> new BaseException(ErrorCode.MANDALART_NOT_FOUND));
-
-        if (!mandalart.getUserId().equals(userId)) {
-            throw new BaseException(ErrorCode.UNAUTHORIZED);
+    private CoreGoalDto createAndUpdateGoals(MandalartEntity mandalart, CoreGoalDto coreDto) {
+        // db에 이미 있는 목표 goalId 별 map
+        List<GoalEntity> currentGoals = goalRepository.findGoalsByMandalartId(mandalart.getId());
+        Map<Long, GoalEntity> currentGoalsMap = new HashMap<>();
+        for (GoalEntity g : currentGoals) {
+            currentGoalsMap.put(g.getGoalId(), g);
         }
-        return mandalart;
-    }
 
-    private CoreGoalDto findOrCreateGoals(Long mandalartId, CoreGoalDto coreDto) {
-        Map<Long, GoalEntity> existingGoalsById = goalRepository.findAllByMandalartId(mandalartId)
-                .stream()
-                .collect(Collectors.toMap(GoalEntity::getGoalId, goal -> goal));
+        // db에 새로 생성되어야 하는 목표 list
+        List<GoalEntity> newGoals = new ArrayList<>();
 
-        List<GoalEntity> pendingGoalsToSave = new ArrayList<>();
-        upsertCoreHierarchy(mandalartId, coreDto, existingGoalsById, pendingGoalsToSave);
+        // create or update된 모든 목표 list
+        List<GoalEntity> allGoals = new ArrayList<>();
 
-        if (!pendingGoalsToSave.isEmpty()) {
+        // -----CORE-----
+        GoalEntity core;
+        if (coreDto.id() != null) {
+            core = getGoalFromGoalsMapByGoalId(currentGoalsMap, coreDto.id());
+            core.updateGoalInfo(coreDto.content());
+        } else {
+            core = GoalEntity.createCoreGoal(mandalart, coreDto.content());
+            newGoals.add(core);
+        }
+        allGoals.add(core);
+
+        // ------MAIN-----
+        for (MainGoalDto mainDto : coreDto.mains()) {
+            GoalEntity main;
+
+            if (mainDto.id() != null) {
+                main = getGoalFromGoalsMapByGoalId(currentGoalsMap, mainDto.id());
+                main.updateGoalInfo(mainDto.content());
+            } else {
+                main = GoalEntity.createMainGoal(mandalart, mainDto.position(), mainDto.content());
+                newGoals.add(main);
+            }
+            allGoals.add(main);
+
+            // -----SUB-----
+            for (SubGoalDto subDto : mainDto.subs()) {
+                GoalEntity sub;
+
+                if (subDto.id() != null) {
+                    sub = getGoalFromGoalsMapByGoalId(currentGoalsMap, subDto.id());
+                    sub.updateGoalInfo(subDto.content());
+                } else {
+                    sub = GoalEntity.createSubGoal(mandalart, mainDto.position(), subDto.position(), subDto.content());
+                    newGoals.add(sub);
+                }
+                allGoals.add(sub);
+            }
+        }
+
+        if (!newGoals.isEmpty()) {
             try {
-                goalRepository.saveAll(pendingGoalsToSave);
+                goalRepository.saveAll(newGoals);
             } catch (DataIntegrityViolationException e) {
                 throw new BaseException(ErrorCode.DUPLICATE_GOAL_POSITION);
             }
         }
-        List<GoalEntity> allGoals = new ArrayList<>(existingGoalsById.values());
-        allGoals.addAll(pendingGoalsToSave);
-
         return CoreGoalDto.fromEntities(allGoals);
     }
 
-    private GoalEntity getGoalByIdOrNotFound(Map<Long, GoalEntity> goalsById, Long goalId) {
-        GoalEntity goalEntity = goalsById.get(goalId);
+    private GoalEntity getGoalFromGoalsMapByGoalId(Map<Long, GoalEntity> goalsMapById, Long goalId) {
+        GoalEntity goalEntity = goalsMapById.get(goalId);
         if (goalEntity == null) throw new BaseException(ErrorCode.GOAL_NOT_FOUND);
         return goalEntity;
-    }
-
-    private void upsertCoreHierarchy(Long mandalartId, CoreGoalDto coreDto, Map<Long, GoalEntity> existingGoalsById, List<GoalEntity> goalsToSave) {
-
-        if (coreDto.id() != null) {
-            GoalEntity core = getGoalByIdOrNotFound(existingGoalsById, coreDto.id());
-            core.updateGoalInfo(coreDto.content());
-        } else {
-            goalsToSave.add(GoalEntity.createCoreGoal(mandalartId, coreDto.content()));
-        }
-        upsertMainHierarchy(mandalartId, coreDto.mains(), existingGoalsById, goalsToSave);
-    }
-
-    private void upsertMainHierarchy(Long mandalartId, List<MainGoalDto> mainDtos, Map<Long, GoalEntity> existingGoals, List<GoalEntity> goalsToSave) {
-        Set<Integer> mainPositions = new HashSet<>();
-        for (MainGoalDto mainDto : mainDtos) {
-            if (!mainPositions.add(mainDto.position())) {
-                throw new BaseException(ErrorCode.DUPLICATE_GOAL_POSITION);
-            }
-
-            GoalEntity main;
-            if (mainDto.id() != null) {
-                main = getGoalByIdOrNotFound(existingGoals, mainDto.id());
-                main.updateGoalInfo(mainDto.content());
-            } else {
-                main = GoalEntity.createMainGoal(mandalartId, mainDto.position(), mainDto.content());
-                goalsToSave.add(main);
-            }
-            upsertSub(mandalartId, mainDto.subs(), main.getPosition(), existingGoals, goalsToSave);
-        }
-    }
-
-    private void upsertSub(Long mandalartId, List<SubGoalDto> subDtos, Integer mainPosition, Map<Long, GoalEntity> existingGoals, List<GoalEntity> goalsToSave) {
-        Set<Integer> subPositions = new HashSet<>();
-        for (SubGoalDto subDto : subDtos) {
-            if (!subPositions.add(subDto.position())) {
-                throw new BaseException(ErrorCode.DUPLICATE_GOAL_POSITION);
-            }
-
-            if (subDto.id() != null) {
-                GoalEntity sub = getGoalByIdOrNotFound(existingGoals, subDto.id());
-                sub.updateGoalInfo(subDto.content());
-            } else {
-                goalsToSave.add(GoalEntity.createSubGoal(mandalartId, mainPosition, subDto.position(), subDto.content()));
-            }
-        }
     }
 }

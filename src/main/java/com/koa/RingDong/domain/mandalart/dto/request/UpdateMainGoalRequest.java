@@ -15,6 +15,6 @@ public record UpdateMainGoalRequest (
     String content,
     //Status status,
     @Size(min = 0, max = 8)
-    List<UpdateSubGoalRequest> subGoals
+    List<UpdateSubGoalRequest> subGoalRequests
 ) {
 }
