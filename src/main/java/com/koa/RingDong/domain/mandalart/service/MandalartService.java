@@ -26,29 +26,29 @@ public class MandalartService {
 
     @Transactional
     public CoreGoalDto createMandalart(Long userId, CoreGoalDto coreGoalDto) {
-        MandalartEntity mandalart = findMandalartOrCreate(userId);
-        return saveGoals(mandalart.getId(), coreGoalDto);
+        MandalartEntity mandalart = findOrCreateMandalart(userId);
+        return findOrCreateGoals(mandalart.getId(), coreGoalDto);
     }
 
     @Transactional
     public CoreGoalDto updateMandalart(Long userId, CoreGoalDto dto) {
-        MandalartEntity mandalart = findMandalartOrNotFound(userId);
-        return saveGoals(mandalart.getId(), dto);
+        MandalartEntity mandalart = findMandalart(userId);
+        return findOrCreateGoals(mandalart.getId(), dto);
     }
 
     @Transactional(readOnly = true)
     public CoreGoalDto getMandalart(Long userId) {
-        MandalartEntity mandalart = findMandalartOrNotFound(userId);
+        MandalartEntity mandalart = findMandalart(userId);
         List<GoalEntity> goals = goalRepository.findAllByMandalartId(mandalart.getId());
         return CoreGoalDto.fromEntities(goals);
     }
 
-    private MandalartEntity findMandalartOrCreate(Long userId) {
+    private MandalartEntity findOrCreateMandalart(Long userId) {
         return mandalartRepository.findByUserId(userId)
                 .orElseGet(() -> mandalartRepository.save(MandalartEntity.create(userId)));
     }
 
-    private MandalartEntity findMandalartOrNotFound(Long userId) {
+    private MandalartEntity findMandalart(Long userId) {
         MandalartEntity mandalart = mandalartRepository.findByUserId(userId)
                 .orElseThrow(() -> new BaseException(ErrorCode.MANDALART_NOT_FOUND));
 
@@ -58,7 +58,7 @@ public class MandalartService {
         return mandalart;
     }
 
-    private CoreGoalDto saveGoals(Long mandalartId, CoreGoalDto coreDto) {
+    private CoreGoalDto findOrCreateGoals(Long mandalartId, CoreGoalDto coreDto) {
         Map<Long, GoalEntity> existingGoalsById = goalRepository.findAllByMandalartId(mandalartId)
                 .stream()
                 .collect(Collectors.toMap(GoalEntity::getGoalId, goal -> goal));
