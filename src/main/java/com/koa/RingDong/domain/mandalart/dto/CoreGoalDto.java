@@ -53,7 +53,7 @@ public record CoreGoalDto(
                     main.getGoalId(),
                     main.getPosition(),
                     main.getContent(),
-                    subGoalsMapByParentPosition.get(main.getPosition())
+                    subGoalsMapByParentPosition.getOrDefault(main.getPosition(), new ArrayList<>())
             ));
         }
 
