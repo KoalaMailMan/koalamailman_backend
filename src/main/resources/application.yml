@@ -92,11 +92,15 @@ jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION:3600000}
 
-huggingface:
-  api:
-    url: https://api-inference.huggingface.co/models
-    token: ${HF_API_TOKEN}
-    model: microsoft/DialoGPT-medium
+springdoc:
+  packages-to-scan: com.koa.koalamailman #swagger가 문서화할 패키지
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    path: /api-docs
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alpha
 
 logging:
   level:
