@@ -4,7 +4,7 @@ import com.koa.koalamailman.domain.mandalart.dto.request.UpdateCoreGoalRequest;
 import com.koa.koalamailman.domain.mandalart.repository.entity.GoalEntity;
 import com.koa.koalamailman.domain.mandalart.repository.entity.GoalLevel;
 import com.koa.koalamailman.global.exception.BaseException;
-import com.koa.koalamailman.global.exception.ErrorCode;
+import com.koa.koalamailman.global.exception.error.MandalartErrorCode;
 
 import java.util.*;
 
@@ -60,7 +60,7 @@ public record CoreGoalDto(
         // 4. CoreGoalDto
         List<GoalEntity> coreGoals = goalsMapByLevel.getOrDefault(GoalLevel.CORE, new ArrayList<>());
         if (coreGoals.isEmpty() || coreGoals.size() > 1) {
-            throw new BaseException(ErrorCode.GOAL_NOT_FOUND);
+            throw new BaseException(MandalartErrorCode.GOAL_NOT_FOUND);
         }
         GoalEntity core = coreGoals.get(0);
 

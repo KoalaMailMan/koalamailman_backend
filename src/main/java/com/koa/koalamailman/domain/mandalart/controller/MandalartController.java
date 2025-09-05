@@ -39,7 +39,7 @@ public class MandalartController implements MandalartControllerDocs {
     ){
         return SuccessResponse.success(
             SuccessCode.GET_MANDALART_SUCCESS,
-            CoreGoalResponse.from(mandalartService.getMandalart(userDetails.getUserId()))
+            CoreGoalResponse.from(mandalartService.getMandalartByUserId(userDetails.getUserId()))
         );
     }
 

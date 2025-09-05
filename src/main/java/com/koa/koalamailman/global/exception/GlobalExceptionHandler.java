@@ -14,26 +14,10 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
-    public ResponseEntity<ErrorResponse> handleBaseException(BaseException ex) {
-        var errorCode = ex.getErrorCode();
+    public ResponseEntity<ErrorResponse> handleBaseException(BaseException e) {
+        var errorCode = e.getErrorCode();
         return ResponseEntity
                 .status(errorCode.getHttpStatusCode())
-                .body(ErrorResponse.error(errorCode));
-    }
-
-    @ExceptionHandler(value = HttpMessageNotReadableException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, Object> handleNotReadable(HttpMessageNotReadableException e) {
-        return Map.of(
-                "code", 400,
-                "message", e.getMostSpecificCause() != null ? e.getMostSpecificCause().getMessage() : e.getMessage()
-        );
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleEtc(Exception ex) {
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse(500, ex.getMessage()));
+                .body(new ErrorResponse(errorCode.getHttpStatusCode(), e.getMessage()));
     }
 }
