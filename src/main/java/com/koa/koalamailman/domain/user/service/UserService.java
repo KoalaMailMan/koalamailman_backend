@@ -2,7 +2,7 @@ package com.koa.koalamailman.domain.user.service;
 
 import com.koa.koalamailman.domain.user.repository.*;
 import com.koa.koalamailman.domain.user.dto.UserResponse;
-import com.koa.koalamailman.global.exception.ErrorCode;
+import com.koa.koalamailman.global.exception.error.UserErrorCode;
 import com.koa.koalamailman.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class UserService {
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public UserResponse getUserById(Long userId){
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BaseException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(UserErrorCode.USER_NOT_FOUND));
 
         return UserResponse.of(user);
     }
@@ -41,13 +41,13 @@ public class UserService {
     @Transactional(readOnly = true)
     public User getUserByOauthInfo(OAuthProvider provider, String providerId) {
         return userRepository.findByOauthIdAndOauthProvider(providerId, provider)
-                .orElseThrow(() -> new BaseException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(UserErrorCode.USER_NOT_FOUND));
     }
 
     @Transactional
     public void updateUserProfile(Long userId, AgeGroup ageGroup, Gender gender, String job) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BaseException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(UserErrorCode.USER_NOT_FOUND));
         user.updateProfile(gender, ageGroup, job);
     }
 }
