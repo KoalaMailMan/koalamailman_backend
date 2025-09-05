@@ -7,12 +7,12 @@ import lombok.*;
 @Table(name = "mandalart", indexes = {
         @Index(
                 name = "idx_user_id",
-                columnList = "userId"
+                columnList = "user_id"
         )
 },
         uniqueConstraints = {
         @UniqueConstraint(name = "uq_mandalart_user",
-                columnNames = {"userId"})
+                columnNames = {"user_id"})
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,7 +24,7 @@ public class MandalartEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
     @Embedded

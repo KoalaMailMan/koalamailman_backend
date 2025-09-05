@@ -14,8 +14,7 @@ public record UpdateMainGoalRequest (
     Integer position,
     String content,
     //Status status,
-    @NotNull
-    @Size(min = 8, max = 8, message = "subGoal은 8개여야 합니다.")
-    List<UpdateSubGoalRequest> subGoals
+    @Size(min = 0, max = 8)
+    List<UpdateSubGoalRequest> subGoalRequests
 ) {
 }
