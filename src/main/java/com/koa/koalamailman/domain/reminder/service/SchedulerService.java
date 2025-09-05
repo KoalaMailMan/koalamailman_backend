@@ -1,6 +1,6 @@
 package com.koa.koalamailman.domain.reminder.service;
 
-import com.koa.koalamailman.domain.reminder.provider.ReminderTimeProvider;
+import com.koa.koalamailman.domain.mandalart.repository.entity.MandalartEntity;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,11 +18,10 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ReminderSchedulerService {
+public class SchedulerService {
 
-    private final CoreGoalRepository coreGoalRepository;
     private final MailService mailService;
-    private final ReminderTimeProvider reminderTimeProvider;
+    private final ReminderService reminderService;
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -52,25 +51,11 @@ public class ReminderSchedulerService {
         LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
         LocalDateTime endOfToday = LocalDate.now().atTime(23, 59, 59);
 
-        List<CoreGoal> targets = coreGoalRepository.findByNextScheduledTimeBefore(endOfToday.plusSeconds(1));
-        log.info("[스케줄러] 📧오늘 또는 지난 메일 예약 대상 수: {}", targets.size());
+        List<MandalartEntity> targetMandalarts = reminderService.findMandalartsByScheduleTimeBefore(endOfToday.plusSeconds(1));
+        log.info("[스케줄러] 📧오늘 또는 지난 메일 예약 대상 수: {}", targetMandalarts.size());
 
-        for (CoreGoal core : targets) {
-            if (core.getNextScheduledTime().isBefore(startOfToday)) {
-                log.info("[스케줄러] 🔄과거 시간 발견 - userId: {}, 원래 시간: {}", core.getUserId(), core.getNextScheduledTime());
-
-                core.updateNextScheduledTime(reminderTimeProvider.generateRandomTime(core.getReminderInterval()));
-
-                log.info("[스케줄러] 🆕새로 설정된 시간: {}", core.getNextScheduledTime());
-            }
-
-            if (!core.getNextScheduledTime().isBefore(startOfToday) &&
-                    !core.getNextScheduledTime().isAfter(endOfToday)) {
-                scheduleMailAt(core.getNextScheduledTime(), core.getUserId());
-                log.info("[스케줄러] ⏱️메일 예약 시작 - userId: {}, scheduledTime: {}", core.getUserId(), core.getNextScheduledTime());
-            }
-
-            coreGoalRepository.save(core);
+        for (MandalartEntity mandalart : targetMandalarts) {
+            scheduleMailAt(mandalart.getReminderOption().getRemindScheduledAt(), mandalart.getUserId());
         }
     }
 

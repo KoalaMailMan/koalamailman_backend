@@ -40,9 +40,21 @@ public class MandalartService {
     }
 
     @Transactional(readOnly = true)
-    public CoreGoalDto getMandalart(Long userId) {
+    public CoreGoalDto getMandalartByUserId(Long userId) {
         List<GoalEntity> goals = goalRepository.findGoalsByUserId(userId);
         return CoreGoalDto.fromEntities(goals);
+    }
+
+    @Transactional(readOnly = true)
+    public MandalartEntity findMandalartByUserId(Long userId) {
+        return mandalartRepository.findByUserId(userId)
+                .orElseThrow(() -> new BaseException(MandalartErrorCode.MANDALART_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public MandalartEntity findMandalartByMandalartId(Long mandalartId) {
+        return mandalartRepository.findById(mandalartId)
+                .orElseThrow(() -> new BaseException(MandalartErrorCode.MANDALART_NOT_FOUND));
     }
 
     private CoreGoalDto createAndUpdateGoals(MandalartEntity mandalart, CoreGoalDto coreDto) {

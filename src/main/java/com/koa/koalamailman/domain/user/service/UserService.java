@@ -32,10 +32,12 @@ public class UserService {
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public UserResponse getUserById(Long userId){
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BaseException(UserErrorCode.USER_NOT_FOUND));
+        return UserResponse.of(findUserById(userId));
+    }
 
-        return UserResponse.of(user);
+    public User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(UserErrorCode.USER_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
