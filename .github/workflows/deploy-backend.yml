@@ -1,0 +1,89 @@
+name: Backend → Docker Hub → EC2
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "build.gradle*"
+      - "gradle/**"
+      - "src/**"
+      - "Dockerfile"
+  workflow_dispatch:
+
+jobs:
+  build_push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=sha
+
+      - name: Login Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & Push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build_push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Blue/Green on EC2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host:     ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key:      ${{ secrets.EC2_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -e
+            IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest"
+            INC="/etc/nginx/conf.d/api-upstream.inc"
+            ENVFILE="/run/ringdong_api.env"
+            APP=${{secrets.APP_NAME}}
+            IN=8080; BLUE=8081; GREEN=8082
+
+            sudo bash -lc 'cat > '"$ENVFILE"' << "EOF"
+            ${{ secrets.BACKEND_ENV_PROD }}
+            EOF'
+            sudo chmod 600 "$ENVFILE"
+
+            docker pull "$IMAGE"
+
+            if [ -f "$INC" ] && grep -q "$BLUE" "$INC"; then ACTIVE=$BLUE; IDLE=$GREEN; else ACTIVE=$GREEN; IDLE=$BLUE; fi
+
+            NEW="${APP}-${IDLE}"
+            (docker rm -f "$NEW" || true)
+            docker run -d --name "$NEW" -e TZ=Asia/Seoul \
+              --env-file "$ENVFILE" \
+              -p ${IDLE}:${IN} \
+              "$IMAGE"
+
+            for i in $(seq 1 30); do curl -fsS "http://127.0.0.1:${IDLE}/actuator/health" >/dev/null && break; sleep 2; done
+            curl -fsS "http://127.0.0.1:${IDLE}/actuator/health" >/dev/null
+
+            printf 'set $api_upstream http://127.0.0.1:%s;\n' "${IDLE}" | sudo tee "$INC" >/dev/null
+            sudo nginx -t && sudo systemctl reload nginx
+
+            (docker rm -f "${APP}-${ACTIVE}" || true)
+
+            sudo shred -u "$ENVFILE" || sudo rm -f "$ENVFILE"
