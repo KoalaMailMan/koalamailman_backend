@@ -2,7 +2,11 @@ package com.koa.koalamailman.domain.mandalart.controller;
 
 import com.koa.koalamailman.domain.mandalart.controller.docs.MandalartControllerDocs;
 import com.koa.koalamailman.domain.mandalart.dto.CoreGoalDto;
+import com.koa.koalamailman.domain.mandalart.dto.MandalartDto;
+import com.koa.koalamailman.domain.mandalart.dto.request.UpdateMandalartRequest;
 import com.koa.koalamailman.domain.mandalart.dto.response.CoreGoalResponse;
+import com.koa.koalamailman.domain.mandalart.dto.response.MandalartResponse;
+import com.koa.koalamailman.domain.mandalart.service.GoalService;
 import com.koa.koalamailman.domain.mandalart.service.MandalartService;
 import com.koa.koalamailman.domain.mandalart.dto.request.UpdateCoreGoalRequest;
 import com.koa.koalamailman.global.dto.SuccessResponse;
@@ -25,10 +29,22 @@ public class MandalartController implements MandalartControllerDocs {
     @Override
     public SuccessResponse<CoreGoalResponse> creatMandalart(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestBody @Valid UpdateCoreGoalRequest request) {
+            @RequestBody @Valid UpdateCoreGoalRequest request
+    ) {
         return SuccessResponse.success(
                 SuccessCode.CREATE_MANDALART_SUCCESS,
                 CoreGoalResponse.from(mandalartService.createMandalart(userDetails.getUserId(), CoreGoalDto.fromRequest(request)))
+        );
+    }
+
+    @PostMapping
+    public SuccessResponse<MandalartResponse> createMandalartWithReminderOption(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody @Valid UpdateMandalartRequest request
+    ) {
+        return SuccessResponse.success(
+                SuccessCode.CREATE_MANDALART_SUCCESS,
+                MandalartResponse.from(mandalartService.createMandalartWithRemind(userDetails.getUserId(), MandalartDto.fromRequest(request)))
         );
     }
 
