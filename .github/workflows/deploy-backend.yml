@@ -68,7 +68,7 @@ jobs:
             sudo bash -lc 'cat > '"$ENVFILE"' << "EOF"
             ${{ secrets.BACKEND_ENV_PROD }}
             EOF'
-            sudo chmod 600 "$ENVFILE"
+            sudo chmod 644 "$ENVFILE"
 
             docker pull "$IMAGE"
 
