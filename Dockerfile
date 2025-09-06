@@ -1,17 +1,13 @@
-FROM eclipse-temurin:17-jdk-jammy AS build
+# build
+FROM gradle:8.8-jdk17 AS builder
+WORKDIR /src
+COPY . .
+RUN gradle clean bootJar -x test
+
+# run
+FROM eclipse-temurin:17-jre
 WORKDIR /app
-
-COPY gradlew ./
-COPY gradle ./gradle
-COPY build.gradle settings.gradle ./
-COPY src/ ./src/
-
-RUN chmod +x gradlew
-RUN ./gradlew build -x test || true
-
-RUN ./gradlew clean build -x test --stacktrace --no-daemon --warning-mode all
-
-FROM eclipse-temurin:17-jre-jammy
-WORKDIR /app
-COPY --from=build /app/build/libs/*.jar app.jar
-ENTRYPOINT ["java", "-Duser.timezone=Asia/Seoul", "-jar", "app.jar"]
+COPY --from=builder /src/build/libs/*-SNAPSHOT.jar app.jar
+ENV TZ=Asia/Seoul JAVA_OPTS="-Dspring.profiles.active=prod" SERVER_PORT=8080
+EXPOSE 8080
+ENTRYPOINT ["sh","-c","java $JAVA_OPTS -jar app.jar"]

@@ -23,3 +23,10 @@ node_modules
 npm-debug.log
 
 .gradle
+
+.env
+*.env
+**/*.env
+*.pem
+*.key
+src/main/resources/application-*.yml

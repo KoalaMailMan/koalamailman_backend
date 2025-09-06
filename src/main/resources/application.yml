@@ -13,6 +13,8 @@ app:
     domain: ${COOKIE_DOMAIN:ringdong.kr}
 
 spring:
+  application:
+    name: koalamailman
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
   security:
@@ -65,12 +67,23 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      jdbc:
+        batch: 50
+      ddl-auto: create
     show-sql: false
     properties:
       hibernate:
         format_sql: true
+        use_sql_comments: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
+
+  ai:
+    openai:
+      api-key: ${OPENROUTER_API_KEY}
+      base-url: https://openrouter.ai/api
+      chat:
+        options:
+          model: ${OPENROUTER_MODEL:mistralai/mistral-7b-instruct:free}
 
 sendgrid:
   api-key: ${SENDGRID_API_KEY}
@@ -78,3 +91,15 @@ sendgrid:
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION:3600000}
+
+huggingface:
+  api:
+    url: https://api-inference.huggingface.co/models
+    token: ${HF_API_TOKEN}
+    model: microsoft/DialoGPT-medium
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+    org.hibernate.type.descriptor.sql: TRACE
