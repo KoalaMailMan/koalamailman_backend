@@ -3,10 +3,8 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "build.gradle*"
-      - "gradle/**"
-      - "src/**"
-      - "Dockerfile"
+      - "backend/**"
+      - ".github/workflows/deploy-backend.yml"
   workflow_dispatch:
 
 jobs:
@@ -37,9 +35,10 @@ jobs:
       - name: Build & Push
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./backend
+          file: ./backend/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
