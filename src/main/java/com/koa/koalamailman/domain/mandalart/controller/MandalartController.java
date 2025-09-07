@@ -6,7 +6,6 @@ import com.koa.koalamailman.domain.mandalart.dto.MandalartDto;
 import com.koa.koalamailman.domain.mandalart.dto.request.UpdateMandalartRequest;
 import com.koa.koalamailman.domain.mandalart.dto.response.CoreGoalResponse;
 import com.koa.koalamailman.domain.mandalart.dto.response.MandalartResponse;
-import com.koa.koalamailman.domain.mandalart.service.GoalService;
 import com.koa.koalamailman.domain.mandalart.service.MandalartService;
 import com.koa.koalamailman.domain.mandalart.dto.request.UpdateCoreGoalRequest;
 import com.koa.koalamailman.global.dto.SuccessResponse;
@@ -37,7 +36,8 @@ public class MandalartController implements MandalartControllerDocs {
         );
     }
 
-    @PostMapping
+    @PostMapping("/with-reminder")
+    @Override
     public SuccessResponse<MandalartResponse> createMandalartWithReminderOption(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody @Valid UpdateMandalartRequest request
