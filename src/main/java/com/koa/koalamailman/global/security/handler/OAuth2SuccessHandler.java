@@ -9,16 +9,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Map;
 
 @Component
@@ -43,26 +41,20 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         OAuthProvider provider = OAuthProvider.valueOf(registrationId.toUpperCase());
 
         Map<String, Object> attrs = oAuth2User.getAttributes();
-        String providerId = String.valueOf(attrs.get("providerId")); // 또는 google은 보통 "sub"
+        String providerId = String.valueOf(attrs.get("providerId"));
         String name       = (String) attrs.get("name");
         String email      = (String) attrs.get("email");
 
 
         User user = userService.findOrCreate(provider, providerId, name, email);
-        String jwtAccessToken = tokenService.generateAccessToken(user);
-        log.info("[JWT 생성] userId: {}, token: {}", user.getId(), jwtAccessToken);
+        String accessToken = tokenService.generateAccessToken(user);
 
-        ResponseCookie cookie = ResponseCookie.from("access_token", jwtAccessToken)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(Duration.ofHours(1))
-                .sameSite("STRICT")
-                .domain(cookieDomain)
-                .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        String targetUrl = UriComponentsBuilder
+                .fromUriString(frontUri)
+                .queryParam("access_token", accessToken)
+                .build().toUriString();
 
-        response.sendRedirect(frontUri + "/dashboard");
+        response.sendRedirect(targetUrl);
     }
 }
 

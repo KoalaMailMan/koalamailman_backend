@@ -22,8 +22,8 @@ public class OAuth2Config {
     @Value("${app.oauth2.front-uri}")
     private String frontUri;
 
-    private static final String OAUTH2_AUTHORIZATION_BASE_URI = "/auth/login/oauth2";
-    private static final String LOGOUT_URL = "/";
+    private static final String OAUTH2_AUTHORIZATION_BASE_URI = "/api/auth/login";
+    private static final String LOGOUT_URL = "/api/auth/logout";
 
     @Bean
     @Order(1)
@@ -32,7 +32,8 @@ public class OAuth2Config {
         http.securityMatcher(
                 OAUTH2_AUTHORIZATION_BASE_URI + "/**",
                 "/oauth2/**",
-                "/login/**"
+                "/login/**",
+                LOGOUT_URL
         );
 
         http
@@ -47,10 +48,11 @@ public class OAuth2Config {
                         .failureHandler(oAuth2FailureHandler)
                 )
                 .logout(logout -> logout
-                        .logoutSuccessHandler((request, response, auth) -> {
-                            response.sendRedirect(LOGOUT_URL);
-                        })
-                        .deleteCookies("JSESSIONID", "access_token")
+                        .logoutUrl(LOGOUT_URL)
+                        .clearAuthentication(true)
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID", "refresh_token")
+                        .logoutSuccessHandler((req, res, auth) -> res.setStatus(200))
                 );
         return http.build();
     }
