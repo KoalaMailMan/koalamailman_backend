@@ -39,8 +39,9 @@ public class SecurityConfig {
 
     private static final String[] PUBLIC_ENDPOINTS = {
             "/", "/auth/**", "/oauth2/**", "/error",
+            "/actuator/health", "/actuator/health/**",
             "/api/auth/login/**", "/api/auth/logout/**",
-            "/swagger-ui.html","/swagger-ui/**","/v3/api-docs/**"
+            "/swagger-ui/index.html","/swagger-ui/**","/v3/api-docs/**"
     };
 
     private static final String OAUTH2_AUTHORIZATION_BASE_URI = "/auth/login/oauth2";
