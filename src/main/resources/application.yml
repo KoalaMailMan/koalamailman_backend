@@ -5,6 +5,7 @@ server:
       charset: UTF-8
       force: true
       enabled: true
+    forward-headers-strategy: framework #
 
 app:
   oauth2:
@@ -92,11 +93,15 @@ jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION:3600000}
 
-huggingface:
-  api:
-    url: https://api-inference.huggingface.co/models
-    token: ${HF_API_TOKEN}
-    model: microsoft/DialoGPT-medium
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
 
 logging:
   level:
