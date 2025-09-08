@@ -1,32 +1,37 @@
-
+# Git / IDE
 .git
 .gitignore
 .idea
 .vscode
+*.iml
 
+# Build & cache
 build/
 out/
 target/
+.gradle/
+bin/
 
+# Docker artifacts
 Dockerfile
 .dockerignore
 
-*.iml
+# Logs / temp
 *.log
+npm-debug.log
 *.swp
 *.swo
-
 .DS_Store
 Thumbs.db
 
-node_modules
-npm-debug.log
+# Node
+node_modules/
 
-.gradle
-
+# Secrets
 .env
 *.env
 **/*.env
 *.pem
 *.key
-src/main/resources/application-*.yml
+*.crt
+secrets/
