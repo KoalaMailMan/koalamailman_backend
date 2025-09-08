@@ -50,7 +50,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String accessToken = tokenService.generateAccessToken(user);
 
         String targetUrl = UriComponentsBuilder
-                .fromUriString(frontUri)
+                .fromHttpUrl(frontUri)
                 .queryParam("access_token", accessToken)
                 .build().toUriString();
 
