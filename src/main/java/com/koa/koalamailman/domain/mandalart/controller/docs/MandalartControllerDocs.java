@@ -10,13 +10,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-//@SecurityRequirement(name = "Authorization")
+@SecurityRequirement(name = "Authorization")
 @Tag(name = "만다라트", description = "만다라트 관련 API입니다.")
 public interface MandalartControllerDocs {
     @Operation(summary = "만다라트 생성")

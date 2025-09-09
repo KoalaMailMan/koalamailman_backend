@@ -1,14 +1,18 @@
 package com.koa.koalamailman.global.security.handler;
 
+import com.koa.koalamailman.domain.auth.service.AccessTokenService;
+import com.koa.koalamailman.domain.auth.service.RefreshTokenService;
 import com.koa.koalamailman.domain.user.repository.OAuthProvider;
 import com.koa.koalamailman.domain.user.repository.User;
 import com.koa.koalamailman.domain.user.service.UserService;
-import com.koa.koalamailman.global.token.JwtProvider;
+import com.koa.koalamailman.global.token.CookieProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -24,7 +28,9 @@ import java.util.Map;
 @Slf4j
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-    private final JwtProvider tokenService;
+    private final AccessTokenService accessTokenService;
+    private final CookieProvider cookieProvider;
+    private final RefreshTokenService refreshTokenService;
     private final UserService userService;
 
     @Value("${app.oauth2.front-uri}")
@@ -47,7 +53,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 
         User user = userService.findOrCreate(provider, providerId, name, email);
-        String accessToken = tokenService.generateAccessToken(user);
+        String accessToken = accessTokenService.createAccessToken(user);
+
+        String refreshToken = refreshTokenService.createRefreshToken(user);
+
+        ResponseCookie cookie = cookieProvider.setRefreshTokenCookie(refreshToken);
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
         String targetUrl = UriComponentsBuilder
                 .fromHttpUrl(frontUri)
