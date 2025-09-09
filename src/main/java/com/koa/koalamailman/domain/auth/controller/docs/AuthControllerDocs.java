@@ -1,9 +1,17 @@
 package com.koa.koalamailman.domain.auth.controller.docs;
 
+import com.koa.koalamailman.domain.auth.dto.AccessTokenResponse;
+import com.koa.koalamailman.global.dto.SuccessResponse;
+import com.koa.koalamailman.global.security.oauth.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CookieValue;
 
+@SecurityRequirement(name = "Authorization")
 @Tag(name = "로그인, 인증", description = "로그인 인증 관련 API입니다.")
 public interface AuthControllerDocs {
     @Operation(
@@ -46,4 +54,21 @@ public interface AuthControllerDocs {
             }
     )
     default void logout() {}
+
+    @Operation(
+            summary = "리프레시 토큰으로 액세스 토큰 재발급",
+            description = """
+            HttpOnly 쿠키의 `refresh_token` 값을 이용해 Access Token을 재발급합니다.
+            - 요청: Cookie에 refresh_token 포함
+            """,
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "재발급 성공"),
+                    @ApiResponse(responseCode = "401", description = "인증 실패(쿠키 없음/만료/불일치)")
+            }
+    )
+    public SuccessResponse<AccessTokenResponse> refreshAccessToken(
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @CookieValue(value = "refresh_token") String refreshToken
+    );
 }

@@ -1,10 +1,8 @@
 package com.koa.koalamailman.domain.user.repository;
 
+import com.koa.koalamailman.domain.mandalart.repository.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user", uniqueConstraints = {
@@ -12,7 +10,7 @@ import java.time.LocalDateTime;
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,10 +37,6 @@ public class User {
 
     @Column
     private String job;
-
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
 
     @Builder
     public User(OAuthProvider oauthProvider, String oauthId, String nickname, String email) {
