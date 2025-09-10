@@ -17,7 +17,7 @@ public class CookieProvider {
                 .secure(false) //개발 환경에서 잠시 false로 추후 https 적용 시 true
                 .path("/")
                 .maxAge(Duration.ofMillis(refreshTokenExpiration))
-                .sameSite("NONE")
+                .sameSite("Lax")
                 .build();
     }
 }
