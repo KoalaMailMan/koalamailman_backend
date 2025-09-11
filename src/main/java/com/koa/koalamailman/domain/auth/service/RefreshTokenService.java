@@ -29,8 +29,9 @@ public class RefreshTokenService {
     private long refreshTokenExpirationMs;
 
     @Transactional
-    public String validateAndGenerateAccessToken(User user, String rawRefreshToken) {
-        RefreshToken refreshToken = findByUserId(user.getId());
+    public String validateAndGenerateAccessToken(String rawRefreshToken) {
+        Long userId = Long.parseLong(jwtProvider.getSubjectFromToken(rawRefreshToken));
+        RefreshToken refreshToken = findByUserId(userId);
 
         byte[] incomingHash = hmacSha256(secretKey, rawRefreshToken);
 
@@ -42,11 +43,11 @@ public class RefreshTokenService {
             throw new BaseException(AuthErrorCode.UNAUTHORIZED);
         }
 
-        return jwtProvider.generateToken(user, refreshTokenExpirationMs);
+        return jwtProvider.generateToken(userId, null, refreshTokenExpirationMs);
     }
     @Transactional
     public String createRefreshToken(User user) {
-        String rawToken = jwtProvider.generateToken(user, refreshTokenExpirationMs);
+        String rawToken = jwtProvider.generateToken(user.getId(), null, refreshTokenExpirationMs);
         byte[] tokenHash = hmacSha256(secretKey, rawToken);
         LocalDateTime expiresAt = LocalDateTime.now().plus(Duration.ofMillis(refreshTokenExpirationMs));
 

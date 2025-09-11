@@ -35,16 +35,16 @@ public class JwtProvider {
         this.algorithm = Algorithm.HMAC256(secretKey);
     }
 
-    public String generateToken(User user, long expirationTimeMs) {
+    public String generateToken(Long userId, String email, long expirationTimeMs) {
         return JWT.create()
-                .withSubject(user.getId().toString())
-                .withClaim("email", user.getEmail())
+                .withSubject(userId.toString())
+                .withClaim("email", email)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + expirationTimeMs))
                 .sign(algorithm);
     }
 
-    private String getSubjectFromToken(String token) {
+    public String getSubjectFromToken(String token) {
         return JWT.require(algorithm)
                 .build()
                 .verify(token)
