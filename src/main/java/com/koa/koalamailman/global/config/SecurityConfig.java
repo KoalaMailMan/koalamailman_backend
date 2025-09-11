@@ -47,7 +47,7 @@ public class SecurityConfig {
             "/", "/error",
             "/actuator/health", "/actuator/health/**",
             // OAuth2
-            "/oauth2/**", "/login/**",
+            "/oauth2/**", "/login/**", "/api/auth/refresh",
             // Login / Logout
             LOGIN_URL + "/**", LOGOUT_URL,
             // Swagger

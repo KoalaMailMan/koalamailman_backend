@@ -14,6 +14,6 @@ public class AccessTokenService {
     private long accessExpirationTimeMs;
 
     public String createAccessToken(User user) {
-        return jwtProvider.generateToken(user, accessExpirationTimeMs);
+        return jwtProvider.generateToken(user.getId(), user.getEmail(), accessExpirationTimeMs);
     }
 }

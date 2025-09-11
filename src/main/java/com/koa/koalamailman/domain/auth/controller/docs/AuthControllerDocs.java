@@ -2,16 +2,12 @@ package com.koa.koalamailman.domain.auth.controller.docs;
 
 import com.koa.koalamailman.domain.auth.dto.AccessTokenResponse;
 import com.koa.koalamailman.global.dto.SuccessResponse;
-import com.koa.koalamailman.global.security.oauth.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
 
-@SecurityRequirement(name = "Authorization")
 @Tag(name = "로그인, 인증", description = "로그인 인증 관련 API입니다.")
 public interface AuthControllerDocs {
     @Operation(
@@ -46,6 +42,7 @@ public interface AuthControllerDocs {
     )
     default void naverLogin() {}
 
+    @SecurityRequirement(name = "Authorization")
     @Operation(
             summary = "로그아웃 [POST] /api/auth/logout",
             responses = {
@@ -67,8 +64,6 @@ public interface AuthControllerDocs {
             }
     )
     public SuccessResponse<AccessTokenResponse> refreshAccessToken(
-            @Parameter(hidden = true)
-            @AuthenticationPrincipal CustomUserDetails userDetails,
             @CookieValue(value = "refresh_token") String refreshToken
     );
 }
