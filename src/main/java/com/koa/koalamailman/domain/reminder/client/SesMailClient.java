@@ -1,6 +1,8 @@
 package com.koa.koalamailman.domain.reminder.client;
 
 import com.koa.koalamailman.domain.reminder.dto.EmailMessage;
+import com.koa.koalamailman.domain.reminder.dto.MandalartEmailMessage;
+import com.koa.koalamailman.domain.reminder.util.MailContentBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -62,5 +64,40 @@ public class SesMailClient implements MailClient {
                 .build();
 
         sesClient.sendEmail(req);
+    }
+
+    public void sendMandalart(MandalartEmailMessage msg) {
+        try {
+            // 1. 템플릿 HTML 생성
+            String html = MailContentBuilder.build(
+                    msg.getUsername(),
+                    msg.getGrid(),
+                    msg.getTip(),
+                    msg.getLogoUrl(),
+                    msg.getHeroUrl(),
+                    msg.getCtaUrl()
+            );
+
+            // 2. HTML 본문을 SES Message로 구성
+            Body body = Body.builder()
+                    .html(Content.builder().data(html).charset(charset).build())
+                    .build();
+
+            Message message = Message.builder()
+                    .subject(Content.builder().data(msg.getSubject()).charset(charset).build())
+                    .body(body)
+                    .build();
+
+            SendEmailRequest req = SendEmailRequest.builder()
+                    .source(msg.getFrom())
+                    .destination(Destination.builder().toAddresses(msg.getTo()).build())
+                    .message(message)
+                    .build();
+
+            sesClient.sendEmail(req);
+
+        } catch (Exception e) {
+            throw new RuntimeException("SES Mandalart 메일 전송 실패", e);
+        }
     }
 }

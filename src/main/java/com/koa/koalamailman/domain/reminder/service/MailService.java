@@ -2,6 +2,7 @@ package com.koa.koalamailman.domain.reminder.service;
 
 import com.koa.koalamailman.domain.reminder.client.SesMailClient;
 import com.koa.koalamailman.domain.reminder.dto.EmailMessage;
+import com.koa.koalamailman.domain.reminder.dto.MandalartEmailMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,4 +15,7 @@ public class MailService {
         mailClient.send(message);
     }
 
+    public void sendMandalartTemplate(MandalartEmailMessage message) {
+        mailClient.sendMandalart(message);
+    }
 }
