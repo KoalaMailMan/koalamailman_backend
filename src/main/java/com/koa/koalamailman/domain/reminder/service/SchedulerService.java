@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -20,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class SchedulerService {
 
-    private final MailService sendGridMailService;
+    private final MailService mailService;
     private final ReminderService reminderService;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
@@ -59,14 +60,16 @@ public class SchedulerService {
         }
     }
 
-    private void scheduleMailAt(MandalartEntity mandalart) {
+    @Transactional
+    public void scheduleMailAt(MandalartEntity mandalart) {
         LocalDateTime scheduledTime = mandalart.getReminderOption().getRemindScheduledAt();
         long delayMs = Duration.between(LocalDateTime.now(), scheduledTime).toMillis();
         if (delayMs < 0) delayMs = 0;
 
         scheduler.schedule(() -> {
             try {
-                sendGridMailService.sendRemindMail(mandalart);
+                mailService.sendRemindMail(mandalart);
+                reminderService.rescheduleRandomWithinInterval(mandalart.getReminderOption(), mandalart.getId());
                 log.info("[스케줄러] 메일 전송 완료 - userId: {}", mandalart.getUserId());
             } catch (Exception e) {
                 log.error("[스케줄러] 메일 전송 중 예외 발생 - userId: {}, 이유: {}", mandalart.getUserId(), e.getMessage());
