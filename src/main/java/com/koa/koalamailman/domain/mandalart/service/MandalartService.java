@@ -1,11 +1,7 @@
 package com.koa.koalamailman.domain.mandalart.service;
 
 import com.koa.koalamailman.domain.mandalart.dto.CoreGoalDto;
-import com.koa.koalamailman.domain.mandalart.dto.MainGoalDto;
 import com.koa.koalamailman.domain.mandalart.dto.MandalartDto;
-import com.koa.koalamailman.domain.mandalart.dto.SubGoalDto;
-import com.koa.koalamailman.domain.mandalart.dto.request.UpdateMandalartRequest;
-import com.koa.koalamailman.domain.mandalart.dto.response.MandalartResponse;
 import com.koa.koalamailman.domain.mandalart.repository.GoalRepository;
 import com.koa.koalamailman.domain.mandalart.repository.MandalartRepository;
 import com.koa.koalamailman.domain.mandalart.repository.entity.GoalEntity;
@@ -13,7 +9,6 @@ import com.koa.koalamailman.domain.mandalart.repository.entity.MandalartEntity;
 import com.koa.koalamailman.global.exception.error.MandalartErrorCode;
 import com.koa.koalamailman.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +35,13 @@ public class MandalartService {
         return mandalartDto.from(mandalart, coreGoalDto);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
+    public MandalartDto getMandalartWithRemind(Long userId) {
+        MandalartEntity mandalart = findMandalartByUserId(userId);
+        return MandalartDto.from(mandalart, getMandalartByUserId(userId));
+    }
+
+        @Transactional
     public CoreGoalDto updateMandalart(Long mandalartId, CoreGoalDto dto) {
         MandalartEntity mandalart = findMandalartByMandalartId(mandalartId);
 

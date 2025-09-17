@@ -10,26 +10,36 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-//@SecurityRequirement(name = "Authorization")
+@SecurityRequirement(name = "Authorization")
 @Tag(name = "만다라트", description = "만다라트 관련 API입니다.")
 public interface MandalartControllerDocs {
-    @Operation(summary = "만다라트 생성")
+    @Operation(summary = "만다라트 생성 및 수정", description = "대시 보드 화면 3x3 만다라트 저장 버튼")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "만다라트 생성 성공")
     })
-    SuccessResponse<CoreGoalResponse> creatMandalart(
+    SuccessResponse<CoreGoalResponse> creatOrUpdateMandalart(
             @Parameter(hidden = true)
             @AuthenticationPrincipal CustomUserDetails userDetails,
             final UpdateCoreGoalRequest request
     );
 
-    @Operation(summary = "만다라트 + 리마인더 생성")
+    @Operation(summary = "만다라트 조회", description = "대시 보드 화면 진입 시 만다라트 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "만다라트 조회 성공")
+    })
+    SuccessResponse<MandalartResponse> getMandalartWithReminderOption(
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    );
+
+    @Operation(summary = "[보류] 만다라트 + 리마인더 생성")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "만다라트 + 리마인성 생성 성공")
     })
@@ -39,17 +49,7 @@ public interface MandalartControllerDocs {
             @RequestBody @Valid UpdateMandalartRequest request
     );
 
-
-    @Operation(summary = "만다라트 조회")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "만다라트 조회 성공")
-    })
-    SuccessResponse<CoreGoalResponse> getMandalart(
-            @Parameter(hidden = true)
-            @AuthenticationPrincipal CustomUserDetails userDetails
-        );
-
-    @Operation(summary = "만다라트 수정")
+    @Operation(summary = "[보류] 만다라트 수정")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "만다라트 수정 성공")
     })
