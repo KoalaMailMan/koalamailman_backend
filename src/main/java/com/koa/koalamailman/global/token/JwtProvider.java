@@ -25,11 +25,9 @@ public class JwtProvider {
 
     private final CustomUserDetailsService userDetailsService;
 
-    @Value("${jwt.secret}")
+    @Value("${jwt.access.secret}")
     private String secretKey;
 
-    @Value("${jwt.expiration}")
-    private long expirationTime;
     private Algorithm algorithm;
 
     @PostConstruct
@@ -37,16 +35,16 @@ public class JwtProvider {
         this.algorithm = Algorithm.HMAC256(secretKey);
     }
 
-    public String generateAccessToken(User user) {
+    public String generateToken(Long userId, String email, long expirationTimeMs) {
         return JWT.create()
-                .withSubject(user.getId().toString())
-                .withClaim("email", user.getEmail())
+                .withSubject(userId.toString())
+                .withClaim("email", email)
                 .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
+                .withExpiresAt(new Date(System.currentTimeMillis() + expirationTimeMs))
                 .sign(algorithm);
     }
 
-    private String getSubjectFromToken(String token) {
+    public String getSubjectFromToken(String token) {
         return JWT.require(algorithm)
                 .build()
                 .verify(token)

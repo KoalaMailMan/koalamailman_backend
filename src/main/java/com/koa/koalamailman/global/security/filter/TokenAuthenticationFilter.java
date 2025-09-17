@@ -12,7 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
 
@@ -40,10 +39,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String extractTokenFromRequest(HttpServletRequest request) {
-        var cookie = WebUtils.getCookie(request, "access_token");
-        if (cookie != null && StringUtils.hasText(cookie.getValue())) {
-            return cookie.getValue();
-        }
         String bearer = request.getHeader("Authorization");
         if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) {
             return bearer.substring(7);

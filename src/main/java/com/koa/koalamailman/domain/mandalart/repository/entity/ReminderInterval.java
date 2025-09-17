@@ -1,6 +1,7 @@
 package com.koa.koalamailman.domain.mandalart.repository.entity;
 
 public enum ReminderInterval {
+    ONE_DAY(1), //test용
 
     ONE_WEEK(7),
     TWO_WEEKS(14),
