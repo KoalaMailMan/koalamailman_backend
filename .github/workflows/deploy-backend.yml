@@ -1,7 +1,7 @@
 name: Backend → Docker Hub → EC2
 on:
   push:
-    branches: ["main"]
+    branches: ["develop"]
   workflow_dispatch:
 
 jobs:

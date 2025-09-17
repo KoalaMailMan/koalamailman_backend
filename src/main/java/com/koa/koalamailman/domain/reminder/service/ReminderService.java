@@ -4,9 +4,8 @@ import com.koa.koalamailman.domain.mandalart.repository.MandalartRepository;
 import com.koa.koalamailman.domain.mandalart.repository.entity.MandalartEntity;
 import com.koa.koalamailman.domain.mandalart.repository.entity.ReminderOption;
 import com.koa.koalamailman.domain.mandalart.service.MandalartService;
+import com.koa.koalamailman.domain.reminder.dto.request.UpdateReminderOptionsRequest;
 import com.koa.koalamailman.domain.reminder.provider.ReminderTimeProvider;
-import com.koa.koalamailman.global.exception.BaseException;
-import com.koa.koalamailman.global.exception.error.MandalartErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,5 +41,17 @@ public class ReminderService {
     @Transactional(readOnly = true)
     public List<MandalartEntity> findMandalartsByScheduleTimeBefore(LocalDateTime endOfToday) {
         return mandalartRepository.findDueReminders(endOfToday);
+    }
+
+    @Transactional
+    public void updateReminderOption(UpdateReminderOptionsRequest request) {
+        MandalartEntity mandalart = mandalartService.findMandalartByMandalartId(request.mandalartId());
+        LocalDateTime nextScheduledTime = reminderTimeProvider.generateRandomTime(request.reminderInterval());
+
+        mandalart.getReminderOption().update(
+                request.reminderEnabled(),
+                request.reminderInterval(),
+                nextScheduledTime
+                );
     }
 }

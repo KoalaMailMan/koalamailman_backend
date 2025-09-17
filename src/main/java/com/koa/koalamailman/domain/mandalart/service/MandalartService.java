@@ -71,5 +71,4 @@ public class MandalartService {
         return mandalartRepository.findById(mandalartId)
                 .orElseThrow(() -> new BaseException(MandalartErrorCode.MANDALART_NOT_FOUND));
     }
-
 }
