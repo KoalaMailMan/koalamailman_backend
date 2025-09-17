@@ -27,6 +27,8 @@ public class MandalartEntity extends BaseEntity {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "remind_interval", nullable = false, length = 15)
     @Embedded
     private ReminderOption reminderOption;
 
