@@ -7,6 +7,11 @@ import org.springframework.http.HttpStatus;
 public enum MandalartErrorCode implements ErrorCode {
 
     /**
+     * 403 FORBIDDEN
+     **/
+    MANDALART_FORBIDDEN(HttpStatus.FORBIDDEN, "해당 만다라트에 대한 권한이 없습니다."),
+
+    /**
      * 404 NOT FOUND
      **/
     MANDALART_NOT_FOUND(HttpStatus.NOT_FOUND, "만다라트를 찾을 수 없습니다."),
