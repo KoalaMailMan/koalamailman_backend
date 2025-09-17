@@ -11,8 +11,8 @@ public record MainGoalDto (
         List<SubGoalDto> subs
 ) {
     public static MainGoalDto fromRequest(UpdateMainGoalRequest req) {
-        List<SubGoalDto> subDtos = (req.subGoalRequests() == null) ? List.of()
-                : req.subGoalRequests().stream().map(SubGoalDto::fromRequest).toList();
-        return new MainGoalDto(req.mainGoalId(), req.position(), req.content(), subDtos);
+        List<SubGoalDto> subDtos = (req.subs() == null) ? List.of()
+                : req.subs().stream().map(SubGoalDto::fromRequest).toList();
+        return new MainGoalDto(req.goalId(), req.position(), req.content(), subDtos);
     }
 }

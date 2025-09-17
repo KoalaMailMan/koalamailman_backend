@@ -9,7 +9,7 @@ public record SubGoalDto(
 //       Status status
 ) {
     public static SubGoalDto fromRequest(UpdateSubGoalRequest req) {
-        return new SubGoalDto(req.subGoalId(), req.position(), req.content());
+        return new SubGoalDto(req.goalId(), req.position(), req.content());
     }
 
 }

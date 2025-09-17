@@ -8,13 +8,13 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 
 public record UpdateMainGoalRequest (
-    Long mainGoalId,
+    Long goalId,
     @NotNull
     @Min(1) @Max(8)
     Integer position,
     String content,
     //Status status,
     @Size(min = 0, max = 8)
-    List<UpdateSubGoalRequest> subGoalRequests
+    List<UpdateSubGoalRequest> subs
 ) {
 }

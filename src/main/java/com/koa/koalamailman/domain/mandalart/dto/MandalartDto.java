@@ -10,10 +10,10 @@ public record MandalartDto(
         CoreGoalDto coreGoalDto
 ) {
     public static MandalartDto fromRequest(UpdateMandalartRequest request) {
-        return new MandalartDto(request.mandalartId(), request.reminderOption(), CoreGoalDto.fromRequest(request.updateCoreGoalRequest()));
+        return new MandalartDto(request.mandalartId(), request.reminderOption(), CoreGoalDto.fromRequest(request.core()));
     }
 
-    public MandalartDto from(MandalartEntity mandalart, CoreGoalDto coreGoalDto) {
+    public static MandalartDto from(MandalartEntity mandalart, CoreGoalDto coreGoalDto) {
         return new MandalartDto(mandalart.getId(), mandalart.getReminderOption(), coreGoalDto);
     }
 }
