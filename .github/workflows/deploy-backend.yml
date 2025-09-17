@@ -1,7 +1,7 @@
 name: Backend → Docker Hub → EC2
 on:
   push:
-    branches: ["feature/domain/mandalart"]
+    branches: ["developer"]
   workflow_dispatch:
 
 jobs:
