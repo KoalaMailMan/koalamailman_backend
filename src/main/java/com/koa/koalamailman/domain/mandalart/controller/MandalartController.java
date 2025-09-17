@@ -23,7 +23,7 @@ public class MandalartController implements MandalartControllerDocs {
 
     private final MandalartService mandalartService;
 
-    @PostMapping
+    @PutMapping
     @Override
     public SuccessResponse<CoreGoalResponse> creatOrUpdateMandalart(
             @AuthenticationPrincipal CustomUserDetails userDetails,
