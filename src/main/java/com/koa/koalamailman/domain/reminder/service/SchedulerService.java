@@ -24,56 +24,95 @@ public class SchedulerService {
     private final MailService mailService;
     private final ReminderService reminderService;
 
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
+    private static final int SCHEDULER_POOL_SIZE = 3;
+    private static final int MAX_RETRY_COUNT = 3;
+    private static final long RETRY_DELAY_MS = TimeUnit.HOURS.toMillis(1); // 1시간
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(SCHEDULER_POOL_SIZE);
 
-    // 매일 오전 6시 실행
+
+    /**
+     * 매일 오전 6시에 실행: 오늘과 과거 예약 메일 모두 스케줄링.
+     */
     @Scheduled(cron = "0 0 6 * * *", zone = "Asia/Seoul")
-    public void checkAndScheduleTodayMails() {
-        log.info("[스케줄러] 🔔오전 6시 스케줄러 실행");
-        reschedulePastOrScheduleToday();
+    public void scheduleTodayAndPastMails() {
+        log.info("[스케줄러] 🔔 오전 6시 스케줄러 실행");
+        scheduleMailsBefore(LocalDate.now().atTime(23, 59, 59));
     }
 
-    // 앱 시작 시: 오늘 06:00 이후라면 한 번 스캔해서 예약해둔다
+    /**
+     * 앱 시작 시: 오늘 오전 6시 이후면 예약/발송 스캔
+     */
     @PostConstruct
-    public void scheduleMailsOnStartup() {
+    public void onStartupScheduleReminders() {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime todayAtSix = LocalDate.now().atTime(6, 0);
+        LocalDateTime sixAMToday = LocalDate.now().atTime(6, 0);
 
-        if (now.isBefore(todayAtSix)) {
-            log.info("[스케줄러] 🕕애플리케이션 시작: 오전 6시 이전은 메일 예약 스케줄링 X");
+        if (now.isBefore(sixAMToday)) {
+            log.info("[스케줄러] 🕕 애플리케이션 시작: 오전 6시 이전, 메일 예약 스킵");
             return;
         }
-
-        log.info("[스케줄러] 🚀애플리케이션 시작: 메일 예약 스케줄링 시작");
-        reschedulePastOrScheduleToday();
+        log.info("[스케줄러] 🚀 애플리케이션 시작: 메일 예약 스케줄 시작");
+        scheduleMailsBefore(LocalDate.now().atTime(23, 59, 59));
     }
 
-    private void reschedulePastOrScheduleToday() {
-
-        LocalDateTime endOfToday = LocalDate.now().atTime(23, 59, 59);
-
-        List<MandalartEntity> targetMandalarts = reminderService.findMandalartsByScheduleTimeBefore(endOfToday.plusSeconds(1));
-        log.info("[스케줄러] 📧오늘 또는 지난 메일 예약 대상 수: {}", targetMandalarts.size());
-
-        for (MandalartEntity mandalart : targetMandalarts) {
-            scheduleMailAt(mandalart);
-        }
+    /**
+     * until 시점 이전의 모든 만달아트 예약/발송
+     */
+    private void scheduleMailsBefore(LocalDateTime until) {
+        List<MandalartEntity> mandalarts = reminderService.findMandalartsByScheduleTimeBefore(until.plusSeconds(1));
+        log.info("[스케줄러] 📧 메일 예약 대상 (오늘/과거): {}건", mandalarts.size());
+        mandalarts.forEach(this::scheduleMailWithRetry);
     }
 
+    /**
+     * 개별 메일 발송 예약 및 재시도
+     */
     @Transactional
-    public void scheduleMailAt(MandalartEntity mandalart) {
+    public void scheduleMailWithRetry(MandalartEntity mandalart) {
         LocalDateTime scheduledTime = mandalart.getReminderOption().getRemindScheduledAt();
-        long delayMs = Duration.between(LocalDateTime.now(), scheduledTime).toMillis();
-        if (delayMs < 0) delayMs = 0;
+        long delayMs = Math.max(Duration.between(LocalDateTime.now(), scheduledTime).toMillis(), 0);
 
         scheduler.schedule(() -> {
             try {
-                mailService.sendRemindMail(mandalart);
-                reminderService.rescheduleRandomWithinInterval(mandalart.getReminderOption(), mandalart.getId());
-                log.info("[스케줄러] 메일 전송 완료 - userId: {}", mandalart.getUserId());
+                boolean send = sendMailWithRetry(mandalart, 0);
+                if (send) updateNextReminder(mandalart);
             } catch (Exception e) {
-                log.error("[스케줄러] 메일 전송 중 예외 발생 - userId: {}, 이유: {}", mandalart.getUserId(), e.getMessage());
+                log.error("[스케줄러] 스케줄 등록 예외 - userId: {}", mandalart.getUserId(), e);
             }
         }, delayMs, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * 메일 발송 및 실패 시 재시도
+     */
+    private Boolean sendMailWithRetry(MandalartEntity mandalart, int attempt) {
+        try {
+            mailService.sendRemindMail(mandalart);
+            log.info("[스케줄러] 메일 전송 성공 - userId: {}", mandalart.getUserId());
+            return true;
+        } catch (Exception e) {
+            log.error("[스케줄러] 메일 발송 실패 - userId: {}, 시도: {}, 이유: {}",
+                    mandalart.getUserId(), attempt + 1, e.getMessage());
+
+            if (attempt < MAX_RETRY_COUNT) {
+                scheduler.schedule(() -> sendMailWithRetry(mandalart, attempt + 1),
+                        RETRY_DELAY_MS, TimeUnit.MILLISECONDS);
+            } else {
+                log.warn("[스케줄러] 최대 재시도 초과, 메일 발송 실패 - userId: {}", mandalart.getUserId());
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 다음 예약시간 갱신
+     */
+    private void updateNextReminder(MandalartEntity mandalart) {
+        try {
+            reminderService.rescheduleRandomWithinInterval(
+                    mandalart.getReminderOption(), mandalart.getId());
+        } catch (Exception e) {
+            log.error("[스케줄러] 예약 시간 갱신 실패 - userId: {}, 이유: {}", mandalart.getUserId(), e.getMessage());
+        }
     }
 }

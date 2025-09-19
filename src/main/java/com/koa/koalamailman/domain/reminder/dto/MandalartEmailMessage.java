@@ -1,20 +1,21 @@
 package com.koa.koalamailman.domain.reminder.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 @Builder
-public class MandalartEmailMessage {
-    String from;
-    String to;
-    String subject;
-    String username;
-    String[][] grid;
-    String tip;
-    String logoUrl; // 로고 이미지
-    String heroUrl; // 배너 이미지
-    String ctaUrl;
+public record MandalartEmailMessage(
+        @NotNull
+        String from,
+        @NotNull
+        String to,
+        @NotNull
+        String subject, // 메일 제목
+        String username,
+        String[][] grid,
+        String tip,
+        String logoUrl, // 로고 이미지
+        String heroUrl, // 배너 이미지
+        String ctaUrl
+        ) {
 }

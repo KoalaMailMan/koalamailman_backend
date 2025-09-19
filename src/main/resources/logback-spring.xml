@@ -1,18 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true">
 
+    <!-- 로그 패턴 정의 -->
     <property name="LOG_PATTERN"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [traceId=%X{traceId}] %-5level %logger{36} - %msg%n"/>
 
+    <!-- 콘솔 출력 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
 
+    <!-- 컨트롤러 전용 파일 -->
+    <appender name="CONTROLLER_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/controller.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/controller.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 스케줄러 전용 파일 -->
+    <appender name="SCHEDULER_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/scheduler.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/scheduler.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Hibernate 쿼리 로그 OFF -->
     <logger name="org.hibernate.SQL" level="OFF"/>
     <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="OFF"/>
 
+    <!-- 컨트롤러 로그 전용 -->
+    <logger name="com.koa.koalamailman.domain" level="INFO" additivity="false">
+        <appender-ref ref="CONTROLLER_FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <!-- 스케줄러 로그 전용 -->
+    <logger name="com.koa.koalamailman.domain.reminder" level="INFO" additivity="false">
+        <appender-ref ref="SCHEDULER_FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <!-- 기본 루트 로그 -->
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
