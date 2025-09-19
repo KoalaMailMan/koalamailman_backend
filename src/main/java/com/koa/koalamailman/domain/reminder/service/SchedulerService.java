@@ -74,8 +74,8 @@ public class SchedulerService {
 
         scheduler.schedule(() -> {
             try {
-                sendMailWithRetry(mandalart, 0);
-                updateNextReminder(mandalart);
+                boolean send = sendMailWithRetry(mandalart, 0);
+                if (send) updateNextReminder(mandalart);
             } catch (Exception e) {
                 log.error("[스케줄러] 스케줄 등록 예외 - userId: {}", mandalart.getUserId(), e);
             }
@@ -85,10 +85,11 @@ public class SchedulerService {
     /**
      * 메일 발송 및 실패 시 재시도
      */
-    private void sendMailWithRetry(MandalartEntity mandalart, int attempt) {
+    private Boolean sendMailWithRetry(MandalartEntity mandalart, int attempt) {
         try {
             mailService.sendRemindMail(mandalart);
             log.info("[스케줄러] 메일 전송 성공 - userId: {}", mandalart.getUserId());
+            return true;
         } catch (Exception e) {
             log.error("[스케줄러] 메일 발송 실패 - userId: {}, 시도: {}, 이유: {}",
                     mandalart.getUserId(), attempt + 1, e.getMessage());
@@ -100,6 +101,7 @@ public class SchedulerService {
                 log.warn("[스케줄러] 최대 재시도 초과, 메일 발송 실패 - userId: {}", mandalart.getUserId());
             }
         }
+        return false;
     }
 
     /**

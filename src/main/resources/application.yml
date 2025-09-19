@@ -91,10 +91,14 @@ aws:
   secret-key: ${AWS_SECRET_ACCESS_KEY}
 
 mail:
-  from: "koala mailman <reminder@ringdong.kr>"
-  fromName: "코알라 우체부"
+  from: "코알라 우체부 <reminder@ringdong.kr>"
+  fromName: "Koala Mailman"
   charset: "UTF-8"
   cta-uri: ${FRONT_URI:https://ringdong.kr}
+  subject: "코알라 우체부가 편지를 전해요  🐨🪽✉️️"
+  logo-url: "https://ringdong.kr/assets/default_koala.png"
+  hero-url: ""
+  tip: "중요한 건 꺾이지 않는 마음입니다."
 
 jwt:
   access:

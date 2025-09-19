@@ -1,5 +1,7 @@
 package com.koa.koalamailman.domain.reminder.util;
 
+import com.koa.koalamailman.domain.reminder.dto.MandalartEmailMessage;
+
 import java.util.Objects;
 
 public class MailContentBuilder {
@@ -9,26 +11,8 @@ public class MailContentBuilder {
         return s.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;");
     }
 
-    public static String build(
-            String username,
-            String[][] grid,
-            String tip,
-            String logoSrc,
-            String heroSrc,
-            String ctaUrl
-    ) {
-        String name = esc(Objects.requireNonNullElse(username, ""));
-        String t    = esc(Objects.requireNonNullElse(tip, "중요한 건 꺾이지 않는 마음입니다."));
-        String logo = esc(Objects.requireNonNullElse(logoSrc, "https://via.placeholder.com/120x40?text=Koala+Mailman"));
-        String hero = esc(Objects.requireNonNullElse(heroSrc, "https://via.placeholder.com/600x200?text=Background"));
-        String cta  = esc(Objects.requireNonNullElse(ctaUrl, "https://ringdong.kr"));
-
-        String[][] g = new String[3][3];
-        for (int i=0;i<3;i++) for (int j=0;j<3;j++) {
-            String v = (grid!=null && i<grid.length && grid[i]!=null && j<grid[i].length) ? grid[i][j] : "";
-            g[i][j] = esc(Objects.requireNonNullElse(v, ""));
-        }
-
+    public static String build(MandalartEmailMessage msg) {
+        String name = esc(Objects.requireNonNullElse(msg.username(), ""));
         String title = name.isBlank()
                 ? "코알라 우체부에게서, 편지가 왔어요  🐨🪽✉️"
                 : name + "님, 코알라 우체부가 편지를 전해요  🐨🪽✉️";
@@ -152,26 +136,26 @@ public class MailContentBuilder {
                 containerTable + font,
                 inner + font,
                 font,
-                logo,
-                hero,
+                msg.logoUrl(),
+                msg.heroUrl(),
                 inner + font,
                 font, title,
                 font,
                 inner + font,
-                cell + font, g[0][0],
-                cell + font, g[0][1],
-                cell + font, g[0][2],
-                cell + font, g[1][0],
-                core + font, g[1][1],
-                cell + font, g[1][2],
-                cell + font, g[2][0],
-                cell + font, g[2][1],
-                cell + font, g[2][2],
+                cell + font, msg.grid()[0][0],
+                cell + font, msg.grid()[0][1],
+                cell + font, msg.grid()[0][2],
+                cell + font, msg.grid()[1][0],
+                core + font, msg.grid()[1][1],
+                cell + font, msg.grid()[1][2],
+                cell + font, msg.grid()[2][0],
+                cell + font, msg.grid()[2][1],
+                cell + font, msg.grid()[2][2],
                 inner + font,
                 panel + font,
-                "padding:16px 18px;" + font, t,
+                "padding:16px 18px;" + font, msg.tip(),
                 inner + font,
-                cta, ctaStyle,
+                msg.ctaUrl(), ctaStyle,
                 inner + font
         );
     }
