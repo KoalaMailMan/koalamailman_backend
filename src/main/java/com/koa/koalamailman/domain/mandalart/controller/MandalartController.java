@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-//@SecurityRequirement(name = "Authorization")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/mandalart")
@@ -24,15 +23,26 @@ public class MandalartController implements MandalartControllerDocs {
 
     private final MandalartService mandalartService;
 
-    @PostMapping
+    @PutMapping
     @Override
-    public SuccessResponse<CoreGoalResponse> creatMandalart(
+    public SuccessResponse<CoreGoalResponse> creatOrUpdateMandalart(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody @Valid UpdateCoreGoalRequest request
     ) {
         return SuccessResponse.success(
                 SuccessCode.CREATE_MANDALART_SUCCESS,
                 CoreGoalResponse.from(mandalartService.createMandalart(userDetails.getUserId(), CoreGoalDto.fromRequest(request)))
+        );
+    }
+
+    @GetMapping
+    @Override
+    public SuccessResponse<MandalartResponse> getMandalartWithReminderOption(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        return SuccessResponse.success(
+                SuccessCode.GET_MANDALART_SUCCESS,
+                MandalartResponse.from(mandalartService.getMandalartWithRemind(userDetails.getUserId()))
         );
     }
 
@@ -45,17 +55,6 @@ public class MandalartController implements MandalartControllerDocs {
         return SuccessResponse.success(
                 SuccessCode.CREATE_MANDALART_SUCCESS,
                 MandalartResponse.from(mandalartService.createMandalartWithRemind(userDetails.getUserId(), MandalartDto.fromRequest(request)))
-        );
-    }
-
-    @GetMapping
-    @Override
-    public SuccessResponse<CoreGoalResponse> getMandalart(
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ){
-        return SuccessResponse.success(
-            SuccessCode.GET_MANDALART_SUCCESS,
-            CoreGoalResponse.from(mandalartService.getMandalartByUserId(userDetails.getUserId()))
         );
     }
 

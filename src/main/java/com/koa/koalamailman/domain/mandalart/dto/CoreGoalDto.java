@@ -14,11 +14,11 @@ public record CoreGoalDto(
         List<MainGoalDto> mains
 ) {
     public static CoreGoalDto fromRequest(UpdateCoreGoalRequest req) {
-        List<MainGoalDto> mains = (req.mainGoalRequests() == null) ? List.of()
-                : req.mainGoalRequests().stream()
+        List<MainGoalDto> mains = (req.mains() == null) ? List.of()
+                : req.mains().stream()
                 .map(MainGoalDto::fromRequest)
                 .toList();
-        return new CoreGoalDto(req.coreGoalId(), req.content(), mains);
+        return new CoreGoalDto(req.goalId(), req.content(), mains);
     }
 
     public static CoreGoalDto fromEntities(List<GoalEntity> goals) {

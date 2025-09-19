@@ -12,6 +12,7 @@ import com.koa.koalamailman.global.exception.error.MandalartErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class GoalService {
     private final GoalRepository goalRepository;
 
+    @Transactional
     public CoreGoalDto createAndUpdateGoals(MandalartEntity mandalart, CoreGoalDto coreDto) {
         // db에 이미 있는 목표 goalId 별 map
         List<GoalEntity> currentGoals = goalRepository.findGoalsByMandalartId(mandalart.getId());

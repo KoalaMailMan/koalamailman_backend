@@ -35,7 +35,13 @@ public class MandalartService {
         return mandalartDto.from(mandalart, coreGoalDto);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
+    public MandalartDto getMandalartWithRemind(Long userId) {
+        MandalartEntity mandalart = findMandalartByUserId(userId);
+        return MandalartDto.from(mandalart, getMandalartByUserId(userId));
+    }
+
+        @Transactional
     public CoreGoalDto updateMandalart(Long mandalartId, CoreGoalDto dto) {
         MandalartEntity mandalart = findMandalartByMandalartId(mandalartId);
 
