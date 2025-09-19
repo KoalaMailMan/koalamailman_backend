@@ -13,6 +13,12 @@ public enum BaseErrorCode implements ErrorCode {
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "유효하지 않은 파라미터입니다."),
 
     /**
+     * 422 UNPROCESSABLE_ENTITY
+     */
+    ENUM_VALUE_INVALID(HttpStatus.UNPROCESSABLE_ENTITY, "잘못된 Enum 값입니다."),
+
+
+    /**
      * 500 INTERNAL SERVER ERROR
      **/
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류"),
