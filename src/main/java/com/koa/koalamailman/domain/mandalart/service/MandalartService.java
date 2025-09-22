@@ -23,9 +23,14 @@ public class MandalartService {
     private final GoalRepository goalRepository;
 
     @Transactional
-    public CoreGoalDto createMandalart(Long userId, CoreGoalDto coreGoalDto) {
-        MandalartEntity mandalart = findMandalartByUserIdOrCreate(userId);
-        return goalService.createAndUpdateGoals(mandalart, coreGoalDto);
+    public MandalartDto createMandalart(Long userId, Long mandalartId, CoreGoalDto coreGoalDto) {
+        MandalartEntity mandalart;
+
+        if (mandalartId == null) mandalart = findMandalartByUserIdOrCreate(userId);
+        else mandalart = findMandalartByMandalartId(mandalartId);
+
+        CoreGoalDto core =  goalService.createAndUpdateGoals(mandalart, coreGoalDto);
+        return MandalartDto.from(mandalart, core);
     }
 
     @Transactional

@@ -2,12 +2,12 @@ package com.koa.koalamailman.domain.mandalart.controller;
 
 import com.koa.koalamailman.domain.mandalart.controller.docs.MandalartControllerDocs;
 import com.koa.koalamailman.domain.mandalart.dto.CoreGoalDto;
-import com.koa.koalamailman.domain.mandalart.dto.MandalartDto;
 import com.koa.koalamailman.domain.mandalart.dto.request.UpdateMandalartRequest;
 import com.koa.koalamailman.domain.mandalart.dto.response.CoreGoalResponse;
 import com.koa.koalamailman.domain.mandalart.dto.response.MandalartResponse;
 import com.koa.koalamailman.domain.mandalart.service.MandalartService;
 import com.koa.koalamailman.domain.mandalart.dto.request.UpdateCoreGoalRequest;
+import com.koa.koalamailman.global.dto.RequestDataWrapper;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.exception.SuccessCode;
 import com.koa.koalamailman.global.security.oauth.CustomUserDetails;
@@ -25,13 +25,13 @@ public class MandalartController implements MandalartControllerDocs {
 
     @PutMapping
     @Override
-    public SuccessResponse<CoreGoalResponse> creatOrUpdateMandalart(
+    public SuccessResponse<MandalartResponse> creatOrUpdateMandalart(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestBody @Valid UpdateCoreGoalRequest request
+            @RequestBody @Valid RequestDataWrapper<UpdateMandalartRequest> request
     ) {
         return SuccessResponse.success(
                 SuccessCode.CREATE_MANDALART_SUCCESS,
-                CoreGoalResponse.from(mandalartService.createMandalart(userDetails.getUserId(), CoreGoalDto.fromRequest(request)))
+                MandalartResponse.from(mandalartService.createMandalart(userDetails.getUserId(), request.getData().mandalartId(), CoreGoalDto.fromRequest(request.getData().core())))
         );
     }
 
@@ -43,18 +43,6 @@ public class MandalartController implements MandalartControllerDocs {
         return SuccessResponse.success(
                 SuccessCode.GET_MANDALART_SUCCESS,
                 MandalartResponse.from(mandalartService.getMandalartWithRemind(userDetails.getUserId()))
-        );
-    }
-
-    @PostMapping("/with-reminder")
-    @Override
-    public SuccessResponse<MandalartResponse> createMandalartWithReminderOption(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestBody @Valid UpdateMandalartRequest request
-    ) {
-        return SuccessResponse.success(
-                SuccessCode.CREATE_MANDALART_SUCCESS,
-                MandalartResponse.from(mandalartService.createMandalartWithRemind(userDetails.getUserId(), MandalartDto.fromRequest(request)))
         );
     }
 

@@ -3,6 +3,7 @@ package com.koa.koalamailman.domain.reminder.controller;
 import com.koa.koalamailman.domain.reminder.controller.docs.ReminderControllerDocs;
 import com.koa.koalamailman.domain.reminder.dto.request.UpdateReminderOptionsRequest;
 import com.koa.koalamailman.domain.reminder.service.ReminderService;
+import com.koa.koalamailman.global.dto.RequestDataWrapper;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.exception.SuccessCode;
 import com.koa.koalamailman.global.security.oauth.CustomUserDetails;
@@ -24,8 +25,8 @@ public class ReminderController implements ReminderControllerDocs {
     @Override
     public SuccessResponse<Void> updateReminderOptions(
             CustomUserDetails userDetails,
-            @RequestBody @Valid UpdateReminderOptionsRequest request) {
-        reminderService.updateReminderOption(request);
+            @RequestBody @Valid RequestDataWrapper<UpdateReminderOptionsRequest> request) {
+        reminderService.updateReminderOption(request.getData());
         return SuccessResponse.success(
                 SuccessCode.UPDATE_REMINDER_SUCCESS
         );
