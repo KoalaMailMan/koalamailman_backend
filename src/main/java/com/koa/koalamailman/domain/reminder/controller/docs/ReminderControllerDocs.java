@@ -1,6 +1,7 @@
 package com.koa.koalamailman.domain.reminder.controller.docs;
 
 import com.koa.koalamailman.domain.reminder.dto.request.UpdateReminderOptionsRequest;
+import com.koa.koalamailman.global.dto.RequestDataWrapper;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.security.oauth.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +22,6 @@ public interface ReminderControllerDocs {
     SuccessResponse<Void> updateReminderOptions(
             @Parameter(hidden = true)
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            final UpdateReminderOptionsRequest request
+            final RequestDataWrapper<UpdateReminderOptionsRequest> request
     );
 }

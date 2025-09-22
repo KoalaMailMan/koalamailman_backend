@@ -4,6 +4,7 @@ import com.koa.koalamailman.domain.mandalart.dto.request.UpdateCoreGoalRequest;
 import com.koa.koalamailman.domain.mandalart.dto.request.UpdateMandalartRequest;
 import com.koa.koalamailman.domain.mandalart.dto.response.CoreGoalResponse;
 import com.koa.koalamailman.domain.mandalart.dto.response.MandalartResponse;
+import com.koa.koalamailman.global.dto.RequestDataWrapper;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.security.oauth.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +26,7 @@ public interface MandalartControllerDocs {
     SuccessResponse<MandalartResponse> creatOrUpdateMandalart(
             @Parameter(hidden = true)
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            final UpdateMandalartRequest request
+            final RequestDataWrapper<UpdateMandalartRequest> request
     );
 
     @Operation(summary = "만다라트 조회", description = "대시 보드 화면 진입 시 만다라트 조회")

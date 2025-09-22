@@ -7,6 +7,7 @@ import com.koa.koalamailman.domain.mandalart.dto.response.CoreGoalResponse;
 import com.koa.koalamailman.domain.mandalart.dto.response.MandalartResponse;
 import com.koa.koalamailman.domain.mandalart.service.MandalartService;
 import com.koa.koalamailman.domain.mandalart.dto.request.UpdateCoreGoalRequest;
+import com.koa.koalamailman.global.dto.RequestDataWrapper;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.exception.SuccessCode;
 import com.koa.koalamailman.global.security.oauth.CustomUserDetails;
@@ -26,11 +27,11 @@ public class MandalartController implements MandalartControllerDocs {
     @Override
     public SuccessResponse<MandalartResponse> creatOrUpdateMandalart(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestBody @Valid UpdateMandalartRequest request
+            @RequestBody @Valid RequestDataWrapper<UpdateMandalartRequest> request
     ) {
         return SuccessResponse.success(
                 SuccessCode.CREATE_MANDALART_SUCCESS,
-                MandalartResponse.from(mandalartService.createMandalart(userDetails.getUserId(), request.mandalartId(), CoreGoalDto.fromRequest(request.core())))
+                MandalartResponse.from(mandalartService.createMandalart(userDetails.getUserId(), request.getData().mandalartId(), CoreGoalDto.fromRequest(request.getData().core())))
         );
     }
 
