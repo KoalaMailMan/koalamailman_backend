@@ -14,9 +14,9 @@ import java.util.UUID;
 @Slf4j
 @Aspect
 @Component
-public class LoggingAspect {
+public class ControllerLoggingAspect {
 
-    @Pointcut("execution(* com.koa.RingDong.controller..*(..))")
+    @Pointcut("execution(* com.koa.koalamailman.domain..controller..*(..))")
     public void controllerMethods() {}
 
     @Before("controllerMethods()")
@@ -24,7 +24,6 @@ public class LoggingAspect {
         String traceId = UUID.randomUUID().toString();
         MDC.put("traceId", traceId);
 
-        // HttpServletRequest 가져오기
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String method = request.getMethod();
         String uri = request.getRequestURI();

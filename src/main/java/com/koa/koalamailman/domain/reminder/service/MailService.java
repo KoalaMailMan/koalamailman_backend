@@ -27,6 +27,14 @@ public class MailService {
     @Value("${mail.cta-uri}")
     private String ctaUrl;
 
+    @Value("${mail.subject}")
+    private String subject;
+
+    @Value("${mail.logo-url}")
+    private String logoUrl;
+    @Value("${mail.tip}")
+    private String tip;
+
     public void send(EmailMessage message) {
         mailClient.send(message);
     }
@@ -36,10 +44,13 @@ public class MailService {
 
         MandalartEmailMessage mandalartEmailMessage = MandalartEmailMessage.builder()
                 .to(user.getEmail())
+                .subject(subject)
                 .username(user.getNickname())
                 .from(from)
                 .ctaUrl(ctaUrl)
                 .grid(toGrid(goals))
+                .logoUrl(logoUrl)
+                .tip(tip)
                 .build();
 
         sendMandalartTemplate(mandalartEmailMessage);

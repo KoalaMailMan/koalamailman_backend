@@ -8,8 +8,7 @@ build/
 # 환경 변수 파일
 src/main/resources/.env**
 .env.local
-.env.development
-.env.production
+**.env**
 
 ### STS ###
 .apt_generated

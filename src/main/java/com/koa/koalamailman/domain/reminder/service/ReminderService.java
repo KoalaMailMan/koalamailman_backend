@@ -39,8 +39,8 @@ public class ReminderService {
     }
 
     @Transactional(readOnly = true)
-    public List<MandalartEntity> findMandalartsByScheduleTimeBefore(LocalDateTime endOfToday) {
-        return mandalartRepository.findDueReminders(endOfToday);
+    public List<MandalartEntity> findMandalartsByScheduleTimeBefore(LocalDateTime util) {
+        return mandalartRepository.findDueReminders(util);
     }
 
     @Transactional

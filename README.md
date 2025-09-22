@@ -5,6 +5,9 @@
 ---
 
 ## Architecture
+![koalaMailManArchitecture](https://github.com/user-attachments/assets/2e2ec3f7-82fc-4580-8b3c-e6f8e7d40069)
+
 
 ## DataBase Schema
+<img width="1070" height="572" alt="koalaMailmanErd" src="https://github.com/user-attachments/assets/0e2eddbb-0033-4d23-b100-3d332b39436f" />
 
