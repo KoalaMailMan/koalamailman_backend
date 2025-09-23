@@ -81,6 +81,8 @@ jobs:
               --env-file "$ENVFILE" \
               -p ${IDLE}:${IN} \
               -v /var/log/koala:/logs \
+              -m 400m --memory-swap 450m \
+              --cpus="0.4" \
               "$IMAGE"
 
             for i in $(seq 1 30); do curl -fsS "http://127.0.0.1:${IDLE}/actuator/health" >/dev/null && break; sleep 2; done
