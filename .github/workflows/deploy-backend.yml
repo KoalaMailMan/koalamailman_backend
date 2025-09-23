@@ -64,7 +64,8 @@ jobs:
             APP=${{secrets.APP_NAME}}
             IN=8080; BLUE=8081; GREEN=8082
 
-            docker image prune -af
+            # Prune only dangling images to avoid removing images used by other applications
+            docker image prune -f
 
             sudo bash -lc 'cat > '"$ENVFILE"' << "EOF"
             ${{ secrets.BACKEND_ENV_PROD }}
