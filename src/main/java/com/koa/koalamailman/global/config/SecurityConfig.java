@@ -40,6 +40,9 @@ public class SecurityConfig {
     @Value("${app.oauth2.front-uri}")
     private String frontUri;
 
+    @Value("${app.oauth2.back-uri}")
+    private String backUri;
+
     private static final String LOGIN_URL = "/api/auth/login";
     private static final String LOGOUT_URL = "/api/auth/logout";
 
@@ -106,7 +109,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
 
-        cfg.setAllowedOrigins(List.of("http://localhost:*", frontUri));
+        cfg.setAllowedOrigins(List.of("http://localhost:*", frontUri, backUri));
 
         cfg.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS","HEAD"));
         cfg.setAllowedHeaders(List.of("*"));
