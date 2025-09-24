@@ -64,6 +64,9 @@ jobs:
             APP=${{secrets.APP_NAME}}
             IN=8080; BLUE=8081; GREEN=8082
 
+            # Prune only dangling images to avoid removing images used by other applications
+            docker image prune -f
+
             sudo bash -lc 'cat > '"$ENVFILE"' << "EOF"
             ${{ secrets.BACKEND_ENV_PROD }}
             EOF'
@@ -78,6 +81,9 @@ jobs:
             docker run -d --name "$NEW" -e TZ=Asia/Seoul \
               --env-file "$ENVFILE" \
               -p ${IDLE}:${IN} \
+              -v /var/log/koala:/logs \
+              -m 400m --memory-swap 450m \
+              --cpus="0.4" \
               "$IMAGE"
 
             # Health 체크: 최대 재시도 30회, 5초 간격
