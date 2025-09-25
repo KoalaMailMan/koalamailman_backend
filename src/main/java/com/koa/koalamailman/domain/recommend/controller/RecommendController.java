@@ -7,6 +7,7 @@ import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.exception.SuccessCode;
 import jakarta.validation.constraints.Max;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ public class RecommendController implements RecommendControllerDocs {
 
     private final RecommendService recommendService;
 
+    @Cacheable(value = "childGoalsCache", key = "#parentGoal + '_' + #recommendationCount")
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public SuccessResponse<ChildGoalsResponse> generationSubGoalList(
