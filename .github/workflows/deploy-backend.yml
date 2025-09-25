@@ -91,13 +91,13 @@ jobs:
             SLEEP=5
             COUNT=0
             until curl -fsS "http://127.0.0.1:${IDLE}/actuator/health" >/dev/null; do
-            COUNT=$((COUNT+1))
-            if [ $COUNT -ge $MAX_RETRIES ]; then
-            echo "Service failed to start on port ${IDLE} after $((MAX_RETRIES*SLEEP)) seconds."
-            exit 1
-            fi
-            echo "Waiting for service on port ${IDLE}... ($COUNT/$MAX_RETRIES)"
-            sleep $SLEEP
+              COUNT=$((COUNT+1))
+              if [ $COUNT -ge $MAX_RETRIES ]; then
+                echo "Service failed to start on port ${IDLE} after $((MAX_RETRIES*SLEEP)) seconds."
+                exit 1
+              fi
+              echo "Waiting for service on port ${IDLE}... ($COUNT/$MAX_RETRIES)"
+              sleep $SLEEP
             done
             echo "Service is up on port ${IDLE}"
             
