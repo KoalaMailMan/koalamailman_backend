@@ -33,8 +33,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final RefreshTokenService refreshTokenService;
     private final UserService userService;
 
-    @Value("${app.oauth2.front-uri}")
-    private String frontUri;
+    @Value("${app.oauth2.login-redirect-uri}")
+    private String loginRedirectUri;
     @Value("${app.oauth2.domain}")
     private String cookieDomain;
 
@@ -61,7 +61,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
         String targetUrl = UriComponentsBuilder
-                .fromHttpUrl(frontUri)
+                .fromHttpUrl(loginRedirectUri)
                 .queryParam("access_token", accessToken)
                 .build().toUriString();
 

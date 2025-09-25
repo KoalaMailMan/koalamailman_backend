@@ -9,6 +9,7 @@ server:
 
 app:
   oauth2:
+    login-redirect-uri: ${LOGIN_REDIRECT_URI}
     front-uri: ${FRONT_URI:http://localhost:3000}
     back-uri: ${BACK_URI:http://localhost:8080}
     domain: ${COOKIE_DOMAIN}
