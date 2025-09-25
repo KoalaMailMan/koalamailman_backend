@@ -9,6 +9,7 @@ server:
 
 app:
   oauth2:
+    login-redirect-url: ${LOGIN_REDIRECT_URL}
     front-uri: ${FRONT_URI}
     back-uri: ${BACK_URI}
     domain: ${COOKIE_DOMAIN}
