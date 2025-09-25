@@ -5,14 +5,17 @@ import com.koa.koalamailman.domain.recommend.dto.ChildGoalsResponse;
 import com.koa.koalamailman.domain.recommend.service.RecommendService;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.exception.SuccessCode;
+import jakarta.validation.constraints.Max;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/recommend")
+@Validated
 public class RecommendController implements RecommendControllerDocs {
 
     private final RecommendService recommendService;
@@ -21,7 +24,7 @@ public class RecommendController implements RecommendControllerDocs {
     @ResponseBody
     public SuccessResponse<ChildGoalsResponse> generationSubGoalList(
             @RequestParam("parentGoal") String parentGoal,
-            @RequestParam("recommendationCount") int recommendationCount
+            @RequestParam("recommendationCount") @Max(8) int recommendationCount
     ) {
         return SuccessResponse.success(
                 SuccessCode.GET_RECOMMEND_SUCCESS,
@@ -32,7 +35,7 @@ public class RecommendController implements RecommendControllerDocs {
     @GetMapping(value = "/streaming", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> generationStreamingChildGoal(
             @RequestParam("parentGoal") String parentGoal,
-            @RequestParam("recommendationCount") int recommendationCount
+            @RequestParam("recommendationCount") @Max(8) int recommendationCount
     ) {
         return recommendService.streamingChildGoalByParentGoal(parentGoal, recommendationCount);
     }
