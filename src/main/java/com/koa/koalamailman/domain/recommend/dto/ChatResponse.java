@@ -1,4 +1,4 @@
-package com.koa.koalamailman.domain.chatbot.dto;
+package com.koa.koalamailman.domain.recommend.dto;
 
 public record ChatResponse(
         String response

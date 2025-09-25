@@ -1,4 +1,4 @@
-package com.koa.koalamailman.domain.chatbot.session;
+package com.koa.koalamailman.domain.recommend.session;
 
 import com.koa.koalamailman.domain.user.repository.AgeGroup;
 import com.koa.koalamailman.domain.user.repository.Gender;

@@ -1,6 +1,6 @@
-package com.koa.koalamailman.domain.chatbot.config;
+package com.koa.koalamailman.domain.recommend.config;
 
-import com.koa.koalamailman.domain.chatbot.template.PromptTemplates;
+import com.koa.koalamailman.domain.recommend.template.PromptTemplates;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -16,32 +16,31 @@ import org.springframework.context.annotation.Configuration;
 public class ChatConfig {
 
     @Bean
-    public ChatClient chatClient(ChatModel chatModel, MessageChatMemoryAdvisor messageChatMemoryAdvisor) {
+    public ChatClient chatClient(ChatModel chatModel) {
         return ChatClient.builder(chatModel)
                 .defaultOptions(ChatOptions.builder()
                         .temperature(0.2)
                         .maxTokens(1024)
                         .build())
                 .defaultSystem(PromptTemplates.DEFAULT_SYSTEM)
-                .defaultAdvisors(messageChatMemoryAdvisor)
                 .build();
     }
 
-    @Bean
-    public MessageWindowChatMemory chatMemory(InMemoryChatMemoryRepository repository) {
-        return MessageWindowChatMemory.builder()
-                .chatMemoryRepository(repository)
-                .maxMessages(20)
-                .build();
-    }
-
-    @Bean
-    public InMemoryChatMemoryRepository chatMemoryRepository() {
-        return new InMemoryChatMemoryRepository();
-    }
-
-    @Bean
-    public MessageChatMemoryAdvisor messageChatMemoryAdvisor(MessageWindowChatMemory chatMemory) {
-        return MessageChatMemoryAdvisor.builder(chatMemory).build();
-    }
+//    @Bean
+//    public MessageWindowChatMemory chatMemory(InMemoryChatMemoryRepository repository) {
+//        return MessageWindowChatMemory.builder()
+//                .chatMemoryRepository(repository)
+//                .maxMessages(20)
+//                .build();
+//    }
+//
+//    @Bean
+//    public InMemoryChatMemoryRepository chatMemoryRepository() {
+//        return new InMemoryChatMemoryRepository();
+//    }
+//
+//    @Bean
+//    public MessageChatMemoryAdvisor messageChatMemoryAdvisor(MessageWindowChatMemory chatMemory) {
+//        return MessageChatMemoryAdvisor.builder(chatMemory).build();
+//    }
 }

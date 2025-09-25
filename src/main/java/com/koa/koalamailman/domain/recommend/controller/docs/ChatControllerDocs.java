@@ -1,4 +1,4 @@
-package com.koa.koalamailman.domain.chatbot.controller.docs;
+package com.koa.koalamailman.domain.recommend.controller.docs;
 
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.security.oauth.CustomUserDetails;
