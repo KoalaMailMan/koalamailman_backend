@@ -21,7 +21,7 @@ public class RecommendController implements RecommendControllerDocs {
 
     private final RecommendService recommendService;
 
-    @Cacheable(value = "childGoalsCache", key = "#parentGoal + '_' + #recommendationCount")
+    @Cacheable(value = "childGoalsCache", key = "T(String).format('%s_%d', #parentGoal, #recommendationCount)")
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public SuccessResponse<ChildGoalsResponse> generationSubGoalList(
