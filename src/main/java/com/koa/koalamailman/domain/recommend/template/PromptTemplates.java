@@ -1,4 +1,4 @@
-package com.koa.koalamailman.domain.chatbot.template;
+package com.koa.koalamailman.domain.recommend.template;
 
 public class PromptTemplates {
 
@@ -77,10 +77,10 @@ public class PromptTemplates {
           너는 실행계획 코치야.
          \s
           [메인 목표]
-          {mainGoal}
+          {parentGoal}
          \s
           [요청]
-          위 메인 목표를 달성하기 위한 "세부 목표(액션 아이템)" 8가지를 한국어로만 추천해줘.
+          위 메인 목표를 달성하기 위한 "세부 목표(액션 아이템)" {recommendationCount}가지를 한국어로만 추천해줘.
          \s
           [예시 출력 형식]
           1. 식단 기록 앱에 매끼 사진 업로드

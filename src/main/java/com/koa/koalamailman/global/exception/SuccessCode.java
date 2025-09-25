@@ -18,6 +18,7 @@ public enum SuccessCode {
     CREATE_MANDALART_SUCCESS(HttpStatus.OK, "만다라트 생성 성공입니다."),
 
     GET_MANDALART_SUCCESS(HttpStatus.OK, "만다라트 조회 성공입니다."),
+    GET_RECOMMEND_SUCCESS(HttpStatus.OK, "추천 목표 조회 성공입니다."),
     UPDATE_MANDALART_SUCCESS(HttpStatus.OK, "만다라트 수정 성공입니다."),
     UPDATE_REMINDER_SUCCESS(HttpStatus.OK, "리마인더 수정 성공입니다."),
     SEND_MAIL_SUCCESS(HttpStatus.OK, "메일이 전송되었습니다.")

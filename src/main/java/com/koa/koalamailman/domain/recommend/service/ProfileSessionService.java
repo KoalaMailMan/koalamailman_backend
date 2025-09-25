@@ -1,6 +1,6 @@
-package com.koa.koalamailman.domain.chatbot.service;
+package com.koa.koalamailman.domain.recommend.service;
 
-import com.koa.koalamailman.domain.chatbot.session.ProfileSession;
+import com.koa.koalamailman.domain.recommend.session.ProfileSession;
 import com.koa.koalamailman.domain.user.repository.User;
 import com.koa.koalamailman.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;

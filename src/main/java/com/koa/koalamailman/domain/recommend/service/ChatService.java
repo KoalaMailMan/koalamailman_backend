@@ -1,7 +1,7 @@
-package com.koa.koalamailman.domain.chatbot.service;
+package com.koa.koalamailman.domain.recommend.service;
 
-import com.koa.koalamailman.domain.chatbot.session.ProfileSession;
-import com.koa.koalamailman.domain.chatbot.template.PromptTemplates;
+import com.koa.koalamailman.domain.recommend.session.ProfileSession;
+import com.koa.koalamailman.domain.recommend.template.PromptTemplates;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;

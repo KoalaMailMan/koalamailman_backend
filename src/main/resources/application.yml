@@ -85,6 +85,11 @@ spring:
         options:
           model: ${OPENROUTER_MODEL:mistralai/mistral-7b-instruct:free}
 
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=5m
+
 aws:
   region: ap-northeast-2
   access-key: ${AWS_ACCESS_KEY_ID}
