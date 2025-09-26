@@ -54,8 +54,8 @@ public class MandalartService {
     }
 
     @Transactional(readOnly = true)
-    public CoreGoalDto getMandalartByMandalartId(Long madalartId) {
-        List<GoalEntity> goals = goalRepository.findGoalsByMandalartId(madalartId);
+    public CoreGoalDto getMandalartByMandalartId(Long mandalartId) {
+        List<GoalEntity> goals = goalRepository.findGoalsByMandalartId(mandalartId);
         return CoreGoalDto.fromEntities(goals);
     }
 
