@@ -43,10 +43,10 @@ public class MandalartService {
     @Transactional(readOnly = true)
     public MandalartDto getMandalartWithRemind(Long userId) {
         MandalartEntity mandalart = findMandalartByUserId(userId);
-        return MandalartDto.from(mandalart, getMandalartByUserId(userId));
+        return MandalartDto.from(mandalart, getMandalartByMandalartId(mandalart.getId()));
     }
 
-        @Transactional
+    @Transactional
     public CoreGoalDto updateMandalart(Long mandalartId, CoreGoalDto dto) {
         MandalartEntity mandalart = findMandalartByMandalartId(mandalartId);
 
@@ -54,8 +54,8 @@ public class MandalartService {
     }
 
     @Transactional(readOnly = true)
-    public CoreGoalDto getMandalartByUserId(Long userId) {
-        List<GoalEntity> goals = goalRepository.findGoalsByUserId(userId);
+    public CoreGoalDto getMandalartByMandalartId(Long madalartId) {
+        List<GoalEntity> goals = goalRepository.findGoalsByMandalartId(madalartId);
         return CoreGoalDto.fromEntities(goals);
     }
 
