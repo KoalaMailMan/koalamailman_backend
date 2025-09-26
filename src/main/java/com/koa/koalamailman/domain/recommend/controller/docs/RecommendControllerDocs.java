@@ -21,11 +21,7 @@ public interface RecommendControllerDocs {
 
     @Operation(summary = "세부(child) 목표 추천", description = "주요(parent) 목표에 대한 세부(child) 목표를 추천합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "응답 성공",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ChildGoalsResponse.class)
-                    ))
+            @ApiResponse(responseCode = "200", description = "응답 성공")
     })
     SuccessResponse<ChildGoalsResponse> generationSubGoalList(
             @Parameter(description = "주요(parent) 목표")
