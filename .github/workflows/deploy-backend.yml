@@ -86,8 +86,8 @@ jobs:
               --cpus="0.4" \
               "$IMAGE"
             
-            # 대기 10초
-            sleep 10
+            # 대기 60초
+            sleep 60
 
             # Health 체크: 최대 재시도 60회, 10초 간격
             MAX_RETRIES=60
