@@ -86,9 +86,9 @@ jobs:
               --cpus="0.4" \
               "$IMAGE"
 
-            # Health 체크: 최대 재시도 30회, 5초 간격
-            MAX_RETRIES=30
-            SLEEP=5
+            # Health 체크: 최대 재시도 30회, 10초 간격
+            MAX_RETRIES=60
+            SLEEP=10
             COUNT=0
             until curl -fsS "http://127.0.0.1:${IDLE}/actuator/health" >/dev/null; do
               COUNT=$((COUNT+1))
