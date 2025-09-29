@@ -1,7 +1,7 @@
 name: Backend → Docker Hub → EC2
 on:
   push:
-    branches: ["infra/ci"]
+    branches: ["develop"]
   workflow_dispatch:
 
 jobs:
@@ -86,7 +86,7 @@ jobs:
               --cpus="0.4" \
               "$IMAGE"
             
-            # 대기 120초
+            # 대기 120
             sleep 120
 
             # Health 체크: 최대 재시도 60회, 10초 간격
