@@ -86,11 +86,11 @@ jobs:
               --cpus="0.4" \
               "$IMAGE"
 
-            # Health 체크: 최대 재시도 30회, 10초 간격
+            # Health 체크: 최대 재시도 60회, 10초 간격
             MAX_RETRIES=60
             SLEEP=10
             COUNT=0
-            until curl -fsS "http://127.0.0.1:${IDLE}/actuator/health" >/dev/null; do
+            until docker exec "$NEW" curl -fsS http://127.0.0.1:${IN}/actuator/health  >/dev/null; do
               COUNT=$((COUNT+1))
               if [ $COUNT -ge $MAX_RETRIES ]; then
                 echo "Service failed to start on port ${IDLE} after $((MAX_RETRIES*SLEEP)) seconds."
