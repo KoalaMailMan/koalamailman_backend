@@ -78,17 +78,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         BindingResult bindingResult = ex.getBindingResult();
-        StringBuilder stringBuilder = new StringBuilder();
-        for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            stringBuilder.append(fieldError.getField()).append(":");
-            stringBuilder.append(fieldError.getDefaultMessage());
-            stringBuilder.append(" , ");
-        }
+        String messages = bindingResult.getFieldErrors().stream()
+                .map(error -> error.getField() + ":" + error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
 
         var errorCode = BaseErrorCode.INVALID_REQUEST;
         return ResponseEntity
                 .status(errorCode.getHttpStatusCode())
-                .body(new ErrorResponse(errorCode.getHttpStatusCode(), String.valueOf(stringBuilder)));
+                .body(new ErrorResponse(errorCode.getHttpStatusCode(), String.valueOf(messages)));
     }
 
     /**

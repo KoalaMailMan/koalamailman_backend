@@ -76,7 +76,7 @@ public class MandalartService {
         MandalartEntity mandalart = mandalartRepository.findById(mandalartId)
                 .orElseThrow(() -> new BusinessException(MandalartErrorCode.MANDALART_NOT_FOUND));
 
-        if (mandalart.getUserId() != userId) throw new BusinessException(MandalartErrorCode.MANDALART_FORBIDDEN);
+        if (!Objects.equals(mandalart.getUserId(), userId)) throw new BusinessException(MandalartErrorCode.MANDALART_FORBIDDEN);
         return mandalart;
     }
 }
