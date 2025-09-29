@@ -4,10 +4,10 @@ import com.koa.koalamailman.global.exception.error.ErrorCode;
 import lombok.Getter;
 
 @Getter
-public class BaseException extends RuntimeException {
+public class BusinessException extends RuntimeException {
     private final ErrorCode errorCode;
 
-    public BaseException(ErrorCode errorCode) {
+    public BusinessException(ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
     }

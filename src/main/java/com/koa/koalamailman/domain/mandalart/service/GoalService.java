@@ -7,7 +7,7 @@ import com.koa.koalamailman.domain.mandalart.repository.GoalRepository;
 import com.koa.koalamailman.domain.mandalart.repository.entity.GoalEntity;
 import com.koa.koalamailman.domain.mandalart.repository.entity.GoalLevel;
 import com.koa.koalamailman.domain.mandalart.repository.entity.MandalartEntity;
-import com.koa.koalamailman.global.exception.BaseException;
+import com.koa.koalamailman.global.exception.BusinessException;
 import com.koa.koalamailman.global.exception.error.MandalartErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -78,19 +78,14 @@ public class GoalService {
             }
         }
 
-        if (!newGoals.isEmpty()) {
-            try {
-                goalRepository.saveAll(newGoals);
-            } catch (DataIntegrityViolationException e) {
-                throw new BaseException(MandalartErrorCode.DUPLICATE_GOAL_POSITION);
-            }
-        }
+        if (!newGoals.isEmpty()) goalRepository.saveAll(newGoals);
+
         return CoreGoalDto.fromEntities(allGoals);
     }
 
     private GoalEntity getGoalFromGoalsMapByGoalId(Map<Long, GoalEntity> goalsMapById, Long goalId) {
         GoalEntity goalEntity = goalsMapById.get(goalId);
-        if (goalEntity == null) throw new BaseException(MandalartErrorCode.GOAL_NOT_FOUND);
+        if (goalEntity == null) throw new BusinessException(MandalartErrorCode.GOAL_NOT_FOUND);
         return goalEntity;
     }
 
