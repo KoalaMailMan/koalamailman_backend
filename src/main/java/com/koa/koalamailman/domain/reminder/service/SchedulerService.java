@@ -1,6 +1,7 @@
 package com.koa.koalamailman.domain.reminder.service;
 
 import com.koa.koalamailman.domain.mandalart.repository.entity.MandalartEntity;
+import com.koa.koalamailman.domain.mandalart.service.MandalartService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ public class SchedulerService {
 
     private final MailService mailService;
     private final ReminderService reminderService;
+    private final MandalartService mandalartService;
 
     private static final int SCHEDULER_POOL_SIZE = 3;
     private static final int MAX_RETRY_COUNT = 3;
@@ -74,8 +76,9 @@ public class SchedulerService {
 
         scheduler.schedule(() -> {
             try {
-                boolean send = sendMailWithRetry(mandalart, 0);
-                if (send) updateNextReminder(mandalart);
+                MandalartEntity latestMandalart = mandalartService.findMandalartByUserId(mandalart.getUserId());
+                boolean send = sendMailWithRetry(latestMandalart, 0);
+                if (send) updateNextReminder(latestMandalart);
             } catch (Exception e) {
                 log.error("[스케줄러] 스케줄 등록 예외 - userId: {}", mandalart.getUserId(), e);
             }
