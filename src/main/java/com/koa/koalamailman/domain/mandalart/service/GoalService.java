@@ -78,13 +78,8 @@ public class GoalService {
             }
         }
 
-        if (!newGoals.isEmpty()) {
-            try {
-                goalRepository.saveAll(newGoals);
-            } catch (DataIntegrityViolationException e) {
-                throw new BusinessException(MandalartErrorCode.DUPLICATE_GOAL_POSITION);
-            }
-        }
+        if (!newGoals.isEmpty()) goalRepository.saveAll(newGoals);
+
         return CoreGoalDto.fromEntities(allGoals);
     }
 

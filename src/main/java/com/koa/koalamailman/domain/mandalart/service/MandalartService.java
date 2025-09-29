@@ -27,7 +27,7 @@ public class MandalartService {
         MandalartEntity mandalart;
 
         if (mandalartId == null) mandalart = findMandalartByUserIdOrCreate(userId);
-        else mandalart = findMandalartByMandalartId(mandalartId);
+        else mandalart = findMandalartByMandalartId(userId, mandalartId);
 
         CoreGoalDto core =  goalService.createAndUpdateGoals(mandalart, coreGoalDto);
         return MandalartDto.from(mandalart, core);
@@ -47,8 +47,8 @@ public class MandalartService {
     }
 
     @Transactional
-    public CoreGoalDto updateMandalart(Long mandalartId, CoreGoalDto dto) {
-        MandalartEntity mandalart = findMandalartByMandalartId(mandalartId);
+    public CoreGoalDto updateMandalart(Long userId, Long mandalartId, CoreGoalDto dto) {
+        MandalartEntity mandalart = findMandalartByMandalartId(userId, mandalartId);
 
         return goalService.createAndUpdateGoals(mandalart, dto);
     }
@@ -72,8 +72,11 @@ public class MandalartService {
     }
 
     @Transactional(readOnly = true)
-    public MandalartEntity findMandalartByMandalartId(Long mandalartId) {
-        return mandalartRepository.findById(mandalartId)
+    public MandalartEntity findMandalartByMandalartId(Long userId, Long mandalartId) {
+        MandalartEntity mandalart = mandalartRepository.findById(mandalartId)
                 .orElseThrow(() -> new BusinessException(MandalartErrorCode.MANDALART_NOT_FOUND));
+
+        if (mandalart.getUserId() != userId) throw new BusinessException(MandalartErrorCode.MANDALART_FORBIDDEN);
+        return mandalart;
     }
 }
