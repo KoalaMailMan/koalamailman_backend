@@ -7,7 +7,7 @@ import com.koa.koalamailman.domain.mandalart.repository.MandalartRepository;
 import com.koa.koalamailman.domain.mandalart.repository.entity.GoalEntity;
 import com.koa.koalamailman.domain.mandalart.repository.entity.MandalartEntity;
 import com.koa.koalamailman.global.exception.error.MandalartErrorCode;
-import com.koa.koalamailman.global.exception.BaseException;
+import com.koa.koalamailman.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,12 +68,12 @@ public class MandalartService {
     @Transactional(readOnly = true)
     public MandalartEntity findMandalartByUserId(Long userId) {
         return mandalartRepository.findByUserId(userId)
-                .orElseThrow(() -> new BaseException(MandalartErrorCode.MANDALART_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(MandalartErrorCode.MANDALART_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
     public MandalartEntity findMandalartByMandalartId(Long mandalartId) {
         return mandalartRepository.findById(mandalartId)
-                .orElseThrow(() -> new BaseException(MandalartErrorCode.MANDALART_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(MandalartErrorCode.MANDALART_NOT_FOUND));
     }
 }
