@@ -3,7 +3,7 @@ package com.koa.koalamailman.domain.auth.service;
 import com.koa.koalamailman.domain.auth.repository.RefreshTokenRepository;
 import com.koa.koalamailman.domain.auth.repository.entity.RefreshToken;
 import com.koa.koalamailman.domain.user.repository.User;
-import com.koa.koalamailman.global.exception.BaseException;
+import com.koa.koalamailman.global.exception.BusinessException;
 import com.koa.koalamailman.global.exception.error.AuthErrorCode;
 import com.koa.koalamailman.global.token.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -36,11 +36,11 @@ public class RefreshTokenService {
         byte[] incomingHash = hmacSha256(secretKey, rawRefreshToken);
 
         if (!MessageDigest.isEqual(refreshToken.getTokenHash(), incomingHash)) {
-            throw new BaseException(AuthErrorCode.UNAUTHORIZED);
+            throw new BusinessException(AuthErrorCode.UNAUTHORIZED);
         }
 
         if (refreshToken.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new BaseException(AuthErrorCode.UNAUTHORIZED);
+            throw new BusinessException(AuthErrorCode.UNAUTHORIZED);
         }
 
         return jwtProvider.generateToken(userId, null, refreshTokenExpirationMs);
@@ -68,6 +68,6 @@ public class RefreshTokenService {
 
     private RefreshToken findByUserId(Long userId) {
         return refreshTokenRepository.findByUserId(userId)
-                .orElseThrow(() -> new BaseException(AuthErrorCode.UNAUTHORIZED));
+                .orElseThrow(() -> new BusinessException(AuthErrorCode.UNAUTHORIZED));
     }
 }

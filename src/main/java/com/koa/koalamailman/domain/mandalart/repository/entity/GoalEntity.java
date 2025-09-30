@@ -23,6 +23,7 @@ import lombok.*;
 )
 public class GoalEntity {
 
+    public static final int ROOT_POSITION = 0;
     public static final int CORE_POSITION = 0;
 
     @Id
@@ -60,7 +61,7 @@ public class GoalEntity {
         return GoalEntity.builder()
                 .mandalart(mandalart)
                 .level(GoalLevel.CORE)
-                .parentPosition(null)
+                .parentPosition(ROOT_POSITION)
                 .position(CORE_POSITION)
                 .content(content)
                 .build();
