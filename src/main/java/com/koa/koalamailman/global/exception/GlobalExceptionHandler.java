@@ -217,9 +217,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         String message;
 
-        if (ex.getCause() instanceof org.hibernate.exception.ConstraintViolationException cve) {
+        Throwable cause = ex.getCause();
+        if (cause instanceof org.hibernate.exception.ConstraintViolationException cve) {
             String constraintName = cve.getConstraintName();
-            message = "DB 제약 조건 위반: " + constraintName;
+            String sqlMessage = cve.getSQLException().getMessage();
+            message = String.format("DB 제약 조건 위반: %s (%s)", constraintName, sqlMessage);
+        } else if (cause != null && cause.getMessage() != null) {
+            message = "데이터 무결성 위반: " + cause.getMessage();
         } else {
             message = "데이터 무결성 위반 오류가 발생했습니다.";
         }
@@ -229,7 +233,6 @@ public class GlobalExceptionHandler {
                 .status(errorCode.getHttpStatusCode())
                 .body(new ErrorResponse(errorCode.getHttpStatusCode(), message));
     }
-
 
     /**
      * Exception
