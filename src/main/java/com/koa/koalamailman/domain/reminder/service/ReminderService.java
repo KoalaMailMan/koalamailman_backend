@@ -42,11 +42,11 @@ public class ReminderService {
     @Transactional
     public void updateReminderOption(Long userId, UpdateReminderOptionsRequest request) {
         MandalartEntity mandalart = mandalartService.findMandalartByMandalartId(userId, request.mandalartId());
-        LocalDateTime nextScheduledTime = reminderTimeProvider.generateRandomTime(request.reminderInterval());
+        LocalDateTime nextScheduledTime = reminderTimeProvider.generateRandomTime(request.remindInterval());
 
         mandalart.getReminderOption().update(
                 request.reminderEnabled(),
-                request.reminderInterval(),
+                request.remindInterval(),
                 nextScheduledTime
                 );
     }

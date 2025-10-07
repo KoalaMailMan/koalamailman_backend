@@ -17,11 +17,11 @@ public class ReminderOption {
     private Boolean reminderEnabled = false;
 
     @Enumerated(EnumType.STRING)
-    private ReminderInterval remindInterval;
+    private RemindInterval remindInterval;
 
     private LocalDateTime remindScheduledAt;
 
-    public void update(Boolean enabled, ReminderInterval interval, LocalDateTime nextTime) {
+    public void update(Boolean enabled, RemindInterval interval, LocalDateTime nextTime) {
         this.reminderEnabled = enabled;
         this.remindInterval = interval;
         this.remindScheduledAt = nextTime;

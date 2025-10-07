@@ -1,6 +1,6 @@
 package com.koa.koalamailman.domain.reminder.provider;
 
-import com.koa.koalamailman.domain.mandalart.repository.entity.ReminderInterval;
+import com.koa.koalamailman.domain.mandalart.repository.entity.RemindInterval;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -13,7 +13,7 @@ public class ReminderTimeProvider {
 
     private final Random random = new Random();
 
-    public LocalDateTime generateRandomTime(ReminderInterval interval) {
+    public LocalDateTime generateRandomTime(RemindInterval interval) {
         int intervalDays = interval.getDays();
         int plusDays = random.nextInt(intervalDays) + 1;
         LocalDate randomDate = LocalDate.now().plusDays(plusDays);
