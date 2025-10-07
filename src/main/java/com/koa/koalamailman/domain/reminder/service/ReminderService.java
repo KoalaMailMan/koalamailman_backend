@@ -23,7 +23,9 @@ public class ReminderService {
     private final ReminderTimeProvider reminderTimeProvider;
 
     @Transactional
-    public void rescheduleRandomWithinInterval(ReminderOption reminderOption, MandalartEntity mandalart) {
+    public void rescheduleRandomWithinInterval(ReminderOption reminderOption, long mandalartId, long userId) {
+        MandalartEntity mandalart = mandalartService.findMandalartByMandalartId(userId, mandalartId);
+
         LocalDateTime nextScheduledTime = reminderTimeProvider.generateRandomTime(reminderOption.getRemindInterval());
         mandalart.getReminderOption().reschedule(nextScheduledTime);
     }

@@ -113,7 +113,7 @@ public class SchedulerService {
     private void updateNextReminder(MandalartEntity mandalart) {
         try {
             reminderService.rescheduleRandomWithinInterval(
-                    mandalart.getReminderOption(), mandalart);
+                    mandalart.getReminderOption(), mandalart.getId(), mandalart.getUserId());
         } catch (Exception e) {
             log.error("[스케줄러] 예약 시간 갱신 실패 - userId: {}, 이유: {}", mandalart.getUserId(), e.getMessage());
         }
