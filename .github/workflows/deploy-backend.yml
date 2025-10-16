@@ -82,7 +82,7 @@ jobs:
               --env-file "$ENVFILE" \
               -p ${IDLE}:${IN} \
               -v /var/log/koala:/logs \
-              -m 400m --memory-swap 450m \
+              -m 2g --memory-swap 2.5g \
               --cpus="0.4" \
               "$IMAGE"
             
