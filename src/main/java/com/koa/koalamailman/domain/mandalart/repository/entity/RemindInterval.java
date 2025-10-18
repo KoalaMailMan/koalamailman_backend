@@ -3,7 +3,7 @@ package com.koa.koalamailman.domain.mandalart.repository.entity;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public enum ReminderInterval {
+public enum RemindInterval {
     ONE_DAY(1), //test용
 
     ONE_WEEK(7),
@@ -16,7 +16,7 @@ public enum ReminderInterval {
 
     private final int days;
 
-    ReminderInterval(int days) {
+    RemindInterval(int days) {
         this.days = days;
     }
 
