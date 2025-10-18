@@ -54,7 +54,7 @@ public class MandalartController implements MandalartControllerDocs {
     ) {
         return SuccessResponse.success(
                 SuccessCode.UPDATE_MANDALART_SUCCESS,
-                CoreGoalResponse.from(mandalartService.updateMandalart(mandalartId, CoreGoalDto.fromRequest(request)))
+                CoreGoalResponse.from(mandalartService.updateMandalart(userDetails.getUserId(), mandalartId, CoreGoalDto.fromRequest(request)))
         );
     }
 }

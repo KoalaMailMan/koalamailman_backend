@@ -26,7 +26,7 @@ public class ReminderController implements ReminderControllerDocs {
     public SuccessResponse<Void> updateReminderOptions(
             CustomUserDetails userDetails,
             @RequestBody @Valid RequestDataWrapper<UpdateReminderOptionsRequest> request) {
-        reminderService.updateReminderOption(request.getData());
+        reminderService.updateReminderOption(userDetails.getUserId(), request.getData());
         return SuccessResponse.success(
                 SuccessCode.UPDATE_REMINDER_SUCCESS
         );

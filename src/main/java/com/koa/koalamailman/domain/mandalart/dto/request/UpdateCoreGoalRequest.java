@@ -12,7 +12,7 @@ public record UpdateCoreGoalRequest(
         @Schema(description = "Core goal 내용")
         String content,
 
-        @Size(min = 0, max = 8)
+        @Size(max = 8, message = "main 목표는 최대 8개입니다.")
         @Valid
         List<UpdateMainGoalRequest> mains
 ) {

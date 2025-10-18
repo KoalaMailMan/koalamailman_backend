@@ -21,7 +21,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface MandalartControllerDocs {
     @Operation(summary = "만다라트 생성 및 수정", description = "대시 보드 화면 3x3 만다라트 저장 버튼")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "만다라트 생성 성공")
+            @ApiResponse(responseCode = "200", description = "만다라트 생성 성공"),
+            @ApiResponse(responseCode = "204", description = "만다라트를 찾을 수 없음. MANDALART_NOT_FOUND"),
+            @ApiResponse(responseCode = "403", description = "해당 만다라트에 대한 권한 없음. MANDALART_FORBIDDEN"),
+            @ApiResponse(responseCode = "422", description = "목표 위치가 중복됨. DUPLICATE_GOAL_POSITION")
     })
     SuccessResponse<MandalartResponse> creatOrUpdateMandalart(
             @Parameter(hidden = true)
@@ -31,7 +34,9 @@ public interface MandalartControllerDocs {
 
     @Operation(summary = "만다라트 조회", description = "대시 보드 화면 진입 시 만다라트 조회")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "만다라트 조회 성공")
+            @ApiResponse(responseCode = "200", description = "만다라트 조회 성공"),
+            @ApiResponse(responseCode = "204", description = "만다라트를 찾을 수 없음. MANDALART_NOT_FOUND"),
+            @ApiResponse(responseCode = "403", description = "해당 만다라트에 대한 권한 없음. MANDALART_FORBIDDEN"),
     })
     SuccessResponse<MandalartResponse> getMandalartWithReminderOption(
             @Parameter(hidden = true)

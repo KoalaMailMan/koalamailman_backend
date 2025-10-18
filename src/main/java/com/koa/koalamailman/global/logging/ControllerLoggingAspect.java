@@ -48,12 +48,14 @@ public class ControllerLoggingAspect {
     }
 
     @AfterThrowing(pointcut = "controllerMethods()", throwing = "ex")
-    public void logAfterThrowing(JoinPoint joinPoint, Throwable ex) {
+    public void logAfterThrowing(JoinPoint joinPoint, Throwable ex) throws Throwable {
         log.error("[ERROR] Exception in {}.{}() - {}",
                 joinPoint.getSignature().getDeclaringTypeName(),
                 joinPoint.getSignature().getName(),
-                ex.getMessage(), ex);
+                ex.getMessage());
 
+        log.debug("Stacktrace: ", ex);
         MDC.clear();
+        throw ex;
     }
 }

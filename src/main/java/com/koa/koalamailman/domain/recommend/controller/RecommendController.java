@@ -6,6 +6,7 @@ import com.koa.koalamailman.domain.recommend.service.RecommendService;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.exception.SuccessCode;
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
@@ -23,10 +24,9 @@ public class RecommendController implements RecommendControllerDocs {
 
     @Cacheable(value = "childGoalsCache", key = "T(String).format('%s_%d', #parentGoal, #recommendationCount)")
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
     public SuccessResponse<ChildGoalsResponse> generationSubGoalList(
-            @RequestParam("parentGoal") String parentGoal,
-            @RequestParam("recommendationCount") @Max(8) int recommendationCount
+            @RequestParam("parentGoal") @NotNull String parentGoal,
+            @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount
     ) {
         return SuccessResponse.success(
                 SuccessCode.GET_RECOMMEND_SUCCESS,
@@ -36,8 +36,8 @@ public class RecommendController implements RecommendControllerDocs {
 
     @GetMapping(value = "/streaming", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> generationStreamingChildGoal(
-            @RequestParam("parentGoal") String parentGoal,
-            @RequestParam("recommendationCount") @Max(8) int recommendationCount
+            @RequestParam("parentGoal") @NotNull String parentGoal,
+            @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount
     ) {
         return recommendService.streamingChildGoalByParentGoal(parentGoal, recommendationCount);
     }

@@ -23,17 +23,15 @@ public class ReminderService {
     private final ReminderTimeProvider reminderTimeProvider;
 
     @Transactional
-    public void rescheduleRandomWithinInterval(ReminderOption reminderOption, Long mandalartId) {
-        MandalartEntity mandalart = mandalartService.findMandalartByMandalartId(mandalartId);
+    public void rescheduleRandomWithinInterval(ReminderOption reminderOption, long mandalartId, long userId) {
+        MandalartEntity mandalart = mandalartService.findMandalartByMandalartId(userId, mandalartId);
 
         LocalDateTime nextScheduledTime = reminderTimeProvider.generateRandomTime(reminderOption.getRemindInterval());
         mandalart.getReminderOption().reschedule(nextScheduledTime);
     }
 
     @Transactional
-    public void rescheduleTomorrow(ReminderOption reminderOption, Long mandalartId) {
-        MandalartEntity mandalart = mandalartService.findMandalartByMandalartId(mandalartId);
-
+    public void rescheduleTomorrow(ReminderOption reminderOption, MandalartEntity mandalart) {
         LocalDateTime nextScheduledTime = reminderTimeProvider.generateRandomTimeForTomorrow();
         mandalart.getReminderOption().reschedule(nextScheduledTime);
     }
@@ -44,13 +42,13 @@ public class ReminderService {
     }
 
     @Transactional
-    public void updateReminderOption(UpdateReminderOptionsRequest request) {
-        MandalartEntity mandalart = mandalartService.findMandalartByMandalartId(request.mandalartId());
-        LocalDateTime nextScheduledTime = reminderTimeProvider.generateRandomTime(request.reminderInterval());
+    public void updateReminderOption(Long userId, UpdateReminderOptionsRequest request) {
+        MandalartEntity mandalart = mandalartService.findMandalartByMandalartId(userId, request.mandalartId());
+        LocalDateTime nextScheduledTime = reminderTimeProvider.generateRandomTime(request.remindInterval());
 
         mandalart.getReminderOption().update(
                 request.reminderEnabled(),
-                request.reminderInterval(),
+                request.remindInterval(),
                 nextScheduledTime
                 );
     }
