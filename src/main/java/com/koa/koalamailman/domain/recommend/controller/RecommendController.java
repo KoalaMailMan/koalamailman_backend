@@ -39,6 +39,7 @@ public class RecommendController implements RecommendControllerDocs {
             @RequestParam("parentGoal") @NotNull String parentGoal,
             @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount
     ) {
-        return recommendService.streamingChildGoalByParentGoal(parentGoal, recommendationCount);
+        return recommendService.streamingChildGoalByParentGoal(parentGoal, recommendationCount)
+                .onErrorResume(e -> Flux.just("[ERROR]: " + e.getMessage()));
     }
 }
