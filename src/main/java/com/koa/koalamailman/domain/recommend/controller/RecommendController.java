@@ -3,6 +3,8 @@ package com.koa.koalamailman.domain.recommend.controller;
 import com.koa.koalamailman.domain.recommend.controller.docs.RecommendControllerDocs;
 import com.koa.koalamailman.domain.recommend.dto.ChildGoalsResponse;
 import com.koa.koalamailman.domain.recommend.service.RecommendService;
+import com.koa.koalamailman.domain.user.repository.AgeGroup;
+import com.koa.koalamailman.domain.user.repository.Gender;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.exception.SuccessCode;
 import jakarta.validation.constraints.Max;
@@ -26,20 +28,26 @@ public class RecommendController implements RecommendControllerDocs {
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public SuccessResponse<ChildGoalsResponse> generationSubGoalList(
             @RequestParam("parentGoal") @NotNull String parentGoal,
-            @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount
-    ) {
+            @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
+            @RequestParam(value = "ageGroup", required = false) AgeGroup ageGroup,
+            @RequestParam(value = "gender", required = false)Gender gender,
+            @RequestParam(value = "job", required = false) String job
+            ) {
         return SuccessResponse.success(
                 SuccessCode.GET_RECOMMEND_SUCCESS,
-                recommendService.getChildGoalByParentGoal(parentGoal, recommendationCount)
+                recommendService.getChildGoalByParentGoal(parentGoal, recommendationCount, ageGroup, gender, job)
         );
     }
 
     @GetMapping(value = "/streaming", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> generationStreamingChildGoal(
             @RequestParam("parentGoal") @NotNull String parentGoal,
-            @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount
+            @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
+            @RequestParam(value = "ageGroup", required = false) AgeGroup ageGroup,
+            @RequestParam(value = "gender", required = false)Gender gender,
+            @RequestParam(value = "job", required = false) String job
     ) {
-        return recommendService.streamingChildGoalByParentGoal(parentGoal, recommendationCount)
+        return recommendService.streamingChildGoalByParentGoal(parentGoal, recommendationCount, ageGroup, gender, job)
                 .onErrorResume(e -> Flux.just("[ERROR]: " + e.getMessage()));
     }
 }
