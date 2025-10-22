@@ -56,5 +56,4 @@ public class RecommendService {
                 .stream()
                 .content();
     }
-
 }

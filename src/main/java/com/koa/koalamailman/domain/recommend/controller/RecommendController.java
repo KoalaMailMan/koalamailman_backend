@@ -10,6 +10,7 @@ import com.koa.koalamailman.global.exception.SuccessCode;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/recommend")
 @Validated
@@ -48,6 +50,8 @@ public class RecommendController implements RecommendControllerDocs {
             @RequestParam(value = "job", required = false) String job
     ) {
         return recommendService.streamingChildGoalByParentGoal(parentGoal, recommendationCount, ageGroup, gender, job)
+                .concatWith(Flux.just("__COMPLETE__"))
+                .doOnComplete(() -> log.info("[목표 추천] 모든 streaming 데이터 전송 완료"))
                 .onErrorResume(e -> Flux.just("[ERROR]: " + e.getMessage()));
     }
 }
