@@ -67,7 +67,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                     .fromHttpUrl("http://localhost:3000")
                     .queryParam("access_token", accessToken)
                     .build().toUriString();
-
         } else {
             targetUrl = UriComponentsBuilder
                     .fromHttpUrl(loginRedirectUri)
