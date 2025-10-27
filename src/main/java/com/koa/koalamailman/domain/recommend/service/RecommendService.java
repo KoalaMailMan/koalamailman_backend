@@ -2,6 +2,8 @@ package com.koa.koalamailman.domain.recommend.service;
 
 import com.koa.koalamailman.domain.recommend.dto.ChildGoalsResponse;
 import com.koa.koalamailman.domain.recommend.template.PromptTemplates;
+import com.koa.koalamailman.domain.user.repository.AgeGroup;
+import com.koa.koalamailman.domain.user.repository.Gender;
 import com.koa.koalamailman.global.exception.BusinessException;
 import com.koa.koalamailman.global.exception.error.RecommendErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +21,15 @@ public class RecommendService {
 
     private final ChatClient chatClient;
 
-    public ChildGoalsResponse getChildGoalByParentGoal(String parentGoal, int recommendationCount) {
+    public ChildGoalsResponse getChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job) {
         var response =  chatClient.prompt()
                 .user(u -> u
                         .text(PromptTemplates.Reference_Sub_By_Main)
                         .param("parentGoal", parentGoal)
                         .param("recommendationCount", recommendationCount)
+                        .param("ageGroup", ageGroup != null ? ageGroup.toString() : "")
+                        .param("gender", gender != null ? gender.toString() : "")
+                        .param("job", job != null ? job : "")
                 )
                 .call()
                 .content();
@@ -38,12 +43,15 @@ public class RecommendService {
         return new ChildGoalsResponse(goals);
     }
 
-    public Flux<String> streamingChildGoalByParentGoal(String parentGoal, int recommendationCount) {
+    public Flux<String> streamingChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job) {
         return chatClient.prompt()
                 .user(u -> u
                         .text(PromptTemplates.Reference_Sub_By_Main)
                         .param("parentGoal", parentGoal)
                         .param("recommendationCount", recommendationCount)
+                        .param("ageGroup", ageGroup != null ? ageGroup.toString() : "")
+                        .param("gender", gender != null ? gender.toString() : "")
+                        .param("job", job != null ? job : "")
                 )
                 .stream()
                 .content();

@@ -1,6 +1,8 @@
 package com.koa.koalamailman.domain.recommend.controller.docs;
 
 import com.koa.koalamailman.domain.recommend.dto.ChildGoalsResponse;
+import com.koa.koalamailman.domain.user.repository.AgeGroup;
+import com.koa.koalamailman.domain.user.repository.Gender;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,7 +31,10 @@ public interface RecommendControllerDocs {
             @Parameter(description = "주요(parent) 목표")
             @RequestParam("parentGoal") @NotNull String parentGoal,
             @Parameter(description = "추천 받을 목표 갯수")
-            @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount
+            @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
+            @RequestParam("ageGroup") AgeGroup ageGroup,
+            @RequestParam("gender") Gender gender,
+            @RequestParam("job") String job
     );
 
     @Operation(summary = "세부(child) 목표 추천 SSE 스트리밍", description = "주요(parent) 목표에 대한 세부(child) 목표를 스트리밍 방식으로 추천합니다.")
@@ -45,6 +50,9 @@ public interface RecommendControllerDocs {
             @Parameter(description = "주요(parent) 목표")
             @RequestParam("parentGoal") @NotNull String parentGoal,
             @Parameter(description = "추천 받을 목표 갯수")
-            @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount
+            @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
+            @RequestParam("ageGroup") AgeGroup ageGroup,
+            @RequestParam("gender")Gender gender,
+            @RequestParam("job") String job
     );
 }
