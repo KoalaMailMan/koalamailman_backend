@@ -60,10 +60,19 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         ResponseCookie cookie = cookieProvider.setRefreshTokenCookie(refreshToken);
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        String targetUrl = UriComponentsBuilder
-                .fromHttpUrl(loginRedirectUri)
-                .queryParam("access_token", accessToken)
-                .build().toUriString();
+        String targetUrl;
+        // 프론트엔드 로컬 테스트용 계정
+        if (providerId.equals("google") && email.equals("mamonde456@gmail.com")) {
+            targetUrl = UriComponentsBuilder
+                    .fromHttpUrl("http://localhost:3000")
+                    .queryParam("access_token", accessToken)
+                    .build().toUriString();
+        } else {
+            targetUrl = UriComponentsBuilder
+                    .fromHttpUrl(loginRedirectUri)
+                    .queryParam("access_token", accessToken)
+                    .build().toUriString();
+        }
 
         response.sendRedirect(targetUrl);
     }
