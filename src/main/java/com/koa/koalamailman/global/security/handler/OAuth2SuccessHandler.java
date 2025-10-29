@@ -61,7 +61,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String targetUrl;
 
         // 프론트엔드 로컬 테스트용 계정
-        if (registrationId.equals("google") && (email.equals("mamonde456@gmail.com") || email.equals("kwakjungah@naver.com"))) {
+        if (registrationId.equals("google") && (email.equals("mamonde456@gmail.com") || email.equals("kwakjungah0605@gmail.com"))) {
             targetUrl = UriComponentsBuilder
                     .fromHttpUrl("http://localhost:3000")
                     .queryParam("access_token", accessToken)
