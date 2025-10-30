@@ -6,6 +6,6 @@ import jakarta.validation.constraints.NotNull;
 public record UpdateReminderOptionsRequest(
         @NotNull Long mandalartId,
         @NotNull Boolean reminderEnabled,
-        RemindInterval remindInterval
+        RemindInterval reminderInterval
 ) {
 }
