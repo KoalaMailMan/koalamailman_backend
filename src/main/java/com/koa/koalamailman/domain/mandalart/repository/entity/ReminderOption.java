@@ -1,5 +1,6 @@
 package com.koa.koalamailman.domain.mandalart.repository.entity;
 
+import com.koa.RingDong.domain.reminder.provider.ReminderTimeProvider;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +26,10 @@ public class ReminderOption {
         this.reminderEnabled = enabled;
         this.remindInterval = interval;
         this.remindScheduledAt = nextTime;
+    }
+
+    public void updateNextScheduledTime(LocalDateTime remindScheduledAt) {
+        this.remindScheduledAt = remindScheduledAt;
     }
 
     public void reschedule(LocalDateTime nextTime) {
