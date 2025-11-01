@@ -1,6 +1,5 @@
 package com.koa.koalamailman.domain.mandalart.repository.entity;
 
-import com.koa.RingDong.domain.reminder.dto.ReminderDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,14 +37,5 @@ public class MandalartEntity extends BaseEntity {
                 .userId(userId)
                 .reminderOption(ReminderOption.disabled())
                 .build();
-    }
-
-    public ReminderDto toReminderDto() {
-        return new ReminderDto(
-                this.id,
-                this.reminderOption.getReminderEnabled(),
-                this.reminderOption.getRemindInterval(),
-                this.reminderOption.getRemindScheduledAt()
-        );
     }
 }
