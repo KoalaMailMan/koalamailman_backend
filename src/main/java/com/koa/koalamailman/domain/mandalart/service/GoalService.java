@@ -10,7 +10,6 @@ import com.koa.koalamailman.domain.mandalart.repository.entity.MandalartEntity;
 import com.koa.koalamailman.global.exception.BusinessException;
 import com.koa.koalamailman.global.exception.error.MandalartErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,9 +42,9 @@ public class GoalService {
         GoalEntity core;
         if (coreDto.id() != null) {
             core = getGoalFromGoalsMapByGoalId(currentGoalsMap, coreDto.id());
-            core.updateGoalInfo(coreDto.content());
+            core.updateGoal(coreDto.content(), coreDto.status());
         } else {
-            core = GoalEntity.createCoreGoal(mandalart, coreDto.content());
+            core = GoalEntity.createCoreGoal(mandalart, coreDto.content(), coreDto.status());
             newGoals.add(core);
         }
         allGoals.add(core);
@@ -56,9 +55,9 @@ public class GoalService {
 
             if (mainDto.id() != null) {
                 main = getGoalFromGoalsMapByGoalId(currentGoalsMap, mainDto.id());
-                main.updateGoalInfo(mainDto.content());
+                main.updateGoal(mainDto.content(), mainDto.status());
             } else {
-                main = GoalEntity.createMainGoal(mandalart, mainDto.position(), mainDto.content());
+                main = GoalEntity.createMainGoal(mandalart, mainDto.position(), mainDto.content(), mainDto.status());
                 newGoals.add(main);
             }
             allGoals.add(main);
@@ -69,9 +68,9 @@ public class GoalService {
 
                 if (subDto.id() != null) {
                     sub = getGoalFromGoalsMapByGoalId(currentGoalsMap, subDto.id());
-                    sub.updateGoalInfo(subDto.content());
+                    sub.updateGoal(subDto.content(), subDto.status());
                 } else {
-                    sub = GoalEntity.createSubGoal(mandalart, mainDto.position(), subDto.position(), subDto.content());
+                    sub = GoalEntity.createSubGoal(mandalart, mainDto.position(), subDto.position(), subDto.content(), subDto.status());
                     newGoals.add(sub);
                 }
                 allGoals.add(sub);
