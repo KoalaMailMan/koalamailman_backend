@@ -1,15 +1,13 @@
-package com.koa.koalamailman.domain.reminder.domain;
+package com.koa.koalamailman.domain.reminder.application.mail;
 
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
-
 @Getter
 @Builder
-public class EmailMessage {
+public class MailMessage {
     private final String from;
-    private final List<String> to;
+    private final String to;
     private final String subject;
     private final String text;
     private final String html;

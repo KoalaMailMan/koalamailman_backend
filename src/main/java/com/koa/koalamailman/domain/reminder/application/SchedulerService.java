@@ -2,6 +2,7 @@ package com.koa.koalamailman.domain.reminder.application;
 
 import com.koa.koalamailman.domain.mandalart.repository.entity.MandalartEntity;
 import com.koa.koalamailman.domain.mandalart.service.MandalartService;
+import com.koa.koalamailman.domain.reminder.application.mail.MailService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
