@@ -1,6 +1,6 @@
-package com.koa.koalamailman.domain.reminder.util;
+package com.koa.koalamailman.domain.reminder.application.util;
 
-import com.koa.koalamailman.domain.reminder.dto.MandalartEmailMessage;
+import com.koa.koalamailman.domain.reminder.domain.MandalartEmailMessage;
 
 import java.util.Objects;
 

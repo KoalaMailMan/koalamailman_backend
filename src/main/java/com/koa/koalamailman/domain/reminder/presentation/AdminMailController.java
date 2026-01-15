@@ -1,7 +1,7 @@
-package com.koa.koalamailman.domain.reminder.controller;
+package com.koa.koalamailman.domain.reminder.presentation;
 
-import com.koa.koalamailman.domain.reminder.dto.EmailMessage;
-import com.koa.koalamailman.domain.reminder.service.MailService;
+import com.koa.koalamailman.domain.reminder.domain.EmailMessage;
+import com.koa.koalamailman.domain.reminder.application.MailService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/internal/mail")
 @RequiredArgsConstructor
-public class MailController {
+public class AdminMailController {
 
     private final MailService mailService;
 

@@ -1,4 +1,4 @@
-package com.koa.koalamailman.domain.reminder.dto;
+package com.koa.koalamailman.domain.reminder.domain;
 
 import lombok.Builder;
 import lombok.Getter;

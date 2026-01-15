@@ -1,14 +1,15 @@
-package com.koa.koalamailman.domain.reminder.controller;
+package com.koa.koalamailman.domain.reminder.presentation;
 
-import com.koa.koalamailman.domain.reminder.controller.docs.ReminderControllerDocs;
-import com.koa.koalamailman.domain.reminder.dto.request.UpdateReminderOptionsRequest;
-import com.koa.koalamailman.domain.reminder.service.ReminderService;
+import com.koa.koalamailman.domain.reminder.presentation.docs.ReminderControllerDocs;
+import com.koa.koalamailman.domain.reminder.presentation.dto.request.UpdateReminderOptionsRequest;
+import com.koa.koalamailman.domain.reminder.application.ReminderService;
 import com.koa.koalamailman.global.dto.RequestDataWrapper;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.exception.SuccessCode;
 import com.koa.koalamailman.global.security.oauth.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +25,7 @@ public class ReminderController implements ReminderControllerDocs {
     @PatchMapping
     @Override
     public SuccessResponse<Void> updateReminderOptions(
-            CustomUserDetails userDetails,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody @Valid RequestDataWrapper<UpdateReminderOptionsRequest> request) {
         reminderService.updateReminderOption(userDetails.getUserId(), request.getData());
         return SuccessResponse.success(

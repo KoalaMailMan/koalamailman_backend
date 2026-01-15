@@ -1,4 +1,4 @@
-package com.koa.koalamailman.domain.reminder.provider;
+package com.koa.koalamailman.domain.reminder.application.provider;
 
 import com.koa.koalamailman.domain.mandalart.repository.entity.RemindInterval;
 import org.springframework.stereotype.Component;

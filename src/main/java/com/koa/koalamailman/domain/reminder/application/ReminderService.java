@@ -1,11 +1,11 @@
-package com.koa.koalamailman.domain.reminder.service;
+package com.koa.koalamailman.domain.reminder.application;
 
 import com.koa.koalamailman.domain.mandalart.repository.MandalartRepository;
 import com.koa.koalamailman.domain.mandalart.repository.entity.MandalartEntity;
 import com.koa.koalamailman.domain.mandalart.repository.entity.ReminderOption;
 import com.koa.koalamailman.domain.mandalart.service.MandalartService;
-import com.koa.koalamailman.domain.reminder.dto.request.UpdateReminderOptionsRequest;
-import com.koa.koalamailman.domain.reminder.provider.ReminderTimeProvider;
+import com.koa.koalamailman.domain.reminder.presentation.dto.request.UpdateReminderOptionsRequest;
+import com.koa.koalamailman.domain.reminder.application.provider.ReminderTimeProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,6 +1,6 @@
-package com.koa.koalamailman.domain.reminder.controller.docs;
+package com.koa.koalamailman.domain.reminder.presentation.docs;
 
-import com.koa.koalamailman.domain.reminder.dto.request.UpdateReminderOptionsRequest;
+import com.koa.koalamailman.domain.reminder.presentation.dto.request.UpdateReminderOptionsRequest;
 import com.koa.koalamailman.global.dto.RequestDataWrapper;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.security.oauth.CustomUserDetails;

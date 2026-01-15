@@ -1,8 +1,9 @@
-package com.koa.koalamailman.domain.reminder.client;
+package com.koa.koalamailman.domain.reminder.infrastructure.ses;
 
-import com.koa.koalamailman.domain.reminder.dto.EmailMessage;
-import com.koa.koalamailman.domain.reminder.dto.MandalartEmailMessage;
-import com.koa.koalamailman.domain.reminder.util.MailContentBuilder;
+import com.koa.koalamailman.domain.reminder.application.MailClient;
+import com.koa.koalamailman.domain.reminder.domain.EmailMessage;
+import com.koa.koalamailman.domain.reminder.domain.MandalartEmailMessage;
+import com.koa.koalamailman.domain.reminder.application.util.MailContentBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

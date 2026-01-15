@@ -1,4 +1,4 @@
-package com.koa.koalamailman.domain.reminder.service;
+package com.koa.koalamailman.domain.reminder.application;
 
 import com.koa.koalamailman.domain.mandalart.repository.entity.MandalartEntity;
 import com.koa.koalamailman.domain.mandalart.service.MandalartService;

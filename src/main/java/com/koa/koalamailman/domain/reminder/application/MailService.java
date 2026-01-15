@@ -1,11 +1,11 @@
-package com.koa.koalamailman.domain.reminder.service;
+package com.koa.koalamailman.domain.reminder.application;
 
 import com.koa.koalamailman.domain.mandalart.repository.entity.GoalEntity;
 import com.koa.koalamailman.domain.mandalart.repository.entity.MandalartEntity;
 import com.koa.koalamailman.domain.mandalart.service.GoalService;
-import com.koa.koalamailman.domain.reminder.client.SesMailClient;
-import com.koa.koalamailman.domain.reminder.dto.EmailMessage;
-import com.koa.koalamailman.domain.reminder.dto.MandalartEmailMessage;
+import com.koa.koalamailman.domain.reminder.infrastructure.ses.SesMailClient;
+import com.koa.koalamailman.domain.reminder.domain.EmailMessage;
+import com.koa.koalamailman.domain.reminder.domain.MandalartEmailMessage;
 import com.koa.koalamailman.domain.mandalart.repository.entity.GoalLevel;
 import com.koa.koalamailman.domain.user.repository.User;
 import com.koa.koalamailman.domain.user.service.UserService;
