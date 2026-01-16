@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MailService {
+public class RemindMailService {
     private final MailSender mailSender;
     private final UserService userService;
     private final GoalService goalService;
@@ -24,7 +24,7 @@ public class MailService {
     @Value("${mail.tip}")
     private String tip;
 
-    public void sendRemindMail(MandalartEntity mandalart) {
+    public void send(MandalartEntity mandalart) {
         User user = userService.findUserById(mandalart.getUserId());
         List<GoalEntity> goals = goalService.getCoreAndMainGoalsFromMandalart(mandalart);
 

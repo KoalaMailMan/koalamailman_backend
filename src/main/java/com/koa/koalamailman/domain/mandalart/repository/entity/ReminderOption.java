@@ -27,7 +27,7 @@ public class ReminderOption {
         this.remindScheduledAt = nextTime;
     }
 
-    public void reschedule(LocalDateTime nextTime) {
+    public void setRemindScheduledAt(LocalDateTime nextTime) {
         this.remindScheduledAt = nextTime;
     }
 

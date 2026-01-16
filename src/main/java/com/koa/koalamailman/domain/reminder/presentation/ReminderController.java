@@ -1,8 +1,8 @@
 package com.koa.koalamailman.domain.reminder.presentation;
 
+import com.koa.koalamailman.domain.reminder.application.usecase.UpdateReminderOptionUseCase;
 import com.koa.koalamailman.domain.reminder.presentation.docs.ReminderControllerDocs;
 import com.koa.koalamailman.domain.reminder.presentation.dto.request.UpdateReminderOptionsRequest;
-import com.koa.koalamailman.domain.reminder.application.ReminderService;
 import com.koa.koalamailman.global.dto.RequestDataWrapper;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.exception.SuccessCode;
@@ -20,14 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ReminderController implements ReminderControllerDocs {
 
-    private final ReminderService reminderService;
+    private final UpdateReminderOptionUseCase updateReminderOption;
 
     @PatchMapping
     @Override
     public SuccessResponse<Void> updateReminderOptions(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody @Valid RequestDataWrapper<UpdateReminderOptionsRequest> request) {
-        reminderService.updateReminderOption(userDetails.getUserId(), request.getData());
+        updateReminderOption.updateReminderOption(userDetails.getUserId(), request.getData());
         return SuccessResponse.success(
                 SuccessCode.UPDATE_REMINDER_SUCCESS
         );
