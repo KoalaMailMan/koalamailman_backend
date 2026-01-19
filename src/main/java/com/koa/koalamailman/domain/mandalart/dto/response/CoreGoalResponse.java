@@ -1,11 +1,14 @@
 package com.koa.koalamailman.domain.mandalart.dto.response;
 
 import com.koa.koalamailman.domain.mandalart.dto.CoreGoalDto;
+import com.koa.koalamailman.domain.mandalart.repository.entity.Status;
+
 import java.util.List;
 
 public record CoreGoalResponse(
         Long goalId,
         String content,
+        Status status,
         List<MainGoalResponse> mains
 ) {
     public static CoreGoalResponse from(CoreGoalDto dto) {
@@ -13,6 +16,6 @@ public record CoreGoalResponse(
                 .map(MainGoalResponse::from)
                 .toList();
 
-        return new CoreGoalResponse(dto.id(), dto.content(), mainResponses);
+        return new CoreGoalResponse(dto.id(), dto.content(), dto.status(), mainResponses);
     }
 }

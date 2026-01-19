@@ -109,7 +109,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
 
-        cfg.setAllowedOrigins(List.of("http://localhost:*", frontUri, backUri));
+        cfg.setAllowedOrigins(List.of("http://localhost:3000", frontUri, backUri));
 
         cfg.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS","HEAD"));
         cfg.setAllowedHeaders(List.of("*"));
