@@ -22,15 +22,7 @@ public class RecommendService {
     private final ChatClient chatClient;
 
     public ChildGoalsResponse getChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job) {
-        var response =  chatClient.prompt()
-                .user(u -> u
-                        .text(PromptTemplates.Reference_Sub_By_Main)
-                        .param("parentGoal", parentGoal)
-                        .param("recommendationCount", recommendationCount)
-                        .param("ageGroup", ageGroup != null ? ageGroup.toString() : "")
-                        .param("gender", gender != null ? gender.toString() : "")
-                        .param("job", job != null ? job : "")
-                )
+        var response = buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job)
                 .call()
                 .content();
 
@@ -44,6 +36,18 @@ public class RecommendService {
     }
 
     public Flux<String> streamingChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job) {
+        return buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job)
+                .stream()
+                .content();
+    }
+
+    private ChatClient.ChatClientRequestSpec buildChildGoalPrompt(
+            String parentGoal,
+            int recommendationCount,
+            AgeGroup ageGroup,
+            Gender gender,
+            String job
+    ) {
         return chatClient.prompt()
                 .user(u -> u
                         .text(PromptTemplates.Reference_Sub_By_Main)
@@ -52,8 +56,6 @@ public class RecommendService {
                         .param("ageGroup", ageGroup != null ? ageGroup.toString() : "")
                         .param("gender", gender != null ? gender.toString() : "")
                         .param("job", job != null ? job : "")
-                )
-                .stream()
-                .content();
+                );
     }
 }

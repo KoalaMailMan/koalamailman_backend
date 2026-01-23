@@ -57,11 +57,7 @@ public class RecommendController implements RecommendControllerDocs {
                 .doOnComplete(() -> log.info("[목표 추천] 모든 streaming 데이터 전송 완료"))
                 .onErrorResume(e -> {
                     log.error("[목표 추천] 스트리밍 에러 발생", e);
-
-                    return Flux.just(StreamingMessage.error(
-                            BaseErrorCode.INTERNAL_SERVER_ERROR.getClass().getSimpleName(),
-                            "스트리밍 중 오류가 발생했습니다."
-                    ));
+                    return Flux.just(StreamingMessage.error(BaseErrorCode.INTERNAL_SERVER_ERROR));
                 });
     }
 }

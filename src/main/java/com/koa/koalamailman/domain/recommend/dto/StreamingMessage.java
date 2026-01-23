@@ -19,7 +19,7 @@ public record StreamingMessage(
     }
 
     public static StreamingMessage error(ErrorCode errorCode) {
-        return new StreamingMessage("error", null, errorCode.getClass().getSimpleName(), errorCode.getMessage());
+        return new StreamingMessage("error", null, errorCode.getCode(), errorCode.getMessage());
     }
 
     public static StreamingMessage error(String code, String message) {
