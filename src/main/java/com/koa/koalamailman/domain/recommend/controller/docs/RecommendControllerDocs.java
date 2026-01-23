@@ -1,6 +1,7 @@
 package com.koa.koalamailman.domain.recommend.controller.docs;
 
 import com.koa.koalamailman.domain.recommend.dto.ChildGoalsResponse;
+import com.koa.koalamailman.domain.recommend.dto.StreamingMessage;
 import com.koa.koalamailman.domain.user.repository.AgeGroup;
 import com.koa.koalamailman.domain.user.repository.Gender;
 import com.koa.koalamailman.global.dto.SuccessResponse;
@@ -37,22 +38,30 @@ public interface RecommendControllerDocs {
             @RequestParam("job") String job
     );
 
-    @Operation(summary = "세부(child) 목표 추천 SSE 스트리밍", description = "주요(parent) 목표에 대한 세부(child) 목표를 스트리밍 방식으로 추천합니다.")
+    @Operation(summary = "세부(child) 목표 추천 SSE 스트리밍",
+            description = """
+                    주요(parent) 목표에 대한 세부(child) 목표를 스트리밍 방식으로 추천합니다.
+
+                    응답 타입:
+                    - data: { "type": "data", "content": "목표 내용" }
+                    - complete: { "type": "complete" }
+                    - error: { "type": "error", "code": "에러코드", "message": "에러메시지" }
+                    """)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "스트리밍 연결 성공",
                     content = @Content(
                             mediaType = "text/event-stream",
-                            array = @ArraySchema(schema = @Schema(implementation = String.class))
+                            array = @ArraySchema(schema = @Schema(implementation = StreamingMessage.class))
                     )
             )
     })
-    Flux<String> generationStreamingChildGoal(
+    Flux<StreamingMessage> generationStreamingChildGoal(
             @Parameter(description = "주요(parent) 목표")
             @RequestParam("parentGoal") @NotNull String parentGoal,
             @Parameter(description = "추천 받을 목표 갯수")
             @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
             @RequestParam("ageGroup") AgeGroup ageGroup,
-            @RequestParam("gender")Gender gender,
+            @RequestParam("gender") Gender gender,
             @RequestParam("job") String job
     );
 }
