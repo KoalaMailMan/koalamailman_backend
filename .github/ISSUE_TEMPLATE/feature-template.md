@@ -1,16 +1,19 @@
 ---
-name: feature template
-about: feature 이슈 템플릿
-title: "Type: 이슈 내용"
-labels: ''
+name: Feature Request
+about: 새로운 기능 요청
+title: "feat: "
+labels: 'feature'
 assignees: ''
 
 ---
 
-## 📌  Feature Issue
-<!-- 구현할 기능에 대한 내용을 설명해주세요. -->
+## 설명
+<!-- 구현할 기능에 대해 설명해주세요. -->
 
-## 📝  To-do
+## 작업 내용
 <!-- 해야 할 일들을 적어주세요. -->
 - [ ]
 - [ ]
+
+## 참고 사항
+<!-- 관련 링크, 스크린샷, 참고 자료 등 -->
