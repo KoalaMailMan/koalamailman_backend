@@ -2,11 +2,13 @@ package com.koa.koalamailman.domain.recommend.controller;
 
 import com.koa.koalamailman.domain.recommend.controller.docs.RecommendControllerDocs;
 import com.koa.koalamailman.domain.recommend.dto.ChildGoalsResponse;
+import com.koa.koalamailman.domain.recommend.dto.StreamingMessage;
 import com.koa.koalamailman.domain.recommend.service.RecommendService;
 import com.koa.koalamailman.domain.user.repository.AgeGroup;
 import com.koa.koalamailman.domain.user.repository.Gender;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.exception.SuccessCode;
+import com.koa.koalamailman.global.exception.error.BaseErrorCode;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -42,16 +44,20 @@ public class RecommendController implements RecommendControllerDocs {
     }
 
     @GetMapping(value = "/streaming", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<String> generationStreamingChildGoal(
+    public Flux<StreamingMessage> generationStreamingChildGoal(
             @RequestParam("parentGoal") @NotNull String parentGoal,
             @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
             @RequestParam(value = "ageGroup", required = false) AgeGroup ageGroup,
-            @RequestParam(value = "gender", required = false)Gender gender,
+            @RequestParam(value = "gender", required = false) Gender gender,
             @RequestParam(value = "job", required = false) String job
     ) {
         return recommendService.streamingChildGoalByParentGoal(parentGoal, recommendationCount, ageGroup, gender, job)
-                .concatWith(Flux.just("__COMPLETE__"))
+                .map(StreamingMessage::data)
+                .concatWith(Flux.just(StreamingMessage.complete()))
                 .doOnComplete(() -> log.info("[목표 추천] 모든 streaming 데이터 전송 완료"))
-                .onErrorResume(e -> Flux.just("[ERROR]: " + e.getMessage()));
+                .onErrorResume(e -> {
+                    log.error("[목표 추천] 스트리밍 에러 발생", e);
+                    return Flux.just(StreamingMessage.error(BaseErrorCode.INTERNAL_SERVER_ERROR));
+                });
     }
 }
