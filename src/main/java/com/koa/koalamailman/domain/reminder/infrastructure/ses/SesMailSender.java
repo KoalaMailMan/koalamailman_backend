@@ -1,8 +1,7 @@
-package com.koa.koalamailman.domain.reminder.client;
+package com.koa.koalamailman.domain.reminder.infrastructure.ses;
 
-import com.koa.koalamailman.domain.reminder.dto.EmailMessage;
-import com.koa.koalamailman.domain.reminder.dto.MandalartEmailMessage;
-import com.koa.koalamailman.domain.reminder.util.MailContentBuilder;
+import com.koa.koalamailman.domain.reminder.application.mail.MailMessage;
+import com.koa.koalamailman.domain.reminder.application.mail.MailSender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,13 +15,13 @@ import software.amazon.awssdk.services.ses.model.*;
 
 @Component
 @Slf4j
-public class SesMailClient implements MailClient {
+public class SesMailSender implements MailSender {
 
     private final SesClient sesClient;
     private final String charset;
 
 
-    public SesMailClient(
+    public SesMailSender(
             @Value("${aws.access-key}") String accessKey,
             @Value("${aws.secret-key}") String secret,
             @Value("${aws.region:ap-northeast-2}") String region,
@@ -42,51 +41,21 @@ public class SesMailClient implements MailClient {
         return "ses";
     }
 
-    @Override
-    public void send(EmailMessage msg) {
-
-        Body body;
-        if (msg.getHtml() != null) {
-            body = Body.builder()
-                    .html(Content.builder().data(msg.getHtml()).charset(charset).build())
-                    .text(msg.getText() != null ? Content.builder().data(msg.getText()).charset(charset).build() : null)
-                    .build();
-        } else {
-            body = Body.builder()
-                    .text(Content.builder().data(msg.getText()).charset(charset).build())
-                    .build();
-        }
-
-        Message message = Message.builder()
-                .subject(Content.builder().data(msg.getSubject()).charset(charset).build())
-                .body(body)
-                .build();
-
-        SendEmailRequest req = SendEmailRequest.builder()
-                .source(msg.getFrom())
-                .destination(Destination.builder().toAddresses(msg.getTo()).build())
-                .message(message)
-                .build();
-
-        sesClient.sendEmail(req);
-    }
-
-    public void sendMandalart(MandalartEmailMessage msg) {
+    public void send(MailMessage msg) {
         try {
-            String html = MailContentBuilder.build(msg);
 
             Body body = Body.builder()
-                    .html(Content.builder().data(html).charset(charset).build())
+                    .html(Content.builder().data(msg.getHtml()).charset(charset).build())
                     .build();
 
             Message message = Message.builder()
-                    .subject(Content.builder().data(msg.subject()).charset(charset).build())
+                    .subject(Content.builder().data(msg.getSubject()).charset(charset).build())
                     .body(body)
                     .build();
 
             SendEmailRequest req = SendEmailRequest.builder()
-                    .source(msg.from())
-                    .destination(Destination.builder().toAddresses(msg.to()).build())
+                    .source(msg.getFrom())
+                    .destination(Destination.builder().toAddresses(msg.getTo()).build())
                     .message(message)
                     .build();
 
