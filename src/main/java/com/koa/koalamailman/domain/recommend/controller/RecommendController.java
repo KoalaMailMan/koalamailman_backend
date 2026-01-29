@@ -2,7 +2,7 @@ package com.koa.koalamailman.domain.recommend.controller;
 
 import com.koa.koalamailman.domain.recommend.controller.docs.RecommendControllerDocs;
 import com.koa.koalamailman.domain.recommend.dto.ChildGoalsResponse;
-import com.koa.koalamailman.domain.recommend.dto.StreamingMessage;
+import com.koa.koalamailman.domain.recommend.dto.StreamingErrorData;
 import com.koa.koalamailman.domain.recommend.service.RecommendService;
 import com.koa.koalamailman.domain.user.repository.AgeGroup;
 import com.koa.koalamailman.domain.user.repository.Gender;
@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -44,7 +45,7 @@ public class RecommendController implements RecommendControllerDocs {
     }
 
     @GetMapping(value = "/streaming", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<StreamingMessage> generationStreamingChildGoal(
+    public Flux<ServerSentEvent<Object>> generationStreamingChildGoal(
             @RequestParam("parentGoal") @NotNull String parentGoal,
             @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
             @RequestParam(value = "ageGroup", required = false) AgeGroup ageGroup,
@@ -52,12 +53,17 @@ public class RecommendController implements RecommendControllerDocs {
             @RequestParam(value = "job", required = false) String job
     ) {
         return recommendService.streamingChildGoalByParentGoal(parentGoal, recommendationCount, ageGroup, gender, job)
-                .map(StreamingMessage::data)
-                .concatWith(Flux.just(StreamingMessage.complete()))
+                .map(goal -> ServerSentEvent.builder().data(goal).build())
+                .concatWith(Flux.just(ServerSentEvent.builder().event("complete").build()))
                 .doOnComplete(() -> log.info("[목표 추천] 모든 streaming 데이터 전송 완료"))
                 .onErrorResume(e -> {
                     log.error("[목표 추천] 스트리밍 에러 발생", e);
-                    return Flux.just(StreamingMessage.error(BaseErrorCode.INTERNAL_SERVER_ERROR));
+                    return Flux.just(
+                            ServerSentEvent.builder()
+                                    .event("error")
+                                    .data(StreamingErrorData.from(BaseErrorCode.INTERNAL_SERVER_ERROR))
+                                    .build()
+                    );
                 });
     }
 }
