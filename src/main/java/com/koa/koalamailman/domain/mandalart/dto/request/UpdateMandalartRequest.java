@@ -1,13 +1,13 @@
 package com.koa.koalamailman.domain.mandalart.dto.request;
 
-import com.koa.koalamailman.domain.mandalart.dto.CoreGoalDto;
-import com.koa.koalamailman.domain.mandalart.dto.MandalartDto;
-import com.koa.koalamailman.domain.mandalart.repository.entity.MandalartEntity;
-import com.koa.koalamailman.domain.mandalart.repository.entity.ReminderOption;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 
 public record UpdateMandalartRequest(
+        @Schema(description = "create 시에는 X")
         Long mandalartId,
-        ReminderOption reminderOption,
-        UpdateCoreGoalRequest updateCoreGoalRequest
+
+        @Valid
+        UpdateCoreGoalRequest core
 ) {
 }

@@ -1,19 +1,14 @@
 package com.koa.koalamailman.domain.mandalart.service;
 
 import com.koa.koalamailman.domain.mandalart.dto.CoreGoalDto;
-import com.koa.koalamailman.domain.mandalart.dto.MainGoalDto;
 import com.koa.koalamailman.domain.mandalart.dto.MandalartDto;
-import com.koa.koalamailman.domain.mandalart.dto.SubGoalDto;
-import com.koa.koalamailman.domain.mandalart.dto.request.UpdateMandalartRequest;
-import com.koa.koalamailman.domain.mandalart.dto.response.MandalartResponse;
 import com.koa.koalamailman.domain.mandalart.repository.GoalRepository;
 import com.koa.koalamailman.domain.mandalart.repository.MandalartRepository;
 import com.koa.koalamailman.domain.mandalart.repository.entity.GoalEntity;
 import com.koa.koalamailman.domain.mandalart.repository.entity.MandalartEntity;
 import com.koa.koalamailman.global.exception.error.MandalartErrorCode;
-import com.koa.koalamailman.global.exception.BaseException;
+import com.koa.koalamailman.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,9 +23,14 @@ public class MandalartService {
     private final GoalRepository goalRepository;
 
     @Transactional
-    public CoreGoalDto createMandalart(Long userId, CoreGoalDto coreGoalDto) {
-        MandalartEntity mandalart = findMandalartByUserIdOrCreate(userId);
-        return goalService.createAndUpdateGoals(mandalart, coreGoalDto);
+    public MandalartDto createMandalart(Long userId, Long mandalartId, CoreGoalDto coreGoalDto) {
+        MandalartEntity mandalart;
+
+        if (mandalartId == null) mandalart = findMandalartByUserIdOrCreate(userId);
+        else mandalart = findMandalartByMandalartId(userId, mandalartId);
+
+        CoreGoalDto core =  goalService.createAndUpdateGoals(mandalart, coreGoalDto);
+        return MandalartDto.from(mandalart, core);
     }
 
     @Transactional
@@ -40,16 +40,22 @@ public class MandalartService {
         return mandalartDto.from(mandalart, coreGoalDto);
     }
 
+    @Transactional(readOnly = true)
+    public MandalartDto getMandalartWithRemind(Long userId) {
+        MandalartEntity mandalart = findMandalartByUserId(userId);
+        return MandalartDto.from(mandalart, getMandalartByMandalartId(mandalart.getId()));
+    }
+
     @Transactional
-    public CoreGoalDto updateMandalart(Long mandalartId, CoreGoalDto dto) {
-        MandalartEntity mandalart = findMandalartByMandalartId(mandalartId);
+    public CoreGoalDto updateMandalart(Long userId, Long mandalartId, CoreGoalDto dto) {
+        MandalartEntity mandalart = findMandalartByMandalartId(userId, mandalartId);
 
         return goalService.createAndUpdateGoals(mandalart, dto);
     }
 
     @Transactional(readOnly = true)
-    public CoreGoalDto getMandalartByUserId(Long userId) {
-        List<GoalEntity> goals = goalRepository.findGoalsByUserId(userId);
+    public CoreGoalDto getMandalartByMandalartId(Long mandalartId) {
+        List<GoalEntity> goals = goalRepository.findGoalsByMandalartId(mandalartId);
         return CoreGoalDto.fromEntities(goals);
     }
 
@@ -62,13 +68,15 @@ public class MandalartService {
     @Transactional(readOnly = true)
     public MandalartEntity findMandalartByUserId(Long userId) {
         return mandalartRepository.findByUserId(userId)
-                .orElseThrow(() -> new BaseException(MandalartErrorCode.MANDALART_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(MandalartErrorCode.MANDALART_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
-    public MandalartEntity findMandalartByMandalartId(Long mandalartId) {
-        return mandalartRepository.findById(mandalartId)
-                .orElseThrow(() -> new BaseException(MandalartErrorCode.MANDALART_NOT_FOUND));
-    }
+    public MandalartEntity findMandalartByMandalartId(Long userId, Long mandalartId) {
+        MandalartEntity mandalart = mandalartRepository.findById(mandalartId)
+                .orElseThrow(() -> new BusinessException(MandalartErrorCode.MANDALART_NOT_FOUND));
 
+        if (!Objects.equals(mandalart.getUserId(), userId)) throw new BusinessException(MandalartErrorCode.MANDALART_FORBIDDEN);
+        return mandalart;
+    }
 }

@@ -81,9 +81,16 @@ spring:
     openai:
       api-key: ${OPENROUTER_API_KEY}
       base-url: https://openrouter.ai/api
+      connect-timeout: 10s
+      read-timeout: 30s
       chat:
         options:
           model: ${OPENROUTER_MODEL:mistralai/mistral-7b-instruct:free}
+
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=5m
 
 aws:
   region: ap-northeast-2
@@ -91,10 +98,14 @@ aws:
   secret-key: ${AWS_SECRET_ACCESS_KEY}
 
 mail:
-  from: "koala mailman <reminder@ringdong.kr>"
-  fromName: "코알라 우체부"
+  from: "코알라 우체부 <reminder@ringdong.kr>"
+  fromName: "Koala Mailman"
   charset: "UTF-8"
   cta-uri: ${FRONT_URI:https://ringdong.kr}
+  subject: "코알라 우체부가 편지를 전해요  🐨🪽✉️️"
+  logo-url: "https://ringdong.kr/koala.svg"
+  hero-url: ""
+  tip: "중요한 건 꺾이지 않는 마음입니다."
 
 jwt:
   access:

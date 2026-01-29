@@ -7,11 +7,11 @@ import com.koa.koalamailman.domain.mandalart.repository.GoalRepository;
 import com.koa.koalamailman.domain.mandalart.repository.entity.GoalEntity;
 import com.koa.koalamailman.domain.mandalart.repository.entity.GoalLevel;
 import com.koa.koalamailman.domain.mandalart.repository.entity.MandalartEntity;
-import com.koa.koalamailman.global.exception.BaseException;
+import com.koa.koalamailman.global.exception.BusinessException;
 import com.koa.koalamailman.global.exception.error.MandalartErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +23,7 @@ import java.util.Map;
 public class GoalService {
     private final GoalRepository goalRepository;
 
+    @Transactional
     public CoreGoalDto createAndUpdateGoals(MandalartEntity mandalart, CoreGoalDto coreDto) {
         // db에 이미 있는 목표 goalId 별 map
         List<GoalEntity> currentGoals = goalRepository.findGoalsByMandalartId(mandalart.getId());
@@ -41,9 +42,9 @@ public class GoalService {
         GoalEntity core;
         if (coreDto.id() != null) {
             core = getGoalFromGoalsMapByGoalId(currentGoalsMap, coreDto.id());
-            core.updateGoalInfo(coreDto.content());
+            core.updateGoal(coreDto.content(), coreDto.status());
         } else {
-            core = GoalEntity.createCoreGoal(mandalart, coreDto.content());
+            core = GoalEntity.createCoreGoal(mandalart, coreDto.content(), coreDto.status());
             newGoals.add(core);
         }
         allGoals.add(core);
@@ -54,9 +55,9 @@ public class GoalService {
 
             if (mainDto.id() != null) {
                 main = getGoalFromGoalsMapByGoalId(currentGoalsMap, mainDto.id());
-                main.updateGoalInfo(mainDto.content());
+                main.updateGoal(mainDto.content(), mainDto.status());
             } else {
-                main = GoalEntity.createMainGoal(mandalart, mainDto.position(), mainDto.content());
+                main = GoalEntity.createMainGoal(mandalart, mainDto.position(), mainDto.content(), mainDto.status());
                 newGoals.add(main);
             }
             allGoals.add(main);
@@ -67,28 +68,23 @@ public class GoalService {
 
                 if (subDto.id() != null) {
                     sub = getGoalFromGoalsMapByGoalId(currentGoalsMap, subDto.id());
-                    sub.updateGoalInfo(subDto.content());
+                    sub.updateGoal(subDto.content(), subDto.status());
                 } else {
-                    sub = GoalEntity.createSubGoal(mandalart, mainDto.position(), subDto.position(), subDto.content());
+                    sub = GoalEntity.createSubGoal(mandalart, mainDto.position(), subDto.position(), subDto.content(), subDto.status());
                     newGoals.add(sub);
                 }
                 allGoals.add(sub);
             }
         }
 
-        if (!newGoals.isEmpty()) {
-            try {
-                goalRepository.saveAll(newGoals);
-            } catch (DataIntegrityViolationException e) {
-                throw new BaseException(MandalartErrorCode.DUPLICATE_GOAL_POSITION);
-            }
-        }
+        if (!newGoals.isEmpty()) goalRepository.saveAll(newGoals);
+
         return CoreGoalDto.fromEntities(allGoals);
     }
 
     private GoalEntity getGoalFromGoalsMapByGoalId(Map<Long, GoalEntity> goalsMapById, Long goalId) {
         GoalEntity goalEntity = goalsMapById.get(goalId);
-        if (goalEntity == null) throw new BaseException(MandalartErrorCode.GOAL_NOT_FOUND);
+        if (goalEntity == null) throw new BusinessException(MandalartErrorCode.GOAL_NOT_FOUND);
         return goalEntity;
     }
 

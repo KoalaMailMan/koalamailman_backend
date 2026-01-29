@@ -23,6 +23,7 @@ import lombok.*;
 )
 public class GoalEntity {
 
+    public static final int ROOT_POSITION = 0;
     public static final int CORE_POSITION = 0;
 
     @Id
@@ -48,28 +49,31 @@ public class GoalEntity {
     @Column(name = "content", length = 40)
     private String content;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private Status status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
 
 
     public static GoalEntity createCoreGoal(
             MandalartEntity mandalart,
-            String content
+            String content,
+            Status status
     ) {
         return GoalEntity.builder()
                 .mandalart(mandalart)
                 .level(GoalLevel.CORE)
-                .parentPosition(null)
+                .parentPosition(ROOT_POSITION)
                 .position(CORE_POSITION)
                 .content(content)
+                .status(status)
                 .build();
     }
 
     public static GoalEntity createMainGoal(
             MandalartEntity mandalart,
             Integer position,
-            String content
+            String content,
+            Status status
     ) {
         return GoalEntity.builder()
                 .mandalart(mandalart)
@@ -77,6 +81,7 @@ public class GoalEntity {
                 .parentPosition(CORE_POSITION)
                 .position(position)
                 .content(content)
+                .status(status)
                 .build();
     }
 
@@ -84,7 +89,8 @@ public class GoalEntity {
             MandalartEntity mandalart,
             Integer mainPosition,
             Integer position,
-            String content
+            String content,
+            Status status
     ) {
         return GoalEntity.builder()
                 .mandalart(mandalart)
@@ -92,10 +98,13 @@ public class GoalEntity {
                 .parentPosition(mainPosition)
                 .position(position)
                 .content(content)
+                .status(status)
                 .build();
     }
 
-    public void updateGoalInfo(String content) {
+    public void updateGoal(String content, Status status) {
         this.content = content;
+        this.status = status;
     }
+    public void updateGoalStatus(Status status) {this.status = status; }
 }

@@ -9,7 +9,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Table(name = "token")
+@Table(name = "token",
+        indexes = {
+                @Index(name = "idx_user_id", columnList = "userId")
+        })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PRIVATE)

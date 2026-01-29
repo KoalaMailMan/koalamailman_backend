@@ -32,7 +32,7 @@ public interface UserControllerDocs {
             @AuthenticationPrincipal CustomUserDetails userDetails
     );
 
-    @Operation(summary = "유저 프로필 수정")
+    @Operation(summary = "[보류] 유저 프로필 수정")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "유저 프로필 수정 성공"),
             @ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음",

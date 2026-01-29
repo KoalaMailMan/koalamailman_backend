@@ -9,7 +9,6 @@ import com.koa.koalamailman.global.token.CookieProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -25,7 +24,6 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final AccessTokenService accessTokenService;
@@ -33,8 +31,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final RefreshTokenService refreshTokenService;
     private final UserService userService;
 
-    @Value("${app.oauth2.front-uri}")
-    private String frontUri;
+    @Value("${app.oauth2.login-redirect-uri}")
+    private String loginRedirectUri;
     @Value("${app.oauth2.domain}")
     private String cookieDomain;
 
@@ -60,10 +58,20 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         ResponseCookie cookie = cookieProvider.setRefreshTokenCookie(refreshToken);
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        String targetUrl = UriComponentsBuilder
-                .fromHttpUrl(frontUri)
-                .queryParam("access_token", accessToken)
-                .build().toUriString();
+        String targetUrl;
+
+        // 프론트엔드 로컬 테스트용 계정
+        if (registrationId.equals("google") && (email.equals("mamonde456@gmail.com") || email.equals("kwakjungah0605@gmail.com"))) {
+            targetUrl = UriComponentsBuilder
+                    .fromHttpUrl("http://localhost:3000")
+                    .queryParam("access_token", accessToken)
+                    .build().toUriString();
+        } else {
+            targetUrl = UriComponentsBuilder
+                    .fromHttpUrl(loginRedirectUri)
+                    .queryParam("access_token", accessToken)
+                    .build().toUriString();
+        }
 
         response.sendRedirect(targetUrl);
     }

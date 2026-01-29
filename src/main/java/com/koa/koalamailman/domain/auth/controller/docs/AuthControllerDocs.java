@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Tag(name = "로그인, 인증", description = "로그인 인증 관련 API입니다.")
 public interface AuthControllerDocs {
@@ -24,7 +26,10 @@ public interface AuthControllerDocs {
                     @ApiResponse(responseCode = "500", description = "서버 오류")
             }
     )
-    default void googleLogin() {}
+    @GetMapping("/login/google")
+    default void googleLogin() {
+        throw new UnsupportedOperationException("Spring Security에서 처리됩니다.");
+    }
 
     @Operation(
             summary = "네이버 로그인 [GET] /api/auth/login/naver",
@@ -40,7 +45,10 @@ public interface AuthControllerDocs {
                     @ApiResponse(responseCode = "500", description = "서버 오류")
             }
     )
-    default void naverLogin() {}
+    @GetMapping("/login/naver")
+    default void naverLogin() {
+        throw new UnsupportedOperationException("Spring Security에서 처리됩니다.");
+    }
 
     @SecurityRequirement(name = "Authorization")
     @Operation(
@@ -50,7 +58,10 @@ public interface AuthControllerDocs {
                     @ApiResponse(responseCode = "401", description = "이미 로그아웃되었거나 인증되지 않음")
             }
     )
-    default void logout() {}
+    @PostMapping("/logout")
+    default void logout() {
+        throw new UnsupportedOperationException("Spring Security에서 처리됩니다.");
+    }
 
     @Operation(
             summary = "리프레시 토큰으로 액세스 토큰 재발급",
