@@ -39,7 +39,7 @@ public class RecommendService {
         List<String> goals = Arrays.stream(response.split(","))
                 .map(String::trim)
                 .filter(goal -> !goal.isEmpty())
-                .map(goal -> goal.length() > 40 ? goal.substring(0, 40) : goal)
+                .map(this::truncateGoal)
                 .toList();
 
         if (goals.isEmpty()) {
