@@ -8,7 +8,7 @@ import com.koa.koalamailman.domain.user.repository.AgeGroup;
 import com.koa.koalamailman.domain.user.repository.Gender;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.exception.SuccessCode;
-import com.koa.koalamailman.global.exception.error.BaseErrorCode;
+import com.koa.koalamailman.global.exception.error.RecommendErrorCode;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -57,11 +57,11 @@ public class RecommendController implements RecommendControllerDocs {
                 .concatWith(Flux.just(ServerSentEvent.builder().event("complete").build()))
                 .doOnComplete(() -> log.info("[목표 추천] 모든 streaming 데이터 전송 완료"))
                 .onErrorResume(e -> {
-                    log.error("[목표 추천] 스트리밍 에러 발생", e);
+                    log.error("[목표 추천] 스트리밍 에러 발생: {}", e.getClass().getSimpleName(), e);
                     return Flux.just(
-                            ServerSentEvent.builder()
+                            ServerSentEvent.<Object>builder()
                                     .event("error")
-                                    .data(StreamingErrorData.from(BaseErrorCode.INTERNAL_SERVER_ERROR))
+                                    .data(StreamingErrorData.from(RecommendErrorCode.fromException(e)))
                                     .build()
                     );
                 });
