@@ -54,7 +54,7 @@ public class RecommendController implements RecommendControllerDocs {
     ) {
         return recommendService.streamingChildGoalByParentGoal(parentGoal, recommendationCount, ageGroup, gender, job)
                 .map(goal -> ServerSentEvent.builder().data(goal).build())
-                .concatWith(Flux.just(ServerSentEvent.builder().event("complete").build()))
+                .concatWith(Flux.just(ServerSentEvent.builder().event("complete").data("").build()))
                 .doOnComplete(() -> log.info("[목표 추천] 모든 streaming 데이터 전송 완료"))
                 .onErrorResume(e -> {
                     log.error("[목표 추천] 스트리밍 에러 발생: {}", e.getClass().getSimpleName(), e);
