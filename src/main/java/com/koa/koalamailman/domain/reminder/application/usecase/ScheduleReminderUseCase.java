@@ -45,7 +45,7 @@ public class ScheduleReminderUseCase {
 
     private void execute(MandalartEntity mandalart) {
         reminderRemindMailService.send(mandalart);
-        reScheduleReminderUseCase.rescheduleRandom(mandalart);
+        reScheduleReminderUseCase.rescheduleRandom(mandalart.getId());
     }
 
     private long calculateDelay(LocalDateTime scheduledTime) {
