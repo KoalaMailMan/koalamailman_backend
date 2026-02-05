@@ -66,6 +66,9 @@ public class SecurityConfig {
                 .httpBasic(b -> b.disable())
                 //.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+                // SSE 스트리밍 완료 후 async dispatch에서 SecurityContext 전파
+                .securityContext(context -> context.requireExplicitSave(false))
+
                 // 권한
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
