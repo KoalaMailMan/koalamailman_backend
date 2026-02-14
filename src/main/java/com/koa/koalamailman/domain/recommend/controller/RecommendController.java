@@ -20,6 +20,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
+import java.util.List;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -36,11 +38,12 @@ public class RecommendController implements RecommendControllerDocs {
             @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
             @RequestParam(value = "ageGroup", required = false) AgeGroup ageGroup,
             @RequestParam(value = "gender", required = false)Gender gender,
-            @RequestParam(value = "job", required = false) String job
+            @RequestParam(value = "job", required = false) String job,
+            @RequestParam(value = "excludeGoals", required = false) List<String> excludeGoals
             ) {
         return SuccessResponse.success(
                 SuccessCode.GET_RECOMMEND_SUCCESS,
-                recommendService.getChildGoalByParentGoal(parentGoal, recommendationCount, ageGroup, gender, job)
+                recommendService.getChildGoalByParentGoal(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
         );
     }
 
@@ -50,9 +53,10 @@ public class RecommendController implements RecommendControllerDocs {
             @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
             @RequestParam(value = "ageGroup", required = false) AgeGroup ageGroup,
             @RequestParam(value = "gender", required = false) Gender gender,
-            @RequestParam(value = "job", required = false) String job
+            @RequestParam(value = "job", required = false) String job,
+            @RequestParam(value = "excludeGoals", required = false) List<String> excludeGoals
     ) {
-        return recommendService.streamingChildGoalByParentGoal(parentGoal, recommendationCount, ageGroup, gender, job)
+        return recommendService.streamingChildGoalByParentGoal(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
                 .map(goal -> ServerSentEvent.builder().data(goal).build())
                 .concatWith(Flux.just(ServerSentEvent.builder().event("complete").data("").build()))
                 .doOnComplete(() -> log.info("[목표 추천] 모든 streaming 데이터 전송 완료"))

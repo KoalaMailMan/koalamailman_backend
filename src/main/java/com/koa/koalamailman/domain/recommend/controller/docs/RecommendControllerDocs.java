@@ -16,6 +16,8 @@ import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Flux;
 
+import java.util.List;
+
 @SecurityRequirement(name = "Authorization")
 @Tag(name = "목표 추천", description = "목표 추천 관련 API입니다.")
 public interface RecommendControllerDocs {
@@ -32,7 +34,9 @@ public interface RecommendControllerDocs {
             @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
             @RequestParam("ageGroup") AgeGroup ageGroup,
             @RequestParam("gender") Gender gender,
-            @RequestParam("job") String job
+            @RequestParam("job") String job,
+            @Parameter(description = "제외할 목표 목록 (이전에 추천된 목표)")
+            @RequestParam(value = "excludeGoals", required = false) List<String> excludeGoals
     );
 
     @Operation(summary = "세부(child) 목표 추천 SSE 스트리밍",
@@ -54,6 +58,8 @@ public interface RecommendControllerDocs {
             @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
             @RequestParam("ageGroup") AgeGroup ageGroup,
             @RequestParam("gender") Gender gender,
-            @RequestParam("job") String job
+            @RequestParam("job") String job,
+            @Parameter(description = "제외할 목표 목록 (이전에 추천된 목표)")
+            @RequestParam(value = "excludeGoals", required = false) List<String> excludeGoals
     );
 }
