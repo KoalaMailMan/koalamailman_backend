@@ -55,7 +55,7 @@ class RecommendServiceTest {
 
             // when
             ChildGoalsResponse result = recommendService.getChildGoalByParentGoal(
-                    "상위목표", 3, null, null, null);
+                    "상위목표", 3, null, null, null, null);
 
             // then
             assertThat(result.childGoals()).hasSize(3);
@@ -71,7 +71,7 @@ class RecommendServiceTest {
 
             // when
             ChildGoalsResponse result = recommendService.getChildGoalByParentGoal(
-                    "상위목표", 3, null, null, null);
+                    "상위목표", 3, null, null, null, null);
 
             // then
             assertThat(result.childGoals()).containsExactly("목표1", "목표2", "목표3");
@@ -86,7 +86,7 @@ class RecommendServiceTest {
 
             // when
             ChildGoalsResponse result = recommendService.getChildGoalByParentGoal(
-                    "상위목표", 2, null, null, null);
+                    "상위목표", 2, null, null, null, null);
 
             // then
             assertThat(result.childGoals()).hasSize(2);
@@ -103,7 +103,7 @@ class RecommendServiceTest {
 
             // when
             ChildGoalsResponse result = recommendService.getChildGoalByParentGoal(
-                    "상위목표", 2, null, null, null);
+                    "상위목표", 2, null, null, null, null);
 
             // then
             assertThat(result.childGoals().get(0)).hasSize(40);
@@ -118,7 +118,7 @@ class RecommendServiceTest {
 
             // when & then
             assertThatThrownBy(() -> recommendService.getChildGoalByParentGoal(
-                    "상위목표", 3, null, null, null))
+                    "상위목표", 3, null, null, null, null))
                     .isInstanceOf(BusinessException.class)
                     .extracting("errorCode")
                     .isEqualTo(RecommendErrorCode.RECOMMEND_NOT_CONTENT);
@@ -132,7 +132,7 @@ class RecommendServiceTest {
 
             // when & then
             assertThatThrownBy(() -> recommendService.getChildGoalByParentGoal(
-                    "상위목표", 3, null, null, null))
+                    "상위목표", 3, null, null, null, null))
                     .isInstanceOf(BusinessException.class)
                     .extracting("errorCode")
                     .isEqualTo(RecommendErrorCode.RECOMMEND_NOT_CONTENT);
@@ -146,7 +146,7 @@ class RecommendServiceTest {
 
             // when & then
             assertThatThrownBy(() -> recommendService.getChildGoalByParentGoal(
-                    "상위목표", 3, null, null, null))
+                    "상위목표", 3, null, null, null, null))
                     .isInstanceOf(BusinessException.class)
                     .extracting("errorCode")
                     .isEqualTo(RecommendErrorCode.RECOMMEND_NOT_CONTENT);
@@ -172,7 +172,7 @@ class RecommendServiceTest {
 
             // when
             Flux<String> result = recommendService.streamingChildGoalByParentGoal(
-                    "상위목표", 3, null, null, null);
+                    "상위목표", 3, null, null, null, null);
 
             // then
             StepVerifier.create(result)
@@ -190,7 +190,7 @@ class RecommendServiceTest {
 
             // when
             Flux<String> result = recommendService.streamingChildGoalByParentGoal(
-                    "상위목표", 3, null, null, null);
+                    "상위목표", 3, null, null, null, null);
 
             // then
             StepVerifier.create(result)
@@ -209,7 +209,7 @@ class RecommendServiceTest {
 
             // when
             Flux<String> result = recommendService.streamingChildGoalByParentGoal(
-                    "상위목표", 2, null, null, null);
+                    "상위목표", 2, null, null, null, null);
 
             // then
             StepVerifier.create(result)
@@ -226,7 +226,7 @@ class RecommendServiceTest {
 
             // when
             Flux<String> result = recommendService.streamingChildGoalByParentGoal(
-                    "상위목표", 2, null, null, null);
+                    "상위목표", 2, null, null, null, null);
 
             // then
             StepVerifier.create(result)
