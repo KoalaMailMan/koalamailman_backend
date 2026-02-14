@@ -26,8 +26,8 @@ public class RecommendService {
 
     private final ChatClient chatClient;
 
-    public ChildGoalsResponse getChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job) {
-        var response = buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job)
+    public ChildGoalsResponse getChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job, List<String> excludeGoals) {
+        var response = buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
                 .call()
                 .content();
 
@@ -50,10 +50,10 @@ public class RecommendService {
         return new ChildGoalsResponse(goals);
     }
 
-    public Flux<String> streamingChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job) {
+    public Flux<String> streamingChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job, List<String> excludeGoals) {
         AtomicReference<String> buffer = new AtomicReference<>("");
 
-        return buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job)
+        return buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
                 .stream()
                 .content()
                 .concatMap(chunk -> parseCompletedGoals(buffer, chunk))
@@ -94,8 +94,13 @@ public class RecommendService {
             int recommendationCount,
             AgeGroup ageGroup,
             Gender gender,
-            String job
+            String job,
+            List<String> excludeGoals
     ) {
+        String excludeGoalsStr = (excludeGoals == null || excludeGoals.isEmpty())
+                ? "없음"
+                : String.join(", ", excludeGoals);
+
         return chatClient.prompt()
                 .user(u -> u
                         .text(PromptTemplates.Reference_Sub_By_Main)
@@ -104,6 +109,7 @@ public class RecommendService {
                         .param("ageGroup", ageGroup != null ? ageGroup.toString() : "")
                         .param("gender", gender != null ? gender.toString() : "")
                         .param("job", job != null ? job : "")
+                        .param("excludeGoals", excludeGoalsStr)
                 );
     }
 }
