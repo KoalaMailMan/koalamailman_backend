@@ -18,4 +18,8 @@ public abstract class BaseEntity {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    public void updateLastLogin() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }
