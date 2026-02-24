@@ -4,6 +4,8 @@ import com.koa.koalamailman.domain.mandalart.repository.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "user", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"oauthId", "oauthProvider"})
@@ -38,6 +40,9 @@ public class User extends BaseEntity {
     @Column
     private String job;
 
+    @Column
+    private LocalDateTime lastLoginAt;
+
     @Builder
     public User(OAuthProvider oauthProvider, String oauthId, String nickname, String email) {
         this.oauthProvider = oauthProvider;
@@ -47,6 +52,10 @@ public class User extends BaseEntity {
         this.gender = null;
         this.ageGroup = null;
         this.job = null;
+    }
+
+    public void updateLastLogin() {
+        this.lastLoginAt = LocalDateTime.now();
     }
 
     public void updateProfile(Gender gender, AgeGroup ageGroup, String job) {

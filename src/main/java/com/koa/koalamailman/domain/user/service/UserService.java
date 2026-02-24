@@ -20,14 +20,24 @@ public class UserService {
     public User findOrCreate(OAuthProvider provider, String oauthId, String name, String email) {
 
         return userRepository.findByOauthIdAndOauthProvider(oauthId, provider)
-            .orElseGet(() -> userRepository.save(
-                    User.builder()
-                            .oauthProvider(provider)
-                            .oauthId(oauthId)
-                            .nickname(name)
-                            .email(email)
-                            .build()
-            ));
+                .map(this::login)
+                .orElseGet(() -> register(provider, oauthId, name, email));
+    }
+
+    private User login(User user) {
+        user.updateLastLogin();
+        return user;
+    }
+
+    private User register(OAuthProvider provider, String oauthId, String name, String email) {
+        return userRepository.save(
+                User.builder()
+                        .oauthProvider(provider)
+                        .oauthId(oauthId)
+                        .nickname(name)
+                        .email(email)
+                        .build()
+        );
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
