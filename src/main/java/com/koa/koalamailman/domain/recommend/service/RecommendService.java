@@ -1,5 +1,6 @@
 package com.koa.koalamailman.domain.recommend.service;
 
+import com.koa.koalamailman.domain.recommend.config.ChatClientProvider;
 import com.koa.koalamailman.domain.recommend.dto.ChildGoalsResponse;
 import com.koa.koalamailman.domain.recommend.template.PromptTemplates;
 import com.koa.koalamailman.domain.user.repository.AgeGroup;
@@ -24,12 +25,14 @@ public class RecommendService {
 
     private static final int MAX_GOAL_LENGTH = 40;
 
-    private final ChatClient chatClient;
+    private final ChatClientProvider chatClientProvider;
 
     public ChildGoalsResponse getChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job, List<String> excludeGoals) {
-        var response = buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
-                .call()
-                .content();
+        var response = chatClientProvider.callWithFallback(chatClient ->
+                buildChildGoalPrompt(chatClient, parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
+                        .call()
+                        .content()
+        );
 
         if (response == null || response.isBlank()) {
             log.error("[Recommend] LLM 응답이 비어있습니다. parentGoal = {}, count = {}", parentGoal, recommendationCount);
@@ -51,13 +54,15 @@ public class RecommendService {
     }
 
     public Flux<String> streamingChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job, List<String> excludeGoals) {
-        AtomicReference<String> buffer = new AtomicReference<>("");
+        return chatClientProvider.streamWithFallback(chatClient -> {
+            AtomicReference<String> buffer = new AtomicReference<>("");
 
-        return buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
-                .stream()
-                .content()
-                .concatMap(chunk -> parseCompletedGoals(buffer, chunk))
-                .concatWith(Flux.defer(() -> parseRemainingGoal(buffer)));
+            return buildChildGoalPrompt(chatClient, parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
+                    .stream()
+                    .content()
+                    .concatMap(chunk -> parseCompletedGoals(buffer, chunk))
+                    .concatWith(Flux.defer(() -> parseRemainingGoal(buffer)));
+        });
     }
 
     private Flux<String> parseCompletedGoals(AtomicReference<String> buffer, String chunk) {
@@ -90,6 +95,7 @@ public class RecommendService {
     }
 
     private ChatClient.ChatClientRequestSpec buildChildGoalPrompt(
+            ChatClient chatClient,
             String parentGoal,
             int recommendationCount,
             AgeGroup ageGroup,

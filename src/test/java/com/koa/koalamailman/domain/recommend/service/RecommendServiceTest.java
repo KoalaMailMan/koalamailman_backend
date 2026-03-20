@@ -1,5 +1,6 @@
 package com.koa.koalamailman.domain.recommend.service;
 
+import com.koa.koalamailman.domain.recommend.config.ChatClientProvider;
 import com.koa.koalamailman.domain.recommend.dto.ChildGoalsResponse;
 import com.koa.koalamailman.global.exception.BusinessException;
 import com.koa.koalamailman.global.exception.error.RecommendErrorCode;
@@ -14,6 +15,8 @@ import org.springframework.ai.chat.client.ChatClient;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
+import java.util.function.Function;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,22 +27,13 @@ import static org.mockito.Mockito.when;
 class RecommendServiceTest {
 
     @Mock
-    private ChatClient chatClient;
-
-    @Mock
-    private ChatClient.ChatClientRequestSpec requestSpec;
-
-    @Mock
-    private ChatClient.CallResponseSpec callResponseSpec;
-
-    @Mock
-    private ChatClient.StreamResponseSpec streamResponseSpec;
+    private ChatClientProvider chatClientProvider;
 
     private RecommendService recommendService;
 
     @BeforeEach
     void setUp() {
-        recommendService = new RecommendService(chatClient);
+        recommendService = new RecommendService(chatClientProvider);
     }
 
     @Nested
@@ -50,8 +44,7 @@ class RecommendServiceTest {
         @DisplayName("정상 응답 시 목표 리스트를 반환한다")
         void success() {
             // given
-            String response = "목표1, 목표2, 목표3";
-            mockChatClientCall(response);
+            mockCallWithFallback("목표1, 목표2, 목표3");
 
             // when
             ChildGoalsResponse result = recommendService.getChildGoalByParentGoal(
@@ -66,8 +59,7 @@ class RecommendServiceTest {
         @DisplayName("응답에 공백이 포함되어도 trim 처리된다")
         void trimWhitespace() {
             // given
-            String response = "  목표1  ,  목표2  ,  목표3  ";
-            mockChatClientCall(response);
+            mockCallWithFallback("  목표1  ,  목표2  ,  목표3  ");
 
             // when
             ChildGoalsResponse result = recommendService.getChildGoalByParentGoal(
@@ -81,8 +73,7 @@ class RecommendServiceTest {
         @DisplayName("빈 문자열은 필터링된다")
         void filterEmptyStrings() {
             // given
-            String response = "목표1,,  ,목표2";
-            mockChatClientCall(response);
+            mockCallWithFallback("목표1,,  ,목표2");
 
             // when
             ChildGoalsResponse result = recommendService.getChildGoalByParentGoal(
@@ -98,8 +89,7 @@ class RecommendServiceTest {
         void truncateLongGoals() {
             // given
             String longGoal = "이것은매우긴목표입니다".repeat(5); // 55자
-            String response = longGoal + ", 짧은목표";
-            mockChatClientCall(response);
+            mockCallWithFallback(longGoal + ", 짧은목표");
 
             // when
             ChildGoalsResponse result = recommendService.getChildGoalByParentGoal(
@@ -114,7 +104,7 @@ class RecommendServiceTest {
         @DisplayName("응답이 null이면 예외를 던진다")
         void throwsWhenResponseIsNull() {
             // given
-            mockChatClientCall(null);
+            mockCallWithFallback(null);
 
             // when & then
             assertThatThrownBy(() -> recommendService.getChildGoalByParentGoal(
@@ -128,7 +118,7 @@ class RecommendServiceTest {
         @DisplayName("응답이 비어있으면 예외를 던진다")
         void throwsWhenResponseIsBlank() {
             // given
-            mockChatClientCall("   ");
+            mockCallWithFallback("   ");
 
             // when & then
             assertThatThrownBy(() -> recommendService.getChildGoalByParentGoal(
@@ -142,7 +132,7 @@ class RecommendServiceTest {
         @DisplayName("파싱 후 유효한 목표가 없으면 예외를 던진다")
         void throwsWhenNoValidGoalsAfterParsing() {
             // given
-            mockChatClientCall("  ,  ,  ");
+            mockCallWithFallback("  ,  ,  ");
 
             // when & then
             assertThatThrownBy(() -> recommendService.getChildGoalByParentGoal(
@@ -152,11 +142,27 @@ class RecommendServiceTest {
                     .isEqualTo(RecommendErrorCode.RECOMMEND_NOT_CONTENT);
         }
 
-        private void mockChatClientCall(String response) {
+        @SuppressWarnings("unchecked")
+        private void mockCallWithFallback(String response) {
+            when(chatClientProvider.callWithFallback(any(Function.class)))
+                    .thenAnswer(invocation -> {
+                        Function<ChatClient, String> action = invocation.getArgument(0);
+                        ChatClient mockClient = mockChatClientForCall(response);
+                        return action.apply(mockClient);
+                    });
+        }
+
+        private ChatClient mockChatClientForCall(String response) {
+            ChatClient chatClient = mock(ChatClient.class);
+            ChatClient.ChatClientRequestSpec requestSpec = mock(ChatClient.ChatClientRequestSpec.class);
+            ChatClient.CallResponseSpec callResponseSpec = mock(ChatClient.CallResponseSpec.class);
+
             when(chatClient.prompt()).thenReturn(requestSpec);
             when(requestSpec.user(any(java.util.function.Consumer.class))).thenReturn(requestSpec);
             when(requestSpec.call()).thenReturn(callResponseSpec);
             when(callResponseSpec.content()).thenReturn(response);
+
+            return chatClient;
         }
     }
 
@@ -168,7 +174,7 @@ class RecommendServiceTest {
         @DisplayName("스트리밍 응답을 쉼표 단위로 파싱한다")
         void parseByComma() {
             // given
-            mockChatClientStream(Flux.just("목표1,", "목표2,", "목표3"));
+            mockStreamWithFallback(Flux.just("목표1,", "목표2,", "목표3"));
 
             // when
             Flux<String> result = recommendService.streamingChildGoalByParentGoal(
@@ -186,7 +192,7 @@ class RecommendServiceTest {
         @DisplayName("청크가 쪼개져 와도 올바르게 파싱한다")
         void handleSplitChunks() {
             // given
-            mockChatClientStream(Flux.just("목", "표1,목표", "2,목표3"));
+            mockStreamWithFallback(Flux.just("목", "표1,목표", "2,목표3"));
 
             // when
             Flux<String> result = recommendService.streamingChildGoalByParentGoal(
@@ -205,7 +211,7 @@ class RecommendServiceTest {
         void truncateLongGoals() {
             // given
             String longGoal = "가나다라마바사아자차".repeat(5); // 50자
-            mockChatClientStream(Flux.just(longGoal + ",짧은목표"));
+            mockStreamWithFallback(Flux.just(longGoal + ",짧은목표"));
 
             // when
             Flux<String> result = recommendService.streamingChildGoalByParentGoal(
@@ -222,7 +228,7 @@ class RecommendServiceTest {
         @DisplayName("빈 문자열은 필터링된다")
         void filterEmptyStrings() {
             // given
-            mockChatClientStream(Flux.just("목표1,  ,목표2,  "));
+            mockStreamWithFallback(Flux.just("목표1,  ,목표2,  "));
 
             // when
             Flux<String> result = recommendService.streamingChildGoalByParentGoal(
@@ -235,11 +241,27 @@ class RecommendServiceTest {
                     .verifyComplete();
         }
 
-        private void mockChatClientStream(Flux<String> response) {
+        @SuppressWarnings("unchecked")
+        private void mockStreamWithFallback(Flux<String> streamContent) {
+            when(chatClientProvider.streamWithFallback(any(Function.class)))
+                    .thenAnswer(invocation -> {
+                        Function<ChatClient, Flux<String>> action = invocation.getArgument(0);
+                        ChatClient mockClient = mockChatClientForStream(streamContent);
+                        return action.apply(mockClient);
+                    });
+        }
+
+        private ChatClient mockChatClientForStream(Flux<String> streamContent) {
+            ChatClient chatClient = mock(ChatClient.class);
+            ChatClient.ChatClientRequestSpec requestSpec = mock(ChatClient.ChatClientRequestSpec.class);
+            ChatClient.StreamResponseSpec streamResponseSpec = mock(ChatClient.StreamResponseSpec.class);
+
             when(chatClient.prompt()).thenReturn(requestSpec);
             when(requestSpec.user(any(java.util.function.Consumer.class))).thenReturn(requestSpec);
             when(requestSpec.stream()).thenReturn(streamResponseSpec);
-            when(streamResponseSpec.content()).thenReturn(response);
+            when(streamResponseSpec.content()).thenReturn(streamContent);
+
+            return chatClient;
         }
     }
 }

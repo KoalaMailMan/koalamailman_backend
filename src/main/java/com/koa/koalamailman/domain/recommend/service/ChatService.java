@@ -2,16 +2,22 @@ package com.koa.koalamailman.domain.recommend.service;
 
 import com.koa.koalamailman.domain.recommend.session.ProfileSession;
 import com.koa.koalamailman.domain.recommend.template.PromptTemplates;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+
 @Service
-@RequiredArgsConstructor
+@Slf4j
 public class ChatService {
 
     private final ChatClient chatClient;
+
+    public ChatService(@Qualifier("primaryChatClient") ChatClient chatClient) {
+        this.chatClient = chatClient;
+    }
 
     public Flux<String> referenceMainGoalByCategory(String category, ProfileSession profileSession) {
         return chatClient.prompt()

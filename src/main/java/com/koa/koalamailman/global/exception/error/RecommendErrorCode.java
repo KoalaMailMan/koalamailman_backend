@@ -16,6 +16,7 @@ public enum RecommendErrorCode implements ErrorCode {
     RECOMMEND_LLM_CONNECTION_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "LLM 서비스에 연결할 수 없습니다."),
     RECOMMEND_TIMEOUT(HttpStatus.GATEWAY_TIMEOUT, "LLM 응답 시간이 초과되었습니다."),
     RECOMMEND_STREAM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "스트리밍 처리 중 오류가 발생했습니다."),
+    RECOMMEND_ALL_MODELS_FAILED(HttpStatus.SERVICE_UNAVAILABLE, "모든 LLM 모델 호출에 실패했습니다."),
     ;
 
     private final HttpStatus status;

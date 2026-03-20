@@ -85,7 +85,8 @@ spring:
       read-timeout: 30s
       chat:
         options:
-          model: ${OPENROUTER_MODEL:mistralai/mistral-7b-instruct:free}
+          model: ${OPENROUTER_MODEL}
+    fallback-model: ${OPENROUTER_FALLBACK_MODEL}
 
   cache:
     type: caffeine

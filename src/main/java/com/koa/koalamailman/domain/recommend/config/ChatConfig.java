@@ -8,6 +8,9 @@ import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.ChatOptions;
+import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,8 +18,12 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class ChatConfig {
 
+    @Value("${spring.ai.fallback-model}")
+    private String fallbackModel;
+
     @Bean
-    public ChatClient chatClient(ChatModel chatModel) {
+    @Qualifier("primaryChatClient")
+    public ChatClient primaryChatClient(ChatModel chatModel) {
         return ChatClient.builder(chatModel)
                 .defaultOptions(ChatOptions.builder()
                         .temperature(0.2)
@@ -26,6 +33,19 @@ public class ChatConfig {
                 .build();
     }
 
+    @Bean
+    @Qualifier("fallbackChatClient")
+    public ChatClient fallbackChatClient(ChatModel chatModel) {
+        return ChatClient.builder(chatModel)
+                .defaultOptions(OpenAiChatOptions.builder()
+                        .model(fallbackModel)
+                        .temperature(0.2)
+                        .maxTokens(1024)
+                        .build())
+                .defaultSystem(PromptTemplates.DEFAULT_SYSTEM)
+                .build();
+    }
+    
 //    @Bean
 //    public MessageWindowChatMemory chatMemory(InMemoryChatMemoryRepository repository) {
 //        return MessageWindowChatMemory.builder()
