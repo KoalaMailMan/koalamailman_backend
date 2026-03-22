@@ -1,5 +1,6 @@
 package com.koa.koalamailman.mandalart.domain;
 
+import com.koa.koalamailman.global.entity.BaseEntity;
 import com.koa.koalamailman.reminder.domain.ReminderOption;
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,6 +1,6 @@
 package com.koa.koalamailman.auth.repository.entity;
 
-import com.koa.koalamailman.mandalart.domain.BaseEntity;
+import com.koa.koalamailman.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
