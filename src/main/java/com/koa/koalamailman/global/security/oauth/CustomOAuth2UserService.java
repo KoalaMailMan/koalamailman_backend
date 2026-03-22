@@ -1,7 +1,7 @@
 package com.koa.koalamailman.global.security.oauth;
 
-import com.koa.koalamailman.domain.user.repository.OAuthProvider;
-import com.koa.koalamailman.domain.user.service.UserService;
+import com.koa.koalamailman.user.repository.OAuthProvider;
+import com.koa.koalamailman.user.service.UserService;
 import com.koa.koalamailman.global.security.oauth.parser.OauthAttributeParserFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

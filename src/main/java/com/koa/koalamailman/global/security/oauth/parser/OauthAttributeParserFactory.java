@@ -1,6 +1,6 @@
 package com.koa.koalamailman.global.security.oauth.parser;
 
-import com.koa.koalamailman.domain.user.repository.OAuthProvider;
+import com.koa.koalamailman.user.repository.OAuthProvider;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 

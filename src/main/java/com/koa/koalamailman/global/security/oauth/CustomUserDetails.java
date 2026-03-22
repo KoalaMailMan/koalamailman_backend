@@ -1,6 +1,6 @@
 package com.koa.koalamailman.global.security.oauth;
 
-import com.koa.koalamailman.domain.user.repository.User;
+import com.koa.koalamailman.user.repository.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

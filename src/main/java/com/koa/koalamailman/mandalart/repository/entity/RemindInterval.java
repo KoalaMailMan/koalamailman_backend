@@ -1,0 +1,32 @@
+package com.koa.koalamailman.mandalart.repository.entity;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+public enum RemindInterval {
+    ONE_DAY(1), //test용
+
+    ONE_WEEK(7),
+    TWO_WEEKS(14),
+    ONE_MONTH(30),
+    TWO_MONTHS(60),
+    THREE_MONTHS(90),
+    FOUR_MONTHS(120),
+    SIX_MONTHS(180);
+
+    private final int days;
+
+    RemindInterval(int days) {
+        this.days = days;
+    }
+
+    public int getDays() {
+        return days;
+    }
+
+    public static String getNames() {
+        return Arrays.stream(values())
+                .map(Enum::name)
+                .collect(Collectors.joining(", "));
+    }
+}

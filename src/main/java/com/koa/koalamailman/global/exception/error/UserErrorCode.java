@@ -1,7 +1,5 @@
 package com.koa.koalamailman.global.exception.error;
 
-import com.koa.koalamailman.domain.user.repository.AgeGroup;
-import com.koa.koalamailman.domain.user.repository.Gender;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
