@@ -1,6 +1,6 @@
-package com.koa.koalamailman.user.dto;
+package com.koa.koalamailman.user.presentation.dto.response;
 
-import com.koa.koalamailman.user.repository.User;
+import com.koa.koalamailman.user.domain.User;
 
 public record UserResponse (String nickname, String email) {
 

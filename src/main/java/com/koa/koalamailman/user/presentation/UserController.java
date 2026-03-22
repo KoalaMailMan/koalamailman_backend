@@ -1,9 +1,9 @@
-package com.koa.koalamailman.user.controller;
+package com.koa.koalamailman.user.presentation;
 
-import com.koa.koalamailman.user.controller.docs.UserControllerDocs;
-import com.koa.koalamailman.user.dto.UpdateUserProfileRequest;
-import com.koa.koalamailman.user.service.UserService;
-import com.koa.koalamailman.user.dto.UserResponse;
+import com.koa.koalamailman.user.presentation.docs.UserControllerDocs;
+import com.koa.koalamailman.user.presentation.dto.request.UpdateUserProfileRequest;
+import com.koa.koalamailman.user.application.UserUseCase;
+import com.koa.koalamailman.user.presentation.dto.response.UserResponse;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.exception.SuccessCode;
 import com.koa.koalamailman.global.security.oauth.CustomUserDetails;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 public class UserController implements UserControllerDocs {
-    private final UserService userService;
+    private final UserUseCase userUseCase;
 
     @GetMapping
     @Override
@@ -25,7 +25,7 @@ public class UserController implements UserControllerDocs {
     ) {
         return SuccessResponse.success(
                 SuccessCode.GET_USER_INFO_SUCCESS,
-                userService.getUserById(userDetails.getUserId())
+                userUseCase.getUserById(userDetails.getUserId())
         );
     }
 
@@ -35,7 +35,7 @@ public class UserController implements UserControllerDocs {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody @Valid UpdateUserProfileRequest request
             ) {
-        userService.updateUserProfile(userDetails.getUserId(), request.ageGroup(), request.gender(), request.job());
+        userUseCase.updateUserProfile(userDetails.getUserId(), request.ageGroup(), request.gender(), request.job());
         return SuccessResponse.success(
                 SuccessCode.UPDATE_USER_PROFILE_SUCCESS
         );

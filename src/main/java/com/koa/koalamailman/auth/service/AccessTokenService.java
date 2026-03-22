@@ -1,6 +1,6 @@
 package com.koa.koalamailman.auth.service;
 
-import com.koa.koalamailman.user.repository.User;
+import com.koa.koalamailman.user.domain.User;
 import com.koa.koalamailman.global.token.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

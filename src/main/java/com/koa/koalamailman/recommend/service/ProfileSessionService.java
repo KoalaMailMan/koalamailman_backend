@@ -1,7 +1,7 @@
 package com.koa.koalamailman.recommend.service;
 
 import com.koa.koalamailman.recommend.session.ProfileSession;
-import com.koa.koalamailman.user.repository.UserRepository;
+import com.koa.koalamailman.user.infrastructure.UserRepository;
 import com.koa.koalamailman.global.exception.BusinessException;
 import com.koa.koalamailman.global.exception.error.UserErrorCode;
 import jakarta.servlet.http.HttpSession;

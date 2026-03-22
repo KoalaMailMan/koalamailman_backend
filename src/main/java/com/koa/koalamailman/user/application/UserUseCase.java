@@ -1,10 +1,13 @@
-package com.koa.koalamailman.user.service;
+package com.koa.koalamailman.user.application;
 
-import com.koa.koalamailman.user.repository.*;
-import com.koa.koalamailman.user.dto.UserResponse;
+import com.koa.koalamailman.user.domain.AgeGroup;
+import com.koa.koalamailman.user.domain.Gender;
+import com.koa.koalamailman.user.domain.OAuthProvider;
+import com.koa.koalamailman.user.domain.User;
+import com.koa.koalamailman.user.infrastructure.UserRepository;
+import com.koa.koalamailman.user.presentation.dto.response.UserResponse;
 import com.koa.koalamailman.global.exception.error.UserErrorCode;
 import com.koa.koalamailman.global.exception.BusinessException;
-import com.koa.koalamailman.user.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -13,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserUseCase {
 
     private final UserRepository userRepository;
 

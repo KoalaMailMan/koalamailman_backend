@@ -1,7 +1,7 @@
 package com.koa.koalamailman.global.security.oauth;
 
-import com.koa.koalamailman.user.repository.User;
-import com.koa.koalamailman.user.repository.UserRepository;
+import com.koa.koalamailman.user.domain.User;
+import com.koa.koalamailman.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;

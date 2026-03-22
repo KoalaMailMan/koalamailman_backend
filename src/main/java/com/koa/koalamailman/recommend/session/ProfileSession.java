@@ -1,7 +1,7 @@
 package com.koa.koalamailman.recommend.session;
 
-import com.koa.koalamailman.user.repository.AgeGroup;
-import com.koa.koalamailman.user.repository.Gender;
+import com.koa.koalamailman.user.domain.AgeGroup;
+import com.koa.koalamailman.user.domain.Gender;
 import lombok.*;
 
 import java.util.UUID;

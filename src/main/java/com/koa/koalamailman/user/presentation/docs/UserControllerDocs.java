@@ -1,7 +1,7 @@
-package com.koa.koalamailman.user.controller.docs;
+package com.koa.koalamailman.user.presentation.docs;
 
-import com.koa.koalamailman.user.dto.UpdateUserProfileRequest;
-import com.koa.koalamailman.user.dto.UserResponse;
+import com.koa.koalamailman.user.presentation.dto.request.UpdateUserProfileRequest;
+import com.koa.koalamailman.user.presentation.dto.response.UserResponse;
 import com.koa.koalamailman.global.dto.ErrorResponse;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.security.oauth.CustomUserDetails;

@@ -1,7 +1,7 @@
-package com.koa.koalamailman.user.dto;
+package com.koa.koalamailman.user.presentation.dto.request;
 
-import com.koa.koalamailman.user.repository.AgeGroup;
-import com.koa.koalamailman.user.repository.Gender;
+import com.koa.koalamailman.user.domain.AgeGroup;
+import com.koa.koalamailman.user.domain.Gender;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

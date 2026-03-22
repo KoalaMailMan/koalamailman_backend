@@ -2,7 +2,7 @@ package com.koa.koalamailman.auth.service;
 
 import com.koa.koalamailman.auth.repository.RefreshTokenRepository;
 import com.koa.koalamailman.auth.repository.entity.RefreshToken;
-import com.koa.koalamailman.user.repository.User;
+import com.koa.koalamailman.user.domain.User;
 import com.koa.koalamailman.global.exception.BusinessException;
 import com.koa.koalamailman.global.exception.error.AuthErrorCode;
 import com.koa.koalamailman.global.token.JwtProvider;

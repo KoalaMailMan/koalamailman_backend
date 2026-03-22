@@ -1,8 +1,8 @@
 package com.koa.koalamailman.recommend.controller.docs;
 
 import com.koa.koalamailman.recommend.dto.ChildGoalsResponse;
-import com.koa.koalamailman.user.repository.AgeGroup;
-import com.koa.koalamailman.user.repository.Gender;
+import com.koa.koalamailman.user.domain.AgeGroup;
+import com.koa.koalamailman.user.domain.Gender;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

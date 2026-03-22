@@ -1,4 +1,4 @@
-package com.koa.koalamailman.user.repository;
+package com.koa.koalamailman.user.domain;
 
 import java.util.List;
 import java.util.stream.Stream;

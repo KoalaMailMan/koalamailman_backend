@@ -1,4 +1,4 @@
-package com.koa.koalamailman.user.repository;
+package com.koa.koalamailman.user.domain;
 
 import com.koa.koalamailman.global.entity.BaseEntity;
 import jakarta.persistence.*;
