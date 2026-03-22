@@ -1,7 +1,7 @@
 package com.koa.koalamailman.mandalart.application.dto;
 
 import com.koa.koalamailman.mandalart.domain.Mandalart;
-import com.koa.koalamailman.mandalart.domain.ReminderOption;
+import com.koa.koalamailman.reminder.domain.ReminderOption;
 
 public record MandalartDto(
         Long mandalartId,

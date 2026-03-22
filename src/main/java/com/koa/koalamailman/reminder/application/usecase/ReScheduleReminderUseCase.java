@@ -2,7 +2,7 @@ package com.koa.koalamailman.reminder.application.usecase;
 
 import com.koa.koalamailman.mandalart.infrastructure.MandalartRepository;
 import com.koa.koalamailman.mandalart.domain.Mandalart;
-import com.koa.koalamailman.mandalart.domain.ReminderOption;
+import com.koa.koalamailman.reminder.domain.ReminderOption;
 import com.koa.koalamailman.reminder.application.provider.ReminderTimeProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
