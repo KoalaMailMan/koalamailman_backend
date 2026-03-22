@@ -2,6 +2,7 @@ package com.koa.koalamailman.mandalart.application;
 
 import com.koa.koalamailman.mandalart.application.dto.CoreGoalDto;
 import com.koa.koalamailman.mandalart.application.dto.MandalartDto;
+import com.koa.koalamailman.mandalart.domain.GoalService;
 import com.koa.koalamailman.mandalart.infrastructure.GoalRepository;
 import com.koa.koalamailman.mandalart.infrastructure.MandalartRepository;
 import com.koa.koalamailman.mandalart.domain.Goal;
@@ -16,7 +17,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class MandalartService {
+public class MandalartUseCase {
 
     private final GoalService goalService;
     private final MandalartRepository mandalartRepository;

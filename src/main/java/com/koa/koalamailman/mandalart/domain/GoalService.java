@@ -1,12 +1,9 @@
-package com.koa.koalamailman.mandalart.application;
+package com.koa.koalamailman.mandalart.domain;
 
 import com.koa.koalamailman.mandalart.application.dto.CoreGoalDto;
 import com.koa.koalamailman.mandalart.application.dto.MainGoalDto;
 import com.koa.koalamailman.mandalart.application.dto.SubGoalDto;
 import com.koa.koalamailman.mandalart.infrastructure.GoalRepository;
-import com.koa.koalamailman.mandalart.domain.Goal;
-import com.koa.koalamailman.mandalart.domain.GoalLevel;
-import com.koa.koalamailman.mandalart.domain.Mandalart;
 import com.koa.koalamailman.global.exception.BusinessException;
 import com.koa.koalamailman.global.exception.error.MandalartErrorCode;
 import lombok.RequiredArgsConstructor;
