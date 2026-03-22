@@ -2,10 +2,8 @@ package com.koa.koalamailman.user.application;
 
 import com.koa.koalamailman.user.domain.AgeGroup;
 import com.koa.koalamailman.user.domain.Gender;
-import com.koa.koalamailman.user.domain.OAuthProvider;
 import com.koa.koalamailman.user.domain.User;
 import com.koa.koalamailman.user.infrastructure.UserRepository;
-import com.koa.koalamailman.user.presentation.dto.response.UserResponse;
 import com.koa.koalamailman.global.exception.error.UserErrorCode;
 import com.koa.koalamailman.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -20,33 +18,13 @@ public class UserUseCase {
 
     private final UserRepository userRepository;
 
-    @Transactional
-    public User findOrCreate(OAuthProvider provider, String oauthId, String name, String email) {
-
-        return userRepository.findByOauthIdAndOauthProvider(oauthId, provider)
-            .orElseGet(() -> userRepository.save(
-                    User.builder()
-                            .oauthProvider(provider)
-                            .oauthId(oauthId)
-                            .nickname(name)
-                            .email(email)
-                            .build()
-            ));
-    }
-
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public UserResponse getUserById(Long userId){
-        return UserResponse.of(findUserById(userId));
+    public User getUserById(Long userId){
+        return findUserById(userId);
     }
 
     public User findUserById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
-    }
-
-    @Transactional(readOnly = true)
-    public User getUserByOauthInfo(OAuthProvider provider, String providerId) {
-        return userRepository.findByOauthIdAndOauthProvider(providerId, provider)
                 .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
     }
 

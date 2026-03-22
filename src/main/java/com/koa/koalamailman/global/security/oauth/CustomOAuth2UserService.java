@@ -1,5 +1,6 @@
 package com.koa.koalamailman.global.security.oauth;
 
+import com.koa.koalamailman.auth.application.AuthUseCase;
 import com.koa.koalamailman.user.domain.OAuthProvider;
 import com.koa.koalamailman.user.application.UserUseCase;
 import com.koa.koalamailman.global.security.oauth.parser.OauthAttributeParserFactory;
@@ -19,7 +20,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final UserUseCase userUseCase;
+    private final AuthUseCase authUseCase;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -27,7 +28,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuthProvider provider = OAuthProvider.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
         Map<String, Object> customAttributes = OauthAttributeParserFactory.parse(provider, oAuth2User);
 
-        userUseCase.findOrCreate(provider, (String) customAttributes.get("providerId"), (String) customAttributes.get("name"), (String) customAttributes.get("email"));
+        authUseCase.findOrCreate(provider, (String) customAttributes.get("providerId"), (String) customAttributes.get("name"), (String) customAttributes.get("email"));
 
         return new DefaultOAuth2User(
                 Set.of(new SimpleGrantedAuthority("USER")),

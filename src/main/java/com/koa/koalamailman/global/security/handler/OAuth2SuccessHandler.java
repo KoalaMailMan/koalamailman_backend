@@ -1,5 +1,6 @@
 package com.koa.koalamailman.global.security.handler;
 
+import com.koa.koalamailman.auth.application.AuthUseCase;
 import com.koa.koalamailman.auth.service.AccessTokenService;
 import com.koa.koalamailman.auth.service.RefreshTokenService;
 import com.koa.koalamailman.user.domain.OAuthProvider;
@@ -29,7 +30,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final AccessTokenService accessTokenService;
     private final CookieProvider cookieProvider;
     private final RefreshTokenService refreshTokenService;
-    private final UserUseCase userUseCase;
+    private final AuthUseCase authUseCase;
 
     @Value("${app.oauth2.login-redirect-uri}")
     private String loginRedirectUri;
@@ -50,7 +51,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String email      = (String) attrs.get("email");
 
 
-        User user = userUseCase.findOrCreate(provider, providerId, name, email);
+        User user = authUseCase.findOrCreate(provider, providerId, name, email);
         String accessToken = accessTokenService.createAccessToken(user);
 
         String refreshToken = refreshTokenService.createRefreshToken(user);

@@ -1,7 +1,6 @@
 package com.koa.koalamailman.user.presentation;
 
 import com.koa.koalamailman.user.presentation.docs.UserControllerDocs;
-import com.koa.koalamailman.user.presentation.dto.request.UpdateUserProfileRequest;
 import com.koa.koalamailman.user.application.UserUseCase;
 import com.koa.koalamailman.user.presentation.dto.response.UserResponse;
 import com.koa.koalamailman.global.dto.SuccessResponse;
@@ -25,19 +24,7 @@ public class UserController implements UserControllerDocs {
     ) {
         return SuccessResponse.success(
                 SuccessCode.GET_USER_INFO_SUCCESS,
-                userUseCase.getUserById(userDetails.getUserId())
-        );
-    }
-
-    @PatchMapping("/profile")
-    @Override
-    public SuccessResponse updateUserProfile(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestBody @Valid UpdateUserProfileRequest request
-            ) {
-        userUseCase.updateUserProfile(userDetails.getUserId(), request.ageGroup(), request.gender(), request.job());
-        return SuccessResponse.success(
-                SuccessCode.UPDATE_USER_PROFILE_SUCCESS
+                UserResponse.from(userUseCase.getUserById(userDetails.getUserId()))
         );
     }
 }

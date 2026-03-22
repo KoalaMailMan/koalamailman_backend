@@ -4,7 +4,7 @@ import com.koa.koalamailman.user.domain.User;
 
 public record UserResponse (String nickname, String email) {
 
-    public static UserResponse of(
+    public static UserResponse from(
             final User user
     ) {
         return new UserResponse(user.getNickname(), user.getEmail());

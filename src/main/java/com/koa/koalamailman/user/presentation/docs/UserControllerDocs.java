@@ -1,6 +1,5 @@
 package com.koa.koalamailman.user.presentation.docs;
 
-import com.koa.koalamailman.user.presentation.dto.request.UpdateUserProfileRequest;
 import com.koa.koalamailman.user.presentation.dto.response.UserResponse;
 import com.koa.koalamailman.global.dto.ErrorResponse;
 import com.koa.koalamailman.global.dto.SuccessResponse;
@@ -30,17 +29,5 @@ public interface UserControllerDocs {
     SuccessResponse<UserResponse> getUserInfo(
             @Parameter(hidden = true)
             @AuthenticationPrincipal CustomUserDetails userDetails
-    );
-
-    @Operation(summary = "[보류] 유저 프로필 수정")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "유저 프로필 수정 성공"),
-            @ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-    })
-    SuccessResponse<Void> updateUserProfile(
-            @Parameter(hidden = true)
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            final UpdateUserProfileRequest request
     );
 }
