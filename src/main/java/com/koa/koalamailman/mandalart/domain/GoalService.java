@@ -21,7 +21,7 @@ public class GoalService {
     private final GoalRepository goalRepository;
 
     @Transactional
-    public CoreGoalDto createAndUpdateGoals(Mandalart mandalart, CoreGoalDto coreDto) {
+    public List<Goal> createAndUpdateGoals(Mandalart mandalart, CoreGoalDto coreDto) {
         // db에 이미 있는 목표 goalId 별 map
         List<Goal> currentGoals = goalRepository.findGoalsByMandalartId(mandalart.getId());
         Map<Long, Goal> currentGoalsMap = new HashMap<>();
@@ -76,7 +76,7 @@ public class GoalService {
 
         if (!newGoals.isEmpty()) goalRepository.saveAll(newGoals);
 
-        return CoreGoalDto.fromEntities(allGoals);
+        return allGoals;
     }
 
     private Goal getGoalFromGoalsMapByGoalId(Map<Long, Goal> goalsMapById, Long goalId) {

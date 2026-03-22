@@ -1,5 +1,6 @@
 package com.koa.koalamailman.mandalart.presentation.dto.request;
 
+import com.koa.koalamailman.mandalart.application.dto.SubGoalDto;
 import com.koa.koalamailman.mandalart.domain.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
@@ -19,4 +20,8 @@ public record UpdateSubGoalRequest (
      @Schema(description = "sub goal status")
      Status status
 ){
+
+    public SubGoalDto subGoalDto() {
+        return new SubGoalDto(goalId, position, content, status);
+    }
 }

@@ -1,12 +1,11 @@
 package com.koa.koalamailman.mandalart.presentation;
 
 import com.koa.koalamailman.mandalart.presentation.docs.MandalartControllerDocs;
-import com.koa.koalamailman.mandalart.application.dto.CoreGoalDto;
 import com.koa.koalamailman.mandalart.presentation.dto.request.UpdateMandalartRequest;
 import com.koa.koalamailman.mandalart.presentation.dto.response.CoreGoalResponse;
 import com.koa.koalamailman.mandalart.presentation.dto.response.MandalartResponse;
-import com.koa.koalamailman.mandalart.application.MandalartUseCase;
 import com.koa.koalamailman.mandalart.presentation.dto.request.UpdateCoreGoalRequest;
+import com.koa.koalamailman.mandalart.application.MandalartUseCase;
 import com.koa.koalamailman.global.dto.RequestDataWrapper;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.exception.SuccessCode;
@@ -31,7 +30,7 @@ public class MandalartController implements MandalartControllerDocs {
     ) {
         return SuccessResponse.success(
                 SuccessCode.CREATE_MANDALART_SUCCESS,
-                MandalartResponse.from(mandalartUseCase.createMandalart(userDetails.getUserId(), request.getData().mandalartId(), CoreGoalDto.fromRequest(request.getData().core())))
+                MandalartResponse.from(mandalartUseCase.createMandalart(userDetails.getUserId(), request.getData().mandalartId(), request.getData().core().coreGoalDto()))
         );
     }
 
@@ -54,7 +53,7 @@ public class MandalartController implements MandalartControllerDocs {
     ) {
         return SuccessResponse.success(
                 SuccessCode.UPDATE_MANDALART_SUCCESS,
-                CoreGoalResponse.from(mandalartUseCase.updateMandalart(userDetails.getUserId(), mandalartId, CoreGoalDto.fromRequest(request)))
+                CoreGoalResponse.from(mandalartUseCase.updateGoals(userDetails.getUserId(), mandalartId, request.coreGoalDto()))
         );
     }
 }

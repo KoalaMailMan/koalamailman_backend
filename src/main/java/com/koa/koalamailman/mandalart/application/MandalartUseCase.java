@@ -25,49 +25,38 @@ public class MandalartUseCase {
 
     @Transactional
     public MandalartDto createMandalart(Long userId, Long mandalartId, CoreGoalDto coreGoalDto) {
-        Mandalart mandalart;
-
-        if (mandalartId == null) mandalart = findMandalartByUserIdOrCreate(userId);
-        else mandalart = findMandalartByMandalartId(userId, mandalartId);
-
-        CoreGoalDto core =  goalService.createAndUpdateGoals(mandalart, coreGoalDto);
-        return MandalartDto.from(mandalart, core);
-    }
-
-    @Transactional
-    public MandalartDto createMandalartWithRemind(Long userId, MandalartDto mandalartDto) {
-        Mandalart mandalart = findMandalartByUserIdOrCreate(userId);
-        CoreGoalDto coreGoalDto = goalService.createAndUpdateGoals(mandalart, mandalartDto.coreGoalDto());
-        return mandalartDto.from(mandalart, coreGoalDto);
+        Mandalart mandalart = mandalartId == null
+                ? findMandalartByUserIdOrCreate(userId)
+                : findMandalartByMandalartId(userId, mandalartId);
+        List<Goal> goals =  goalService.createAndUpdateGoals(mandalart, coreGoalDto);
+        return MandalartDto.from(mandalart, CoreGoalDto.from(goals));
     }
 
     @Transactional(readOnly = true)
     public MandalartDto getMandalartWithRemind(Long userId) {
         Mandalart mandalart = findMandalartByUserId(userId);
-        return MandalartDto.from(mandalart, getMandalartByMandalartId(mandalart.getId()));
+        return MandalartDto.from(mandalart, getGoalsByMandalartId(mandalart.getId()));
     }
 
     @Transactional
-    public CoreGoalDto updateMandalart(Long userId, Long mandalartId, CoreGoalDto dto) {
+    public CoreGoalDto updateGoals(Long userId, Long mandalartId, CoreGoalDto coreGoalDto) {
         Mandalart mandalart = findMandalartByMandalartId(userId, mandalartId);
-
-        return goalService.createAndUpdateGoals(mandalart, dto);
+        List<Goal> goals = goalService.createAndUpdateGoals(mandalart, coreGoalDto);
+        return CoreGoalDto.from(goals);
     }
 
     @Transactional(readOnly = true)
-    public CoreGoalDto getMandalartByMandalartId(Long mandalartId) {
+    public CoreGoalDto getGoalsByMandalartId(Long mandalartId) {
         List<Goal> goals = goalRepository.findGoalsByMandalartId(mandalartId);
-        return CoreGoalDto.fromEntities(goals);
+        return CoreGoalDto.from(goals);
     }
 
-    @Transactional
-    public Mandalart findMandalartByUserIdOrCreate(Long userId) {
+    private Mandalart findMandalartByUserIdOrCreate(Long userId) {
         return mandalartRepository.findByUserId(userId)
                 .orElseGet(() -> mandalartRepository.save(Mandalart.create(userId)));
     }
 
-    @Transactional(readOnly = true)
-    public Mandalart findMandalartByUserId(Long userId) {
+    private Mandalart findMandalartByUserId(Long userId) {
         return mandalartRepository.findByUserId(userId)
                 .orElseThrow(() -> new BusinessException(MandalartErrorCode.MANDALART_NOT_FOUND));
     }

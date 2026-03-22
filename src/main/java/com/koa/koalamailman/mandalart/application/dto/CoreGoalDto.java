@@ -1,6 +1,5 @@
 package com.koa.koalamailman.mandalart.application.dto;
 
-import com.koa.koalamailman.mandalart.presentation.dto.request.UpdateCoreGoalRequest;
 import com.koa.koalamailman.mandalart.domain.Goal;
 import com.koa.koalamailman.mandalart.domain.GoalLevel;
 import com.koa.koalamailman.mandalart.domain.Status;
@@ -15,15 +14,7 @@ public record CoreGoalDto(
         Status status,
         List<MainGoalDto> mains
 ) {
-    public static CoreGoalDto fromRequest(UpdateCoreGoalRequest req) {
-        List<MainGoalDto> mains = (req.mains() == null) ? List.of()
-                : req.mains().stream()
-                .map(MainGoalDto::fromRequest)
-                .toList();
-        return new CoreGoalDto(req.goalId(), req.content(), req.status(), mains);
-    }
-
-    public static CoreGoalDto fromEntities(List<Goal> goals) {
+    public static CoreGoalDto from(List<Goal> goals) {
         if (goals == null || goals.isEmpty()) {
             throw new IllegalArgumentException("Goals cannot be null or empty");
         }

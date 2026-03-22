@@ -1,5 +1,7 @@
 package com.koa.koalamailman.mandalart.presentation.dto.request;
 
+import com.koa.koalamailman.mandalart.application.dto.MainGoalDto;
+import com.koa.koalamailman.mandalart.application.dto.SubGoalDto;
 import com.koa.koalamailman.mandalart.domain.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -29,4 +31,11 @@ public record UpdateMainGoalRequest (
     @Valid
     List<UpdateSubGoalRequest> subs
 ) {
+    public MainGoalDto mainGoalDto() {
+        List< SubGoalDto> subDtos = (subs == null) ? List.of()
+                :subs.stream()
+                .map(UpdateSubGoalRequest::subGoalDto)
+                .toList();
+        return new MainGoalDto(goalId, position, content, status, subDtos);
+    }
 }
