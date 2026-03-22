@@ -2,8 +2,8 @@ package com.koa.koalamailman.reminder.application.mail;
 
 import com.koa.koalamailman.mandalart.domain.Goal;
 import com.koa.koalamailman.mandalart.domain.Mandalart;
-import com.koa.koalamailman.mandalart.application.GoalService;
-import com.koa.koalamailman.reminder.domain.MandalartGrid;
+import com.koa.koalamailman.mandalart.domain.GoalService;
+import com.koa.koalamailman.reminder.domain.MailMandalartGrid;
 import com.koa.koalamailman.reminder.domain.MandalartReminder;
 import com.koa.koalamailman.user.repository.User;
 import com.koa.koalamailman.user.service.UserService;
@@ -31,7 +31,7 @@ public class RemindMailService {
         MandalartReminder reminder = new MandalartReminder(
                 user.getNickname(),
                 user.getEmail(),
-                MandalartGrid.from(goals),
+                MailMandalartGrid.from(goals),
                 tip
         );
 

@@ -7,13 +7,13 @@ public class MandalartReminder {
 
     private final String username;
     private final String email;
-    private final MandalartGrid grid;
+    private final MailMandalartGrid grid;
     private final String tip;
 
     public MandalartReminder(
             String username,
             String email,
-            MandalartGrid grid,
+            MailMandalartGrid grid,
             String tip
     ) {
         this.username = username;

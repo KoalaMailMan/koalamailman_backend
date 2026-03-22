@@ -5,15 +5,15 @@ import com.koa.koalamailman.mandalart.domain.GoalLevel;
 
 import java.util.List;
 
-public class MandalartGrid {
+public class MailMandalartGrid {
 
     private final String[][] values;
 
-    private MandalartGrid(String[][] values) {
+    private MailMandalartGrid(String[][] values) {
         this.values = values;
     }
 
-    public static MandalartGrid from(List<Goal> goals) {
+    public static MailMandalartGrid from(List<Goal> goals) {
         int size = 3;
         String[][] grid = new String[size][size];
 
@@ -36,7 +36,7 @@ public class MandalartGrid {
             }
         }
 
-        return new MandalartGrid(grid);
+        return new MailMandalartGrid(grid);
     }
 
     public String[][] values() {
