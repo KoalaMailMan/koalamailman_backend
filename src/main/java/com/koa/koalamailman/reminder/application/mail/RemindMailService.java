@@ -1,8 +1,8 @@
 package com.koa.koalamailman.reminder.application.mail;
 
-import com.koa.koalamailman.mandalart.repository.entity.GoalEntity;
-import com.koa.koalamailman.mandalart.repository.entity.MandalartEntity;
-import com.koa.koalamailman.mandalart.service.GoalService;
+import com.koa.koalamailman.mandalart.domain.Goal;
+import com.koa.koalamailman.mandalart.domain.Mandalart;
+import com.koa.koalamailman.mandalart.application.GoalService;
 import com.koa.koalamailman.reminder.domain.MandalartGrid;
 import com.koa.koalamailman.reminder.domain.MandalartReminder;
 import com.koa.koalamailman.user.repository.User;
@@ -24,9 +24,9 @@ public class RemindMailService {
     @Value("${mail.tip}")
     private String tip;
 
-    public void send(MandalartEntity mandalart) {
+    public void send(Mandalart mandalart) {
         User user = userService.findUserById(mandalart.getUserId());
-        List<GoalEntity> goals = goalService.getCoreAndMainGoalsFromMandalart(mandalart);
+        List<Goal> goals = goalService.getCoreAndMainGoalsFromMandalart(mandalart);
 
         MandalartReminder reminder = new MandalartReminder(
                 user.getNickname(),

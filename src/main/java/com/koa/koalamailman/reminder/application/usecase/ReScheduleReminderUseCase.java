@@ -1,8 +1,8 @@
 package com.koa.koalamailman.reminder.application.usecase;
 
-import com.koa.koalamailman.mandalart.repository.MandalartRepository;
-import com.koa.koalamailman.mandalart.repository.entity.MandalartEntity;
-import com.koa.koalamailman.mandalart.repository.entity.ReminderOption;
+import com.koa.koalamailman.mandalart.infrastructure.MandalartRepository;
+import com.koa.koalamailman.mandalart.domain.Mandalart;
+import com.koa.koalamailman.mandalart.domain.ReminderOption;
 import com.koa.koalamailman.reminder.application.provider.ReminderTimeProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class ReScheduleReminderUseCase {
 
     @Transactional
     public void rescheduleRandom(Long mandalartId) {
-        MandalartEntity mandalart = mandalartRepository.findById(mandalartId).orElse(null);
+        Mandalart mandalart = mandalartRepository.findById(mandalartId).orElse(null);
         if (mandalart == null) return;
 
         ReminderOption option = mandalart.getReminderOption();

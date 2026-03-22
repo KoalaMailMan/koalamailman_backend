@@ -1,6 +1,6 @@
 package com.koa.koalamailman.reminder.application.usecase;
 
-import com.koa.koalamailman.mandalart.repository.entity.MandalartEntity;
+import com.koa.koalamailman.mandalart.domain.Mandalart;
 import com.koa.koalamailman.reminder.application.mail.RemindMailService;
 import com.koa.koalamailman.reminder.infrastructure.ReminderTaskScheduler;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +43,7 @@ public class ScheduleReminderUseCase {
         });
     }
 
-    private void execute(MandalartEntity mandalart) {
+    private void execute(Mandalart mandalart) {
         reminderRemindMailService.send(mandalart);
         reScheduleReminderUseCase.rescheduleRandom(mandalart.getId());
     }

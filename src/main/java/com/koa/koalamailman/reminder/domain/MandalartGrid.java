@@ -1,7 +1,7 @@
 package com.koa.koalamailman.reminder.domain;
 
-import com.koa.koalamailman.mandalart.repository.entity.GoalEntity;
-import com.koa.koalamailman.mandalart.repository.entity.GoalLevel;
+import com.koa.koalamailman.mandalart.domain.Goal;
+import com.koa.koalamailman.mandalart.domain.GoalLevel;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public class MandalartGrid {
         this.values = values;
     }
 
-    public static MandalartGrid from(List<GoalEntity> goals) {
+    public static MandalartGrid from(List<Goal> goals) {
         int size = 3;
         String[][] grid = new String[size][size];
 
@@ -23,7 +23,7 @@ public class MandalartGrid {
             }
         }
 
-        for (GoalEntity goal : goals) {
+        for (Goal goal : goals) {
             if (goal.getLevel() == GoalLevel.CORE) {
                 grid[1][1] = goal.getContent();
             } else if (goal.getLevel() == GoalLevel.MAIN) {

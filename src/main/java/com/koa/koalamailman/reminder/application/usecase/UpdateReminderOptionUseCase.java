@@ -1,7 +1,7 @@
 package com.koa.koalamailman.reminder.application.usecase;
 
-import com.koa.koalamailman.mandalart.repository.entity.MandalartEntity;
-import com.koa.koalamailman.mandalart.service.MandalartService;
+import com.koa.koalamailman.mandalart.domain.Mandalart;
+import com.koa.koalamailman.mandalart.application.MandalartService;
 import com.koa.koalamailman.reminder.application.provider.ReminderTimeProvider;
 import com.koa.koalamailman.reminder.presentation.dto.request.UpdateReminderOptionsRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class UpdateReminderOptionUseCase {
 
     @Transactional
     public void updateReminderOption(Long userId, UpdateReminderOptionsRequest request) {
-        MandalartEntity mandalart = mandalartService.findMandalartByMandalartId(userId, request.mandalartId());
+        Mandalart mandalart = mandalartService.findMandalartByMandalartId(userId, request.mandalartId());
         LocalDateTime nextScheduledTime = reminderTimeProvider.generateRandomTime(request.reminderInterval());
 
         mandalart.getReminderOption().update(
