@@ -1,9 +1,7 @@
-package com.koa.koalamailman.domain.recommend.service;
+package com.koa.koalamailman.recommend.application;
 
-import com.koa.koalamailman.recommend.presentation.dto.ChildGoalsResponse;
 import com.koa.koalamailman.global.exception.BusinessException;
 import com.koa.koalamailman.global.exception.error.RecommendErrorCode;
-import com.koa.koalamailman.recommend.application.RecommendService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,10 +13,11 @@ import org.springframework.ai.chat.client.ChatClient;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,12 +54,12 @@ class RecommendServiceTest {
             mockChatClientCall(response);
 
             // when
-            ChildGoalsResponse result = recommendService.getChildGoalByParentGoal(
+            List<String> result = recommendService.getChildGoalByParentGoal(
                     "상위목표", 3, null, null, null, null);
 
             // then
-            assertThat(result.childGoals()).hasSize(3);
-            assertThat(result.childGoals()).containsExactly("목표1", "목표2", "목표3");
+            assertThat(result).hasSize(3);
+            assertThat(result).containsExactly("목표1", "목표2", "목표3");
         }
 
         @Test
@@ -71,11 +70,11 @@ class RecommendServiceTest {
             mockChatClientCall(response);
 
             // when
-            ChildGoalsResponse result = recommendService.getChildGoalByParentGoal(
+            List<String> result = recommendService.getChildGoalByParentGoal(
                     "상위목표", 3, null, null, null, null);
 
             // then
-            assertThat(result.childGoals()).containsExactly("목표1", "목표2", "목표3");
+            assertThat(result).containsExactly("목표1", "목표2", "목표3");
         }
 
         @Test
@@ -86,12 +85,12 @@ class RecommendServiceTest {
             mockChatClientCall(response);
 
             // when
-            ChildGoalsResponse result = recommendService.getChildGoalByParentGoal(
+            List<String> result = recommendService.getChildGoalByParentGoal(
                     "상위목표", 2, null, null, null, null);
 
             // then
-            assertThat(result.childGoals()).hasSize(2);
-            assertThat(result.childGoals()).containsExactly("목표1", "목표2");
+            assertThat(result).hasSize(2);
+            assertThat(result).containsExactly("목표1", "목표2");
         }
 
         @Test
@@ -103,12 +102,12 @@ class RecommendServiceTest {
             mockChatClientCall(response);
 
             // when
-            ChildGoalsResponse result = recommendService.getChildGoalByParentGoal(
+            List<String> result = recommendService.getChildGoalByParentGoal(
                     "상위목표", 2, null, null, null, null);
 
             // then
-            assertThat(result.childGoals().get(0)).hasSize(40);
-            assertThat(result.childGoals().get(1)).isEqualTo("짧은목표");
+            assertThat(result.get(0)).hasSize(40);
+            assertThat(result.get(1)).isEqualTo("짧은목표");
         }
 
         @Test

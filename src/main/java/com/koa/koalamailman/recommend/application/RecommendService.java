@@ -1,9 +1,8 @@
-package com.koa.koalamailman.domain.recommend.service;
+package com.koa.koalamailman.recommend.application;
 
-import com.koa.koalamailman.domain.recommend.dto.ChildGoalsResponse;
-import com.koa.koalamailman.domain.recommend.template.PromptTemplates;
-import com.koa.koalamailman.domain.user.repository.AgeGroup;
-import com.koa.koalamailman.domain.user.repository.Gender;
+import com.koa.koalamailman.recommend.infrastructure.PromptTemplates;
+import com.koa.koalamailman.user.domain.AgeGroup;
+import com.koa.koalamailman.user.domain.Gender;
 import com.koa.koalamailman.global.exception.BusinessException;
 import com.koa.koalamailman.global.exception.error.RecommendErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +25,8 @@ public class RecommendService {
 
     private final ChatClient chatClient;
 
-    public List<String> getChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job) {
-        var response = buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job)
+    public List<String> getChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job, List<String> excludeGoals) {
+        var response = buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
                 .call()
                 .content();
 
