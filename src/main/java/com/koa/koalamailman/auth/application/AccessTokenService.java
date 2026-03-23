@@ -1,4 +1,4 @@
-package com.koa.koalamailman.auth.service;
+package com.koa.koalamailman.auth.application;
 
 import com.koa.koalamailman.user.domain.User;
 import com.koa.koalamailman.global.token.JwtProvider;

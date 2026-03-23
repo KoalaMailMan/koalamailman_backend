@@ -1,6 +1,6 @@
-package com.koa.koalamailman.auth.controller.docs;
+package com.koa.koalamailman.auth.presentation.docs;
 
-import com.koa.koalamailman.auth.dto.AccessTokenResponse;
+import com.koa.koalamailman.auth.presentation.dto.response.AccessTokenResponse;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

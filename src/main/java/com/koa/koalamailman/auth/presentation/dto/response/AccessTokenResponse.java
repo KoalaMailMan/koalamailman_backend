@@ -1,4 +1,4 @@
-package com.koa.koalamailman.auth.dto;
+package com.koa.koalamailman.auth.presentation.dto.response;
 
 public record AccessTokenResponse(
         String accessToken

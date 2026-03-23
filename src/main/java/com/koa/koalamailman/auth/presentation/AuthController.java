@@ -1,8 +1,8 @@
-package com.koa.koalamailman.auth.controller;
+package com.koa.koalamailman.auth.presentation;
 
-import com.koa.koalamailman.auth.controller.docs.AuthControllerDocs;
-import com.koa.koalamailman.auth.dto.AccessTokenResponse;
-import com.koa.koalamailman.auth.service.RefreshTokenService;
+import com.koa.koalamailman.auth.presentation.docs.AuthControllerDocs;
+import com.koa.koalamailman.auth.presentation.dto.response.AccessTokenResponse;
+import com.koa.koalamailman.auth.application.RefreshTokenService;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.exception.SuccessCode;
 import lombok.RequiredArgsConstructor;

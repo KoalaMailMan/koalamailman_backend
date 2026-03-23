@@ -1,4 +1,4 @@
-package com.koa.koalamailman.auth.application;
+package com.koa.koalamailman.user.application;
 
 import com.koa.koalamailman.user.domain.OAuthProvider;
 import com.koa.koalamailman.user.domain.User;
@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class AuthUseCase {
+public class UserAuthUseCase {
 
     private final UserRepository userRepository;
 

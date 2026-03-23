@@ -1,7 +1,7 @@
-package com.koa.koalamailman.auth.service;
+package com.koa.koalamailman.auth.application;
 
-import com.koa.koalamailman.auth.repository.RefreshTokenRepository;
-import com.koa.koalamailman.auth.repository.entity.RefreshToken;
+import com.koa.koalamailman.auth.infrastructure.RefreshTokenRepository;
+import com.koa.koalamailman.auth.domain.RefreshToken;
 import com.koa.koalamailman.user.domain.User;
 import com.koa.koalamailman.global.exception.BusinessException;
 import com.koa.koalamailman.global.exception.error.AuthErrorCode;
@@ -45,6 +45,7 @@ public class RefreshTokenService {
 
         return jwtProvider.generateToken(userId, null, refreshTokenExpirationMs);
     }
+
     @Transactional
     public String createRefreshToken(User user) {
         String rawToken = jwtProvider.generateToken(user.getId(), null, refreshTokenExpirationMs);

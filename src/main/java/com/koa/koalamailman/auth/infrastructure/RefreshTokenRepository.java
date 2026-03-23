@@ -1,6 +1,6 @@
-package com.koa.koalamailman.auth.repository;
+package com.koa.koalamailman.auth.infrastructure;
 
-import com.koa.koalamailman.auth.repository.entity.RefreshToken;
+import com.koa.koalamailman.auth.domain.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
