@@ -6,7 +6,6 @@ import com.auth0.jwt.exceptions.AlgorithmMismatchException;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.koa.koalamailman.domain.user.repository.User;
 import com.koa.koalamailman.global.security.oauth.CustomUserDetailsService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;

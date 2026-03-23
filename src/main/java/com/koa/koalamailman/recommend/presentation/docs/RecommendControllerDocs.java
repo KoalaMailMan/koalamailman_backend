@@ -1,0 +1,65 @@
+package com.koa.koalamailman.recommend.presentation.docs;
+
+import com.koa.koalamailman.recommend.presentation.dto.ChildGoalsResponse;
+import com.koa.koalamailman.user.domain.AgeGroup;
+import com.koa.koalamailman.user.domain.Gender;
+import com.koa.koalamailman.global.dto.SuccessResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.web.bind.annotation.RequestParam;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "목표 추천", description = "목표 추천 관련 API입니다.")
+public interface RecommendControllerDocs {
+
+    @Operation(summary = "세부(child) 목표 추천", description = "주요(parent) 목표에 대한 세부(child) 목표를 추천합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "응답 성공"),
+            @ApiResponse(responseCode = "204", description = "LLM 응답이 비어있어 추천 내용이 없음")
+    })
+    SuccessResponse<ChildGoalsResponse> generationSubGoalList(
+            @Parameter(description = "주요(parent) 목표")
+            @RequestParam("parentGoal") @NotNull String parentGoal,
+            @Parameter(description = "추천 받을 목표 갯수")
+            @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
+            @RequestParam("ageGroup") AgeGroup ageGroup,
+            @RequestParam("gender") Gender gender,
+            @RequestParam("job") String job,
+            @Parameter(description = "제외할 목표 목록 (이전에 추천된 목표)")
+            @RequestParam(value = "excludeGoals", required = false) List<String> excludeGoals
+    );
+
+    @Operation(summary = "세부(child) 목표 추천 SSE 스트리밍",
+            description = """
+                    주요(parent) 목표에 대한 세부(child) 목표를 스트리밍 방식으로 추천합니다.
+
+                    SSE 이벤트 타입:
+                    - data: 목표 내용 (예: data: 운동하기)
+                    - event: complete - 스트리밍 완료
+                    - event: error - 에러 발생 (data: {"code": "에러코드", "message": "에러메시지"})
+                    """)
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "스트리밍 연결 성공")
+    })
+    Flux<ServerSentEvent<Object>> generationStreamingChildGoal(
+            @Parameter(description = "주요(parent) 목표")
+            @RequestParam("parentGoal") @NotNull String parentGoal,
+            @Parameter(description = "추천 받을 목표 갯수")
+            @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
+            @RequestParam("ageGroup") AgeGroup ageGroup,
+            @RequestParam("gender") Gender gender,
+            @RequestParam("job") String job,
+            @Parameter(description = "제외할 목표 목록 (이전에 추천된 목표)")
+            @RequestParam(value = "excludeGoals", required = false) List<String> excludeGoals
+    );
+}
