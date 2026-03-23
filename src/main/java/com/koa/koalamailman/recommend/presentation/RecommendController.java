@@ -40,7 +40,7 @@ public class RecommendController implements RecommendControllerDocs {
             ) {
         return SuccessResponse.success(
                 SuccessCode.GET_RECOMMEND_SUCCESS,
-                recommendService.getChildGoalByParentGoal(parentGoal, recommendationCount, ageGroup, gender, job)
+                ChildGoalsResponse.from(recommendService.getChildGoalByParentGoal(parentGoal, recommendationCount, ageGroup, gender, job))
         );
     }
 

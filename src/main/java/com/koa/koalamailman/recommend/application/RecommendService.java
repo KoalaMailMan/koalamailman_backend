@@ -26,7 +26,7 @@ public class RecommendService {
 
     private final ChatClient chatClient;
 
-    public ChildGoalsResponse getChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job) {
+    public List<String> getChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job) {
         var response = buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job)
                 .call()
                 .content();
@@ -47,7 +47,7 @@ public class RecommendService {
             throw new BusinessException(RecommendErrorCode.RECOMMEND_NOT_CONTENT);
         }
 
-        return new ChildGoalsResponse(goals);
+        return goals;
     }
 
     public Flux<String> streamingChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job) {
