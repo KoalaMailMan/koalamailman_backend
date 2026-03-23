@@ -1,6 +1,5 @@
-package com.koa.koalamailman.recommend.config;
+package com.koa.koalamailman.recommend.infrastructure;
 
-import com.koa.koalamailman.recommend.template.PromptTemplates;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;

@@ -1,9 +1,9 @@
 package com.koa.koalamailman.domain.recommend.service;
 
-import com.koa.koalamailman.recommend.dto.ChildGoalsResponse;
+import com.koa.koalamailman.recommend.presentation.dto.ChildGoalsResponse;
 import com.koa.koalamailman.global.exception.BusinessException;
 import com.koa.koalamailman.global.exception.error.RecommendErrorCode;
-import com.koa.koalamailman.recommend.service.RecommendService;
+import com.koa.koalamailman.recommend.application.RecommendService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

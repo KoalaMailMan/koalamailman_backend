@@ -1,7 +1,7 @@
-package com.koa.koalamailman.recommend.service;
+package com.koa.koalamailman.recommend.application;
 
-import com.koa.koalamailman.recommend.dto.ChildGoalsResponse;
-import com.koa.koalamailman.recommend.template.PromptTemplates;
+import com.koa.koalamailman.recommend.infrastructure.PromptTemplates;
+import com.koa.koalamailman.recommend.presentation.dto.ChildGoalsResponse;
 import com.koa.koalamailman.user.domain.AgeGroup;
 import com.koa.koalamailman.user.domain.Gender;
 import com.koa.koalamailman.global.exception.BusinessException;

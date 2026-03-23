@@ -1,6 +1,6 @@
-package com.koa.koalamailman.recommend.controller.docs;
+package com.koa.koalamailman.recommend.presentation.docs;
 
-import com.koa.koalamailman.recommend.dto.ChildGoalsResponse;
+import com.koa.koalamailman.recommend.presentation.dto.ChildGoalsResponse;
 import com.koa.koalamailman.user.domain.AgeGroup;
 import com.koa.koalamailman.user.domain.Gender;
 import com.koa.koalamailman.global.dto.SuccessResponse;

@@ -1,9 +1,9 @@
-package com.koa.koalamailman.recommend.controller;
+package com.koa.koalamailman.recommend.presentation;
 
-import com.koa.koalamailman.recommend.controller.docs.RecommendControllerDocs;
-import com.koa.koalamailman.recommend.dto.ChildGoalsResponse;
-import com.koa.koalamailman.recommend.dto.StreamingErrorData;
-import com.koa.koalamailman.recommend.service.RecommendService;
+import com.koa.koalamailman.recommend.presentation.docs.RecommendControllerDocs;
+import com.koa.koalamailman.recommend.presentation.dto.ChildGoalsResponse;
+import com.koa.koalamailman.recommend.presentation.dto.StreamingErrorData;
+import com.koa.koalamailman.recommend.application.RecommendService;
 import com.koa.koalamailman.user.domain.AgeGroup;
 import com.koa.koalamailman.user.domain.Gender;
 import com.koa.koalamailman.global.dto.SuccessResponse;

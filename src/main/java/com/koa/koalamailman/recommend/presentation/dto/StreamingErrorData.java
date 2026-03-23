@@ -1,4 +1,4 @@
-package com.koa.koalamailman.recommend.dto;
+package com.koa.koalamailman.recommend.presentation.dto;
 
 import com.koa.koalamailman.global.exception.error.ErrorCode;
 

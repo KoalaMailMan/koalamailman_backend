@@ -1,4 +1,4 @@
-package com.koa.koalamailman.recommend.template;
+package com.koa.koalamailman.recommend.infrastructure;
 
 public class PromptTemplates {
 
