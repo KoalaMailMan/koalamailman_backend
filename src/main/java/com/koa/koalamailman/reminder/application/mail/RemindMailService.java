@@ -2,7 +2,7 @@ package com.koa.koalamailman.reminder.application.mail;
 
 import com.koa.koalamailman.mandalart.domain.Goal;
 import com.koa.koalamailman.mandalart.domain.Mandalart;
-import com.koa.koalamailman.mandalart.domain.GoalService;
+import com.koa.koalamailman.mandalart.application.GoalService;
 import com.koa.koalamailman.reminder.domain.MailMandalartGrid;
 import com.koa.koalamailman.reminder.domain.MandalartReminder;
 import com.koa.koalamailman.user.domain.User;

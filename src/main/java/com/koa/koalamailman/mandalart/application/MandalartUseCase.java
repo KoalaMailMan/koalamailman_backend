@@ -2,7 +2,6 @@ package com.koa.koalamailman.mandalart.application;
 
 import com.koa.koalamailman.mandalart.application.dto.CoreGoalDto;
 import com.koa.koalamailman.mandalart.application.dto.MandalartDto;
-import com.koa.koalamailman.mandalart.domain.GoalService;
 import com.koa.koalamailman.mandalart.infrastructure.GoalRepository;
 import com.koa.koalamailman.mandalart.infrastructure.MandalartRepository;
 import com.koa.koalamailman.mandalart.domain.Goal;
