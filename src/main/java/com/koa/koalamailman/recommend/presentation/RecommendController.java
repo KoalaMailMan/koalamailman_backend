@@ -1,11 +1,12 @@
-package com.koa.koalamailman.domain.recommend.controller;
+package com.koa.koalamailman.recommend.presentation;
 
-import com.koa.koalamailman.domain.recommend.controller.docs.RecommendControllerDocs;
-import com.koa.koalamailman.domain.recommend.dto.ChildGoalsResponse;
-import com.koa.koalamailman.domain.recommend.dto.StreamingErrorData;
-import com.koa.koalamailman.domain.recommend.service.RecommendService;
-import com.koa.koalamailman.domain.user.repository.AgeGroup;
-import com.koa.koalamailman.domain.user.repository.Gender;
+import com.koa.koalamailman.recommend.presentation.docs.RecommendControllerDocs;
+import com.koa.koalamailman.recommend.presentation.dto.ChildGoalsResponse;
+import com.koa.koalamailman.recommend.presentation.dto.StreamingErrorData;
+import com.koa.koalamailman.recommend.application.RecommendService;
+import com.koa.koalamailman.user.domain.AgeGroup;
+import com.koa.koalamailman.user.domain.Gender;
+import java.util.List;
 import com.koa.koalamailman.global.dto.SuccessResponse;
 import com.koa.koalamailman.global.exception.SuccessCode;
 import com.koa.koalamailman.global.exception.error.RecommendErrorCode;
@@ -41,7 +42,7 @@ public class RecommendController implements RecommendControllerDocs {
             ) {
         return SuccessResponse.success(
                 SuccessCode.GET_RECOMMEND_SUCCESS,
-                ChildGoalsResponse.from(recommendService.getChildGoalByParentGoal(parentGoal, recommendationCount, ageGroup, gender, job))
+                ChildGoalsResponse.from(recommendService.getChildGoalByParentGoal(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals))
         );
     }
 
