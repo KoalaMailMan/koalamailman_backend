@@ -25,8 +25,9 @@ public class RecommendService {
 
     private final ChatClient chatClient;
 
-    public List<String> getChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job, List<String> excludeGoals) {
-        var response = buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
+    public List<String> getChildGoalByParentGoal(String parentGoal, int recommendationCount, List<String> excludeGoals) {
+        // age, gender, job 별 프롬프트 개인화 중지
+        var response = buildChildGoalPrompt(parentGoal, recommendationCount, null, null, null, excludeGoals)
                 .call()
                 .content();
 
@@ -49,10 +50,11 @@ public class RecommendService {
         return goals;
     }
 
-    public Flux<String> streamingChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job, List<String> excludeGoals) {
+    public Flux<String> streamingChildGoalByParentGoal(String parentGoal, int recommendationCount, List<String> excludeGoals) {
         AtomicReference<String> buffer = new AtomicReference<>("");
 
-        return buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
+        // age, gender, job 별 프롬프트 개인화 중지
+        return buildChildGoalPrompt(parentGoal, recommendationCount, null, null, null, excludeGoals)
                 .stream()
                 .content()
                 .concatMap(chunk -> parseCompletedGoals(buffer, chunk))

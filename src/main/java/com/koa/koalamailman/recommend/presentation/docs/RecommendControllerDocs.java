@@ -32,9 +32,6 @@ public interface RecommendControllerDocs {
             @RequestParam("parentGoal") @NotNull String parentGoal,
             @Parameter(description = "추천 받을 목표 갯수")
             @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
-            @RequestParam("ageGroup") AgeGroup ageGroup,
-            @RequestParam("gender") Gender gender,
-            @RequestParam("job") String job,
             @Parameter(description = "제외할 목표 목록 (이전에 추천된 목표)")
             @RequestParam(value = "excludeGoals", required = false) List<String> excludeGoals
     );
@@ -56,9 +53,6 @@ public interface RecommendControllerDocs {
             @RequestParam("parentGoal") @NotNull String parentGoal,
             @Parameter(description = "추천 받을 목표 갯수")
             @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
-            @RequestParam("ageGroup") AgeGroup ageGroup,
-            @RequestParam("gender") Gender gender,
-            @RequestParam("job") String job,
             @Parameter(description = "제외할 목표 목록 (이전에 추천된 목표)")
             @RequestParam(value = "excludeGoals", required = false) List<String> excludeGoals
     );
