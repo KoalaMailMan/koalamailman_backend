@@ -1,4 +1,4 @@
-package com.koa.koalamailman.reminder.domain;
+package com.koa.koalamailman.reminder.application.mail;
 
 import lombok.Getter;
 
