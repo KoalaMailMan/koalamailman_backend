@@ -1,8 +1,7 @@
 package com.koa.koalamailman.reminder.application.mail;
 
+import com.koa.koalamailman.mandalart.application.MandalartUseCase;
 import com.koa.koalamailman.mandalart.domain.Goal;
-import com.koa.koalamailman.mandalart.domain.Mandalart;
-import com.koa.koalamailman.mandalart.application.GoalService;
 import com.koa.koalamailman.reminder.domain.MailMandalartGrid;
 import com.koa.koalamailman.reminder.domain.MandalartReminder;
 import com.koa.koalamailman.user.domain.User;
@@ -18,15 +17,15 @@ import java.util.List;
 public class RemindMailService {
     private final MailSender mailSender;
     private final UserUseCase userUseCase;
-    private final GoalService goalService;
+    private final MandalartUseCase mandalartUseCase;
     private final MandalartMailComposer composer;
 
     @Value("${mail.tip}")
     private String tip;
 
-    public void send(Mandalart mandalart) {
-        User user = userUseCase.findUserById(mandalart.getUserId());
-        List<Goal> goals = goalService.getCoreAndMainGoalsFromMandalart(mandalart);
+    public void send(Long mandalartId, Long userId) {
+        User user = userUseCase.findUserById(userId);
+        List<Goal> goals = mandalartUseCase.getCoreAndMainGoals(mandalartId);
 
         MandalartReminder reminder = new MandalartReminder(
                 user.getNickname(),

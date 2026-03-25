@@ -1,4 +1,4 @@
-package com.koa.koalamailman.reminder.domain;
+package com.koa.koalamailman.mandalart.domain;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

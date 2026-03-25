@@ -1,6 +1,6 @@
 package com.koa.koalamailman.reminder.application.provider;
 
-import com.koa.koalamailman.reminder.domain.RemindInterval;
+import com.koa.koalamailman.mandalart.domain.RemindInterval;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;

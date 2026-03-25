@@ -1,4 +1,4 @@
-package com.koa.koalamailman.reminder.domain;
+package com.koa.koalamailman.mandalart.domain;
 
 import jakarta.persistence.*;
 import lombok.*;

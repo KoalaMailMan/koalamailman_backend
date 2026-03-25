@@ -1,6 +1,6 @@
 package com.koa.koalamailman.reminder.application.usecase;
 
-import com.koa.koalamailman.mandalart.infrastructure.MandalartRepository;
+import com.koa.koalamailman.mandalart.application.MandalartUseCase;
 import com.koa.koalamailman.mandalart.domain.Mandalart;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,10 +13,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FindDueReminderUseCase {
 
-    private final MandalartRepository mandalartRepository;
+    private final MandalartUseCase mandalartUseCase;
 
     @Transactional(readOnly = true)
     public List<Mandalart> findBefore(LocalDateTime until) {
-        return mandalartRepository.findDueReminders(until);
+        return mandalartUseCase.findDueMandalarts(until);
     }
 }
