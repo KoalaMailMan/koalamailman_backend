@@ -2,8 +2,6 @@ package com.koa.koalamailman.reminder.application.mail;
 
 import com.koa.koalamailman.mandalart.application.MandalartUseCase;
 import com.koa.koalamailman.mandalart.domain.Goal;
-import com.koa.koalamailman.reminder.domain.MailMandalartGrid;
-import com.koa.koalamailman.reminder.domain.MandalartReminder;
 import com.koa.koalamailman.user.domain.User;
 import com.koa.koalamailman.user.application.UserUseCase;
 import lombok.RequiredArgsConstructor;

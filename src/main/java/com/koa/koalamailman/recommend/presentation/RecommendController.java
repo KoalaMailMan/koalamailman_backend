@@ -35,14 +35,11 @@ public class RecommendController implements RecommendControllerDocs {
     public SuccessResponse<ChildGoalsResponse> generationSubGoalList(
             @RequestParam("parentGoal") @NotNull String parentGoal,
             @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
-            @RequestParam(value = "ageGroup", required = false) AgeGroup ageGroup,
-            @RequestParam(value = "gender", required = false)Gender gender,
-            @RequestParam(value = "job", required = false) String job,
             @RequestParam(value = "excludeGoals", required = false) List<String> excludeGoals
             ) {
         return SuccessResponse.success(
                 SuccessCode.GET_RECOMMEND_SUCCESS,
-                ChildGoalsResponse.from(recommendService.getChildGoalByParentGoal(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals))
+                ChildGoalsResponse.from(recommendService.getChildGoalByParentGoal(parentGoal, recommendationCount, excludeGoals))
         );
     }
 
@@ -50,12 +47,9 @@ public class RecommendController implements RecommendControllerDocs {
     public Flux<ServerSentEvent<Object>> generationStreamingChildGoal(
             @RequestParam("parentGoal") @NotNull String parentGoal,
             @RequestParam("recommendationCount") @NotNull @Max(8) int recommendationCount,
-            @RequestParam(value = "ageGroup", required = false) AgeGroup ageGroup,
-            @RequestParam(value = "gender", required = false) Gender gender,
-            @RequestParam(value = "job", required = false) String job,
             @RequestParam(value = "excludeGoals", required = false) List<String> excludeGoals
     ) {
-        return recommendService.streamingChildGoalByParentGoal(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
+        return recommendService.streamingChildGoalByParentGoal(parentGoal, recommendationCount, excludeGoals)
                 .map(goal -> ServerSentEvent.builder().data(goal).build())
                 .concatWith(Flux.just(ServerSentEvent.builder().event("complete").data("").build()))
                 .doOnComplete(() -> log.info("[목표 추천] 모든 streaming 데이터 전송 완료"))

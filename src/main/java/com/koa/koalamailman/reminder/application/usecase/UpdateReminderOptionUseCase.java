@@ -21,7 +21,7 @@ public class UpdateReminderOptionUseCase {
         Mandalart mandalart = mandalartUseCase.findMandalartByMandalartId(userId, request.mandalartId());
         LocalDateTime nextScheduledTime = reminderTimeProvider.generateRandomTime(request.reminderInterval());
 
-        mandalart.getReminderOption().update(
+        mandalart.updateReminderOption(
                 request.reminderEnabled(),
                 request.reminderInterval(),
                 nextScheduledTime
