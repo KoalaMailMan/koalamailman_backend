@@ -85,6 +85,6 @@ public class MandalartUseCase {
     public void rescheduleReminder(Long mandalartId, LocalDateTime nextTime) {
         Mandalart mandalart = mandalartRepository.findById(mandalartId).orElse(null);
         if (mandalart == null) return;
-        mandalart.getReminderOption().setRemindScheduledAt(nextTime);
+        mandalart.rescheduleReminder(nextTime);
     }
 }
