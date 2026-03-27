@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "token",
         indexes = {
-                @Index(name = "idx_user_id", columnList = "userId")
+                @Index(name = "idx_token_user_id", columnList = "userId")
         })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
