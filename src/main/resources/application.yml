@@ -61,7 +61,7 @@ spring:
             user-name-attribute: response
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?currentSchema=ringdongdb
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
@@ -75,10 +75,11 @@ spring:
     properties:
       hibernate:
         format_sql: false
-        default_schema: ringdongdb
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
   ai:
+    retry:
+      max-attempts: 1
     openai:
       api-key: ${OPENROUTER_API_KEY}
       base-url: https://openrouter.ai/api
@@ -86,12 +87,12 @@ spring:
       read-timeout: 30s
       chat:
         options:
-          model: ${OPENROUTER_MODEL:mistralai/mistral-7b-instruct:free}
-
-  cache:
-    type: caffeine
-    caffeine:
-      spec: maximumSize=1000,expireAfterWrite=5m
+          model: ${OPENROUTER_MODEL}
+      embedding:
+        api-key: ${OPENROUTER_API_KEY}
+        base-url: https://openrouter.ai/api
+        options:
+          model: ${OPENROUTER_EMBEDDING_MODEL}
 
 aws:
   region: ap-northeast-2
