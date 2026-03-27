@@ -1,6 +1,5 @@
 package com.koa.koalamailman.reminder.application.mail;
 
-import com.koa.koalamailman.reminder.domain.MandalartReminder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.koa.koalamailman.reminder.domain;
+package com.koa.koalamailman.mandalart.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,17 +21,17 @@ public class ReminderOption {
 
     private LocalDateTime remindScheduledAt;
 
-    public void update(Boolean enabled, RemindInterval interval, LocalDateTime nextTime) {
+    void update(Boolean enabled, RemindInterval interval, LocalDateTime nextTime) {
         this.reminderEnabled = enabled;
         this.remindInterval = interval;
         this.remindScheduledAt = nextTime;
     }
 
-    public void setRemindScheduledAt(LocalDateTime nextTime) {
+    void setRemindScheduledAt(LocalDateTime nextTime) {
         this.remindScheduledAt = nextTime;
     }
 
-    public static ReminderOption disabled() {
+    static ReminderOption disabled() {
         return ReminderOption.builder()
                 .reminderEnabled(false)
                 .remindInterval(null)

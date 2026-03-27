@@ -74,7 +74,11 @@ public class GoalService {
         return goal;
     }
 
-    public List<Goal> getCoreAndMainGoalsFromMandalart(Mandalart mandalart) {
-        return goalRepository.findByMandalartIdAndLevelIn(mandalart.getId(), List.of(GoalLevel.CORE, GoalLevel.MAIN));
+    public List<Goal> findGoalsByMandalartId(Long mandalartId) {
+        return goalRepository.findGoalsByMandalartId(mandalartId);
+    }
+
+    public List<Goal> findByMandalartIdAndLevelIn(Long mandalartId, List<GoalLevel> goalLevels) {
+        return goalRepository.findByMandalartIdAndLevelIn(mandalartId, goalLevels);
     }
 }

@@ -1,12 +1,10 @@
 package com.koa.koalamailman.reminder.application.usecase;
 
-import com.koa.koalamailman.mandalart.infrastructure.MandalartRepository;
-import com.koa.koalamailman.mandalart.domain.Mandalart;
-import com.koa.koalamailman.reminder.domain.ReminderOption;
+import com.koa.koalamailman.mandalart.application.MandalartUseCase;
+import com.koa.koalamailman.mandalart.domain.RemindInterval;
 import com.koa.koalamailman.reminder.application.provider.ReminderTimeProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -15,16 +13,10 @@ import java.time.LocalDateTime;
 public class ReScheduleReminderUseCase {
 
     private final ReminderTimeProvider reminderTimeProvider;
-    private final MandalartRepository mandalartRepository;
+    private final MandalartUseCase mandalartUseCase;
 
-    @Transactional
-    public void rescheduleRandom(Long mandalartId) {
-        Mandalart mandalart = mandalartRepository.findById(mandalartId).orElse(null);
-        if (mandalart == null) return;
-
-        ReminderOption option = mandalart.getReminderOption();
-        if (option == null) return;
-        LocalDateTime nextScheduledTime = reminderTimeProvider.generateRandomTime(option.getRemindInterval());
-        option.setRemindScheduledAt(nextScheduledTime);
+    public void rescheduleRandom(Long mandalartId, RemindInterval interval) {
+        LocalDateTime nextScheduledTime = reminderTimeProvider.generateRandomTime(interval);
+        mandalartUseCase.rescheduleReminder(mandalartId, nextScheduledTime);
     }
 }
