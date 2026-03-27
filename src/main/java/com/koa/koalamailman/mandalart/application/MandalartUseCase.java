@@ -2,7 +2,6 @@ package com.koa.koalamailman.mandalart.application;
 
 import com.koa.koalamailman.mandalart.application.dto.CoreGoalDto;
 import com.koa.koalamailman.mandalart.application.dto.MandalartDto;
-import com.koa.koalamailman.mandalart.infrastructure.GoalRepository;
 import com.koa.koalamailman.mandalart.infrastructure.MandalartRepository;
 import com.koa.koalamailman.mandalart.domain.Goal;
 import com.koa.koalamailman.mandalart.domain.GoalLevel;
@@ -22,7 +21,6 @@ public class MandalartUseCase {
 
     private final GoalService goalService;
     private final MandalartRepository mandalartRepository;
-    private final GoalRepository goalRepository;
 
     @Transactional
     public MandalartDto createMandalart(Long userId, Long mandalartId, CoreGoalDto coreGoalDto) {
@@ -48,7 +46,7 @@ public class MandalartUseCase {
 
     @Transactional(readOnly = true)
     public CoreGoalDto getGoalsByMandalartId(Long mandalartId) {
-        List<Goal> goals = goalRepository.findGoalsByMandalartId(mandalartId);
+        List<Goal> goals = goalService.findGoalsByMandalartId(mandalartId);
         return CoreGoalDto.from(goals);
     }
 
@@ -78,7 +76,7 @@ public class MandalartUseCase {
 
     @Transactional(readOnly = true)
     public List<Goal> getCoreAndMainGoals(Long mandalartId) {
-        return goalRepository.findByMandalartIdAndLevelIn(mandalartId, List.of(GoalLevel.CORE, GoalLevel.MAIN));
+        return goalService.findByMandalartIdAndLevelIn(mandalartId, List.of(GoalLevel.CORE, GoalLevel.MAIN));
     }
 
     @Transactional
