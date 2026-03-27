@@ -7,7 +7,7 @@ import lombok.*;
 @Entity
 @Table(name = "mandalart", indexes = {
         @Index(
-                name = "idx_user_id",
+                name = "idx_mandalart_user_id",
                 columnList = "user_id"
         )
 },
