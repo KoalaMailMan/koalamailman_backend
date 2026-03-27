@@ -60,8 +60,9 @@ dependencies {
 	implementation "jakarta.mail:jakarta.mail-api:2.1.2"
 	implementation "com.sun.mail:jakarta.mail:2.0.1"
 
-	// mysql
-	implementation 'mysql:mysql-connector-java:8.0.33'
+	// postgresql + pgvector
+	implementation 'org.postgresql:postgresql'
+	implementation 'com.pgvector:pgvector:0.1.6'
 
 	// spring ai
 	implementation 'org.springframework.ai:spring-ai-starter-model-openai'
