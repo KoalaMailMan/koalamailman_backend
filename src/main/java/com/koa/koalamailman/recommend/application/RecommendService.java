@@ -1,5 +1,6 @@
 package com.koa.koalamailman.recommend.application;
 
+import com.koa.koalamailman.recommend.infrastructure.ParentGoalCacheRepository.CacheResult;
 import com.koa.koalamailman.recommend.infrastructure.PromptTemplates;
 import com.koa.koalamailman.user.domain.AgeGroup;
 import com.koa.koalamailman.user.domain.Gender;
@@ -14,6 +15,7 @@ import reactor.core.publisher.Flux;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -24,8 +26,76 @@ public class RecommendService {
     private static final int MAX_GOAL_LENGTH = 40;
 
     private final ChatClient chatClient;
+    private final GoalEmbeddingCacheService embeddingCacheService;
 
     public List<String> getChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job, List<String> excludeGoals) {
+        Optional<CacheResult> cacheResult = embeddingCacheService.findCachedResult(parentGoal);
+
+        if (cacheResult.isPresent()) {
+            List<String> cachedGoals = filterExcluded(cacheResult.get().childGoals(), excludeGoals);
+
+            if (cachedGoals.size() >= recommendationCount) {
+                return cachedGoals;
+            }
+
+            // 캐시 히트지만 개수 부족 → LLM으로 부족한 만큼 추가 요청
+            int remaining = recommendationCount - cachedGoals.size();
+            List<String> combinedExcludes = buildCombinedExcludes(excludeGoals, cachedGoals);
+            List<String> additionalGoals = callLLM(parentGoal, remaining, ageGroup, gender, job, combinedExcludes);
+
+            embeddingCacheService.appendGoals(cacheResult.get().id(), additionalGoals);
+
+            List<String> merged = new ArrayList<>(cachedGoals);
+            merged.addAll(additionalGoals);
+            return merged;
+        }
+
+        List<String> goals = callLLM(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals);
+        embeddingCacheService.cacheGoals(parentGoal, goals);
+        return goals;
+    }
+
+    public Flux<String> streamingChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job, List<String> excludeGoals) {
+        Optional<CacheResult> cacheResult = embeddingCacheService.findCachedResult(parentGoal);
+
+        if (cacheResult.isPresent()) {
+            List<String> cachedGoals = filterExcluded(cacheResult.get().childGoals(), excludeGoals);
+
+            if (cachedGoals.size() >= recommendationCount) {
+                return Flux.fromIterable(cachedGoals);
+            }
+
+            // 캐시 히트지만 개수 부족 → LLM으로 나머지 스트리밍
+            int remaining = recommendationCount - cachedGoals.size();
+            List<String> combinedExcludes = buildCombinedExcludes(excludeGoals, cachedGoals);
+            AtomicReference<String> buffer = new AtomicReference<>("");
+            List<String> additionalGoals = new ArrayList<>();
+
+            return Flux.fromIterable(cachedGoals)
+                    .concatWith(
+                            buildChildGoalPrompt(parentGoal, remaining, ageGroup, gender, job, combinedExcludes)
+                                    .stream()
+                                    .content()
+                                    .concatMap(chunk -> parseCompletedGoals(buffer, chunk))
+                                    .concatWith(Flux.defer(() -> parseRemainingGoal(buffer)))
+                                    .doOnNext(additionalGoals::add)
+                                    .doOnComplete(() -> embeddingCacheService.appendGoals(cacheResult.get().id(), additionalGoals))
+                    );
+        }
+
+        AtomicReference<String> buffer = new AtomicReference<>("");
+        List<String> collectedGoals = new ArrayList<>();
+
+        return buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
+                .stream()
+                .content()
+                .concatMap(chunk -> parseCompletedGoals(buffer, chunk))
+                .concatWith(Flux.defer(() -> parseRemainingGoal(buffer)))
+                .doOnNext(collectedGoals::add)
+                .doOnComplete(() -> embeddingCacheService.cacheGoals(parentGoal, collectedGoals));
+    }
+
+    private List<String> callLLM(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job, List<String> excludeGoals) {
         var response = buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
                 .call()
                 .content();
@@ -49,14 +119,21 @@ public class RecommendService {
         return goals;
     }
 
-    public Flux<String> streamingChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job, List<String> excludeGoals) {
-        AtomicReference<String> buffer = new AtomicReference<>("");
+    private List<String> buildCombinedExcludes(List<String> excludeGoals, List<String> cachedGoals) {
+        List<String> combined = new ArrayList<>(cachedGoals);
+        if (excludeGoals != null) {
+            combined.addAll(excludeGoals);
+        }
+        return combined;
+    }
 
-        return buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
-                .stream()
-                .content()
-                .concatMap(chunk -> parseCompletedGoals(buffer, chunk))
-                .concatWith(Flux.defer(() -> parseRemainingGoal(buffer)));
+    private List<String> filterExcluded(List<String> goals, List<String> excludeGoals) {
+        if (excludeGoals == null || excludeGoals.isEmpty()) {
+            return goals;
+        }
+        return goals.stream()
+                .filter(goal -> !excludeGoals.contains(goal))
+                .toList();
     }
 
     private Flux<String> parseCompletedGoals(AtomicReference<String> buffer, String chunk) {
