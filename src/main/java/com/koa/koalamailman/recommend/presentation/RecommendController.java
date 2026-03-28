@@ -14,7 +14,6 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.validation.annotation.Validated;
@@ -30,7 +29,6 @@ public class RecommendController implements RecommendControllerDocs {
 
     private final RecommendService recommendService;
 
-    @Cacheable(value = "childGoalsCache", key = "T(String).format('%s_%d', #parentGoal, #recommendationCount)")
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public SuccessResponse<ChildGoalsResponse> generationSubGoalList(
             @RequestParam("parentGoal") @NotNull String parentGoal,

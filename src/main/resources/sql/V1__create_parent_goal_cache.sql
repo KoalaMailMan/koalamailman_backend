@@ -1,13 +1,14 @@
 -- pgvector extension 활성화
 CREATE EXTENSION IF NOT EXISTS vector;
 
+
 -- 부모 목표 embedding 캐시 테이블
 CREATE TABLE IF NOT EXISTS parent_goal_cache (
-    id                   BIGSERIAL    PRIMARY KEY,
-    parent_goal          TEXT         NOT NULL,
-    embedding            vector(1536) NOT NULL,
-    child_goals          TEXT[]       NOT NULL,
-    created_at           TIMESTAMP    NOT NULL DEFAULT NOW()
+    id          BIGSERIAL     PRIMARY KEY,
+    parent_goal VARCHAR(50)   NOT NULL,
+    embedding   vector(1536)  NOT NULL,
+    child_goals VARCHAR(50)[] NOT NULL,
+    created_at  TIMESTAMP     NOT NULL DEFAULT NOW()
 );
 
 -- 벡터 유사도 검색용 HNSW 인덱스 (cosine similarity)
