@@ -118,14 +118,21 @@ public class RecommendService {
         return goals;
     }
 
-    public Flux<String> streamingChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job, List<String> excludeGoals) {
-        AtomicReference<String> buffer = new AtomicReference<>("");
+    private List<String> buildCombinedExcludes(List<String> excludeGoals, List<String> cachedGoals) {
+        List<String> combined = new ArrayList<>(cachedGoals);
+        if (excludeGoals != null) {
+            combined.addAll(excludeGoals);
+        }
+        return combined;
+    }
 
-        return buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
-                .stream()
-                .content()
-                .concatMap(chunk -> parseCompletedGoals(buffer, chunk))
-                .concatWith(Flux.defer(() -> parseRemainingGoal(buffer)));
+    private List<String> filterExcluded(List<String> goals, List<String> excludeGoals) {
+        if (excludeGoals == null || excludeGoals.isEmpty()) {
+            return goals;
+        }
+        return goals.stream()
+                .filter(goal -> !excludeGoals.contains(goal))
+                .toList();
     }
 
     private Flux<String> parseCompletedGoals(AtomicReference<String> buffer, String chunk) {
