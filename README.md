@@ -5,7 +5,7 @@
 ---
 
 ## Architecture
-<img width="2880" height="2200" alt="koalaMailmanArchitecture" src="https://github.com/user-attachments/assets/0f5eb089-8e6e-481a-9237-29d9dfb4f192" />
+<img width="2880" height="2200" alt="koalaMailmanArchitecture" src="https://github.com/user-attachments/assets/56fc7b85-a9e1-4f84-826a-4b0254131571" />
 
 
 
