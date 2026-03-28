@@ -8,6 +8,7 @@ import com.koa.koalamailman.global.exception.error.RecommendErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import com.koa.koalamailman.recommend.infrastructure.ParentGoalCacheRepository.CacheResult;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -27,7 +28,7 @@ public class RecommendService {
     private final ChatClient chatClient;
     private final GoalEmbeddingCacheService embeddingCacheService;
 
-    public List<String> getChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job, List<String> excludeGoals) {
+    public List<String> getChildGoalByParentGoal(String parentGoal, int recommendationCount, List<String> excludeGoals) {
         Optional<CacheResult> cacheResult = embeddingCacheService.findCachedResult(parentGoal);
 
         if (cacheResult.isPresent()) {
@@ -40,7 +41,7 @@ public class RecommendService {
             // 캐시 히트지만 개수 부족 → LLM으로 부족한 만큼 추가 요청
             int remaining = recommendationCount - cachedGoals.size();
             List<String> combinedExcludes = buildCombinedExcludes(excludeGoals, cachedGoals);
-            List<String> additionalGoals = callLLM(parentGoal, remaining, ageGroup, gender, job, combinedExcludes);
+            List<String> additionalGoals = callLLM(parentGoal, remaining, combinedExcludes);
 
             embeddingCacheService.appendGoals(cacheResult.get().id(), additionalGoals);
 
@@ -49,12 +50,12 @@ public class RecommendService {
             return merged;
         }
 
-        List<String> goals = callLLM(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals);
+        List<String> goals = callLLM(parentGoal, recommendationCount, excludeGoals);
         embeddingCacheService.cacheGoals(parentGoal, goals);
         return goals;
     }
 
-    public Flux<String> streamingChildGoalByParentGoal(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job, List<String> excludeGoals) {
+    public Flux<String> streamingChildGoalByParentGoal(String parentGoal, int recommendationCount, List<String> excludeGoals) {
         Optional<CacheResult> cacheResult = embeddingCacheService.findCachedResult(parentGoal);
 
         if (cacheResult.isPresent()) {
@@ -72,7 +73,7 @@ public class RecommendService {
 
             return Flux.fromIterable(cachedGoals)
                     .concatWith(
-                            buildChildGoalPrompt(parentGoal, remaining, ageGroup, gender, job, combinedExcludes)
+                            buildChildGoalPrompt(parentGoal, remaining, null, null, null, combinedExcludes)
                                     .stream()
                                     .content()
                                     .concatMap(chunk -> parseCompletedGoals(buffer, chunk))
@@ -85,7 +86,7 @@ public class RecommendService {
         AtomicReference<String> buffer = new AtomicReference<>("");
         List<String> collectedGoals = new ArrayList<>();
 
-        return buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
+        return buildChildGoalPrompt(parentGoal, recommendationCount, null, null, null, excludeGoals)
                 .stream()
                 .content()
                 .concatMap(chunk -> parseCompletedGoals(buffer, chunk))
@@ -94,8 +95,8 @@ public class RecommendService {
                 .doOnComplete(() -> embeddingCacheService.cacheGoals(parentGoal, collectedGoals));
     }
 
-    private List<String> callLLM(String parentGoal, int recommendationCount, AgeGroup ageGroup, Gender gender, String job, List<String> excludeGoals) {
-        var response = buildChildGoalPrompt(parentGoal, recommendationCount, ageGroup, gender, job, excludeGoals)
+    private List<String> callLLM(String parentGoal, int recommendationCount, List<String> excludeGoals) {
+        var response = buildChildGoalPrompt(parentGoal, recommendationCount, null, null, null, excludeGoals)
                 .call()
                 .content();
 
