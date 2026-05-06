@@ -76,6 +76,8 @@ jobs:
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             docker pull "$IMAGE"
 
+            cd "$COMPOSE_DIR"
+            docker-compose rm -sf backend 2>/dev/null || true
             BACKEND_IMAGE="$IMAGE" docker-compose up -d
 
             MAX_RETRIES=60
