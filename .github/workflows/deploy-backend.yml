@@ -76,12 +76,12 @@ jobs:
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             docker pull "$IMAGE"
 
-            BACKEND_IMAGE="$IMAGE" docker compose up -d
+            BACKEND_IMAGE="$IMAGE" docker-compose up -d
 
             MAX_RETRIES=60
             SLEEP=10
             COUNT=0
-            until docker compose exec -T backend curl -fsS http://127.0.0.1:8080/actuator/health >/dev/null; do
+            until docker-compose exec -T backend curl -fsS http://127.0.0.1:8080/actuator/health >/dev/null; do
               COUNT=$((COUNT+1))
               if [ $COUNT -ge $MAX_RETRIES ]; then
                 echo "Service failed to start after $((MAX_RETRIES*SLEEP)) seconds."
