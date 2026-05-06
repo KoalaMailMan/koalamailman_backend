@@ -59,7 +59,7 @@ jobs:
           script: |
             set -e
             IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest"
-            COMPOSE_DIR="$HOME/ringdong/backend"
+            COMPOSE_DIR="$HOME/mandalart/backend"
             ENVFILE="$COMPOSE_DIR/.env"
 
             if [ ! -d "$COMPOSE_DIR/.git" ]; then
