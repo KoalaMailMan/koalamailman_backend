@@ -73,6 +73,7 @@ jobs:
             EOF
             chmod 644 "$ENVFILE"
 
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             docker pull "$IMAGE"
 
             BACKEND_IMAGE="$IMAGE" docker compose up -d
