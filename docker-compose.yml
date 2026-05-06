@@ -1,0 +1,27 @@
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - backend
+    restart: always
+    networks:
+      - mandalart
+
+  backend:
+    image: ${BACKEND_IMAGE}
+    expose:
+      - "8080"
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - mandalart
+
+networks:
+  mandalart:
+    driver: bridge
