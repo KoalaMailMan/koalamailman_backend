@@ -6,6 +6,8 @@ RUN gradle clean bootJar -x test
 
 # run
 FROM eclipse-temurin:17-jre
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=builder /src/build/libs/*-SNAPSHOT.jar app.jar
 ENV TZ=Asia/Seoul JAVA_OPTS="-Dspring.profiles.active=prod" SERVER_PORT=8080
