@@ -82,6 +82,12 @@ jobs:
             docker pull "$IMAGE"
 
             cd "$COMPOSE_DIR"
+
+            if [ "$NGINX_CHANGED" = "true" ]; then
+              echo "nginx config changed, rebuilding..."
+              BACKEND_IMAGE="$IMAGE" docker-compose build nginx
+            fi
+
             docker-compose rm -sf backend 2>/dev/null || true
             BACKEND_IMAGE="$IMAGE" docker-compose up -d
 
@@ -98,13 +104,6 @@ jobs:
               sleep $SLEEP
             done
             echo "Service is up"
-
-            if [ "$NGINX_CHANGED" = "true" ]; then
-              echo "nginx config changed, rebuilding..."
-              docker-compose rm -sf nginx 2>/dev/null || true
-              BACKEND_IMAGE="$IMAGE" docker-compose build nginx
-              BACKEND_IMAGE="$IMAGE" docker-compose up -d nginx
-            fi
 
             docker image prune -f
             sudo shred -u "$ENVFILE" || sudo rm -f "$ENVFILE"
