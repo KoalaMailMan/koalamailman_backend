@@ -102,8 +102,8 @@ jobs:
             if [ "$NGINX_CHANGED" = "true" ]; then
               echo "nginx config changed, rebuilding..."
               docker-compose rm -sf nginx 2>/dev/null || true
-              docker-compose build nginx
-              docker-compose up -d nginx
+              BACKEND_IMAGE="$IMAGE" docker-compose build nginx
+              BACKEND_IMAGE="$IMAGE" docker-compose up -d nginx
             fi
 
             docker image prune -f
