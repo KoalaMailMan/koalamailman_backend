@@ -1,19 +1,25 @@
 name: Backend → Docker Hub → EC2
+
+# infra/nginx-setup 브랜치 푸시 또는 수동 실행 시 트리거
 on:
   push:
     branches: ["infra/nginx-setup"]
   workflow_dispatch:
 
 jobs:
+  # ── 1단계: 백엔드 이미지 빌드 후 Docker Hub에 푸시 ──────────────────────
   build_push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # Java 17 (Temurin) 설치
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
 
+      # 이미지 태그 메타데이터 생성 (latest + git sha)
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
@@ -29,11 +35,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # BuildKit 활성화 (멀티플랫폼 빌드 지원)
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
           driver: 'docker-container'
 
+      # 캐시 없이 빌드 후 Docker Hub에 푸시
       - name: Build & Push
         uses: docker/build-push-action@v6
         with:
@@ -45,6 +53,7 @@ jobs:
           no-cache: true
 
 
+  # ── 2단계: EC2에 SSH 접속해 배포 (build_push 완료 후 실행) ───────────────
   deploy:
     needs: build_push
     runs-on: ubuntu-latest
@@ -63,6 +72,9 @@ jobs:
             ENVFILE="$COMPOSE_DIR/.env"
 
             BRANCH="${{ github.ref_name }}"
+
+            # 최초 배포: 레포 클론 / 이후: 최신 커밋으로 업데이트
+            # nginx 디렉토리 변경 여부를 git 트리 해시로 감지
             if [ ! -d "$COMPOSE_DIR/.git" ]; then
               git clone -b "$BRANCH" https://github.com/${{ github.repository }}.git "$COMPOSE_DIR"
               NGINX_CHANGED=true
@@ -73,24 +85,30 @@ jobs:
               [ "$NGINX_BEFORE" != "$NGINX_AFTER" ] && NGINX_CHANGED=true || NGINX_CHANGED=false
             fi
 
+            # GitHub Secret에서 .env 파일 생성 (민감 정보 주입)
             cat > "$ENVFILE" << "EOF"
             ${{ secrets.BACKEND_ENV_PROD }}
             EOF
             chmod 644 "$ENVFILE"
 
+            # 새 이미지 pull
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             docker pull "$IMAGE"
 
             cd "$COMPOSE_DIR"
 
+            # nginx conf가 변경된 경우 up -d 전에 미리 이미지 재빌드
+            # (재빌드 전 up -d하면 컨테이너에 구버전 이미지가 들어감)
             if [ "$NGINX_CHANGED" = "true" ]; then
               echo "nginx config changed, rebuilding..."
               BACKEND_IMAGE="$IMAGE" docker-compose build nginx
             fi
 
+            # 백엔드 컨테이너 교체 후 전체 서비스 기동
             docker-compose rm -sf backend 2>/dev/null || true
             BACKEND_IMAGE="$IMAGE" docker-compose up -d
 
+            # 백엔드 헬스체크 통과 대기 (최대 600초)
             MAX_RETRIES=60
             SLEEP=10
             COUNT=0
@@ -105,5 +123,6 @@ jobs:
             done
             echo "Service is up"
 
+            # 미사용 이미지 정리 및 .env 파일 완전 삭제
             docker image prune -f
             sudo shred -u "$ENVFILE" || sudo rm -f "$ENVFILE"
