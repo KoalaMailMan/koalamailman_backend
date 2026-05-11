@@ -1,5 +1,6 @@
 services:
   nginx:
+    container_name: nginx
     build: ./nginx
     ports:
       - "80:80"
@@ -14,6 +15,7 @@ services:
 
   backend:
     image: ${BACKEND_IMAGE}
+    container_name: backend
     expose:
       - "8080"
     env_file:
