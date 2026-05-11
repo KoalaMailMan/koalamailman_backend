@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -33,6 +34,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private String loginRedirectUri;
     @Value("${app.oauth2.domain}")
     private String cookieDomain;
+    @Value("${app.oauth2.local-redirect-uri}")
+    private String localRedirectUri;
+    @Value("${app.oauth2.local-test-emails:#{null}}")
+    private List<String> localTestEmails;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -55,18 +60,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         ResponseCookie cookie = cookieProvider.setRefreshTokenCookie(refreshToken);
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        String targetUrl;
-
-        // 프론트엔드 로컬 테스트용 계정
-        if (registrationId.equals("google") && (email.equals("mamonde456@gmail.com") || email.equals("kwakjungah0605@gmail.com"))) {
-            targetUrl = UriComponentsBuilder
-                    .fromHttpUrl("https://localhost:3000")
-                    .build().toUriString();
-        } else {
-            targetUrl = UriComponentsBuilder
-                    .fromHttpUrl(loginRedirectUri)
-                    .build().toUriString();
-        }
+        boolean isLocalTest = localTestEmails != null && localTestEmails.contains(email);
+        String targetUrl = UriComponentsBuilder
+                .fromHttpUrl(isLocalTest ? localRedirectUri : loginRedirectUri)
+                .build().toUriString();
 
         response.sendRedirect(targetUrl);
     }
