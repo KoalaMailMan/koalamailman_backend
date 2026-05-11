@@ -1,7 +1,6 @@
 package com.koa.koalamailman.global.security.handler;
 
 import com.koa.koalamailman.user.application.UserAuthUseCase;
-import com.koa.koalamailman.auth.application.AccessTokenService;
 import com.koa.koalamailman.auth.application.RefreshTokenService;
 import com.koa.koalamailman.user.domain.OAuthProvider;
 import com.koa.koalamailman.user.domain.User;
@@ -26,7 +25,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-    private final AccessTokenService accessTokenService;
     private final CookieProvider cookieProvider;
     private final RefreshTokenService refreshTokenService;
     private final UserAuthUseCase userAuthUseCase;
@@ -51,7 +49,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 
         User user = userAuthUseCase.findOrCreate(provider, providerId, name, email);
-        String accessToken = accessTokenService.createAccessToken(user);
 
         String refreshToken = refreshTokenService.createRefreshToken(user);
 
@@ -63,13 +60,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // 프론트엔드 로컬 테스트용 계정
         if (registrationId.equals("google") && (email.equals("mamonde456@gmail.com") || email.equals("kwakjungah0605@gmail.com"))) {
             targetUrl = UriComponentsBuilder
-                    .fromHttpUrl("http://localhost:3000")
-                    .queryParam("access_token", accessToken)
+                    .fromHttpUrl("https://localhost:3000")
                     .build().toUriString();
         } else {
             targetUrl = UriComponentsBuilder
                     .fromHttpUrl(loginRedirectUri)
-                    .queryParam("access_token", accessToken)
                     .build().toUriString();
         }
 
