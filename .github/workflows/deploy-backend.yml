@@ -67,7 +67,8 @@ jobs:
           script_stop: true
           script: |
             set -e
-            IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest"
+            export BACKEND_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest"
+            IMAGE="$BACKEND_IMAGE"
             COMPOSE_DIR="$HOME/mandalart/backend"
             ENVFILE="$COMPOSE_DIR/.env"
 
@@ -101,12 +102,12 @@ jobs:
             # (재빌드 전 up -d하면 컨테이너에 구버전 이미지가 들어감)
             if [ "$NGINX_CHANGED" = "true" ]; then
               echo "nginx config changed, rebuilding..."
-              BACKEND_IMAGE="$IMAGE" docker-compose build nginx
+              docker-compose build nginx
             fi
 
             # 백엔드 컨테이너 교체 후 전체 서비스 기동
             docker-compose rm -sf backend 2>/dev/null || true
-            BACKEND_IMAGE="$IMAGE" docker-compose up -d
+            docker-compose up -d
 
             # 백엔드 헬스체크 통과 대기 (최대 600초)
             MAX_RETRIES=60
