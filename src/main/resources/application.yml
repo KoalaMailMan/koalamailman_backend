@@ -9,9 +9,11 @@ server:
 
 app:
   oauth2:
-    front-uri: ${FRONT_URI:https://ringdong.kr}
-    back-uri: ${BACK_URI:https://ringdong.kr}
-    domain: ${COOKIE_DOMAIN:ringdong.kr}
+    front-uri: ${FRONT_URI}
+    back-uri: ${BACK_URI}
+    domain: ${COOKIE_DOMAIN}
+    local-redirect-uri: ${LOCAL_REDIRECT_URI:https://localhost:3000}
+    local-test-emails: ${LOCAL_TEST_EMAILS:}
 
 spring:
   application:

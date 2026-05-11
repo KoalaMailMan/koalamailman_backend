@@ -28,6 +28,9 @@ public class RefreshTokenService {
     @Value("${jwt.refresh.expiration}")
     private long refreshTokenExpirationMs;
 
+    @Value("${jwt.access.expiration}")
+    private long accessTokenExpirationMs;
+
     @Transactional
     public String validateAndGenerateAccessToken(String rawRefreshToken) {
         Long userId = Long.parseLong(jwtProvider.getSubjectFromToken(rawRefreshToken));
@@ -43,7 +46,7 @@ public class RefreshTokenService {
             throw new BusinessException(AuthErrorCode.UNAUTHORIZED);
         }
 
-        return jwtProvider.generateToken(userId, null, refreshTokenExpirationMs);
+        return jwtProvider.generateToken(userId, null, accessTokenExpirationMs);
     }
 
     @Transactional
