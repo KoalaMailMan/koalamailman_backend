@@ -3,7 +3,7 @@ name: Backend → Docker Hub → EC2
 # infra/nginx-setup 브랜치 푸시 또는 수동 실행 시 트리거
 on:
   push:
-    branches: ["infra/nginx-setup"]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
