@@ -1,7 +1,6 @@
 package com.koa.koalamailman.global.security.handler;
 
 import com.koa.koalamailman.user.application.UserAuthUseCase;
-import com.koa.koalamailman.auth.application.AccessTokenService;
 import com.koa.koalamailman.auth.application.RefreshTokenService;
 import com.koa.koalamailman.user.domain.OAuthProvider;
 import com.koa.koalamailman.user.domain.User;
@@ -20,13 +19,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-    private final AccessTokenService accessTokenService;
     private final CookieProvider cookieProvider;
     private final RefreshTokenService refreshTokenService;
     private final UserAuthUseCase userAuthUseCase;
@@ -35,6 +34,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private String loginRedirectUri;
     @Value("${app.oauth2.domain}")
     private String cookieDomain;
+    @Value("${app.oauth2.local-redirect-uri}")
+    private String localRedirectUri;
+    @Value("${app.oauth2.local-test-emails:#{null}}")
+    private List<String> localTestEmails;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -51,27 +54,16 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 
         User user = userAuthUseCase.findOrCreate(provider, providerId, name, email);
-        String accessToken = accessTokenService.createAccessToken(user);
 
         String refreshToken = refreshTokenService.createRefreshToken(user);
 
         ResponseCookie cookie = cookieProvider.setRefreshTokenCookie(refreshToken);
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        String targetUrl;
-
-        // 프론트엔드 로컬 테스트용 계정
-        if (registrationId.equals("google") && (email.equals("mamonde456@gmail.com") || email.equals("kwakjungah0605@gmail.com"))) {
-            targetUrl = UriComponentsBuilder
-                    .fromHttpUrl("http://localhost:3000")
-                    .queryParam("access_token", accessToken)
-                    .build().toUriString();
-        } else {
-            targetUrl = UriComponentsBuilder
-                    .fromHttpUrl(loginRedirectUri)
-                    .queryParam("access_token", accessToken)
-                    .build().toUriString();
-        }
+        boolean isLocalTest = localTestEmails != null && localTestEmails.contains(email);
+        String targetUrl = UriComponentsBuilder
+                .fromHttpUrl(isLocalTest ? localRedirectUri : loginRedirectUri)
+                .build().toUriString();
 
         response.sendRedirect(targetUrl);
     }
