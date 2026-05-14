@@ -2,7 +2,7 @@
 FROM gradle:8.8-jdk17 AS builder
 WORKDIR /src
 COPY . .
-RUN gradle clean bootJar -x test
+RUN chmod +x ./gradlew && ./gradlew clean bootJar -x test --no-daemon
 
 # run
 FROM eclipse-temurin:17-jre
