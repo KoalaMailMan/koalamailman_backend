@@ -65,6 +65,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String targetUrl = UriComponentsBuilder
                 .fromUriString(isLocalTest ? localRedirectUri : loginRedirectUri)
                 .queryParam("state", state)
+                .build().toUriString();
 
         response.sendRedirect(targetUrl);
     }
