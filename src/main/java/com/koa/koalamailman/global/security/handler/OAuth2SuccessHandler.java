@@ -61,8 +61,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
         boolean isLocalTest = localTestEmails != null && localTestEmails.contains(email);
+        String state = request.getParameter("state");
         String targetUrl = UriComponentsBuilder
-                .fromHttpUrl(isLocalTest ? localRedirectUri : loginRedirectUri)
+                .fromUriString(isLocalTest ? localRedirectUri : loginRedirectUri)
+                .queryParam("state", state)
                 .build().toUriString();
 
         response.sendRedirect(targetUrl);
