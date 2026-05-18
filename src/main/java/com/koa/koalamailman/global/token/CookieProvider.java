@@ -11,6 +11,9 @@ import java.time.Duration;
 public class CookieProvider {
     @Value("${jwt.refresh.expiration}")
     private long refreshTokenExpiration;
+    @Value("${app.oauth2.domain}")
+    private String cookieDomain;
+
     public ResponseCookie setRefreshTokenCookie(String refreshToken) {
         return ResponseCookie.from("refresh_token", refreshToken)
                 .httpOnly(true)
@@ -18,6 +21,7 @@ public class CookieProvider {
                 .path("/")
                 .maxAge(Duration.ofMillis(refreshTokenExpiration))
                 .sameSite("Lax")
+                .domain(cookieDomain)
                 .build();
     }
 }
