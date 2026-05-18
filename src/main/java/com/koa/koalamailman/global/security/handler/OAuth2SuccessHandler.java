@@ -32,8 +32,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     @Value("${app.oauth2.login-redirect-uri}")
     private String loginRedirectUri;
-    @Value("${app.oauth2.domain}")
-    private String cookieDomain;
     @Value("${app.oauth2.local-redirect-uri}")
     private String localRedirectUri;
     @Value("${app.oauth2.local-test-emails:#{null}}")
