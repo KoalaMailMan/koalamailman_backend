@@ -15,6 +15,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -29,6 +32,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final CookieProvider cookieProvider;
     private final RefreshTokenService refreshTokenService;
     private final UserAuthUseCase userAuthUseCase;
+    private final RequestCache requestCache = new HttpSessionRequestCache();
 
     @Value("${app.oauth2.login-redirect-uri}")
     private String loginRedirectUri;
@@ -58,6 +62,13 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         ResponseCookie cookie = cookieProvider.setRefreshTokenCookie(refreshToken);
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
+        SavedRequest savedRequest = requestCache.getRequest(request, response);
+        if (savedRequest != null && isMcpAuthorizationRequest(savedRequest.getRedirectUrl())) {
+            requestCache.removeRequest(request, response);
+            response.sendRedirect(savedRequest.getRedirectUrl());
+            return;
+        }
+
         boolean isLocalTest = localTestEmails != null && localTestEmails.contains(email);
         String state = request.getParameter("state");
         String targetUrl = UriComponentsBuilder
@@ -67,5 +78,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         response.sendRedirect(targetUrl);
     }
-}
 
+    private boolean isMcpAuthorizationRequest(String redirectUrl) {
+        return redirectUrl != null
+                && redirectUrl.contains("/oauth2/authorize")
+                && redirectUrl.contains("client_id=");
+    }
+}

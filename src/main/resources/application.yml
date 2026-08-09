@@ -14,6 +14,12 @@ app:
     domain: ${COOKIE_DOMAIN}
     local-redirect-uri: ${LOCAL_REDIRECT_URI:https://localhost:3000}
     local-test-emails: ${LOCAL_TEST_EMAILS:}
+  mcp:
+    oauth:
+      issuer: ${MCP_OAUTH_ISSUER:${BACK_URI:http://localhost:8080}}
+      client-id: ${MCP_OAUTH_CLIENT_ID:ringdong-mcp}
+      client-secret: ${MCP_OAUTH_CLIENT_SECRET:dev-secret}
+      redirect-uri: ${MCP_OAUTH_REDIRECT_URI:http://localhost:6274/oauth/callback}
 
 spring:
   application:
@@ -89,7 +95,7 @@ spring:
         version: 0.1.0
         type: SYNC
         instructions: "Provides MCP tools for authenticated RingDong users to read their mandalart goals."
-        base-url: /api
+        base-url: ""
         sse-endpoint: /mcp/sse
         sse-message-endpoint: /mcp/messages
         capabilities:
