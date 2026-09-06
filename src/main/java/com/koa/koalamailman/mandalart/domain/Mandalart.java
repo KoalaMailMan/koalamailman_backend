@@ -4,8 +4,6 @@ import com.koa.koalamailman.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "mandalart", indexes = {
         @Index(
@@ -30,24 +28,12 @@ public class Mandalart extends BaseEntity {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Embedded
-    private ReminderOption reminderOption;
-
     public static Mandalart create(
             Long userId
     ) {
         return Mandalart.builder()
                 .userId(userId)
-                .reminderOption(ReminderOption.disabled())
                 .build();
-    }
-
-    public void updateReminderOption(Boolean enabled, RemindInterval interval, LocalDateTime nextTime) {
-        this.reminderOption.update(enabled, interval, nextTime);
-    }
-
-    public void rescheduleReminder(LocalDateTime nextTime) {
-        this.reminderOption.setRemindScheduledAt(nextTime);
     }
 
 }

@@ -96,21 +96,6 @@ spring:
         options:
           model: ${OPENROUTER_EMBEDDING_MODEL}
 
-aws:
-  region: ap-northeast-2
-  access-key: ${AWS_ACCESS_KEY_ID}
-  secret-key: ${AWS_SECRET_ACCESS_KEY}
-
-mail:
-  from: "코알라 우체부 <reminder@ringdong.kr>"
-  fromName: "Koala Mailman"
-  charset: "UTF-8"
-  cta-uri: ${FRONT_URI:https://ringdong.kr}
-  subject: "코알라 우체부가 편지를 전해요  🐨🪽✉️️"
-  logo-url: "https://ringdong.kr/koala.svg"
-  hero-url: ""
-  tip: "중요한 건 꺾이지 않는 마음입니다."
-
 jwt:
   access:
     secret: ${JWT_SECRET}

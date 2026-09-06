@@ -38,7 +38,7 @@ public interface MandalartControllerDocs {
             @ApiResponse(responseCode = "204", description = "만다라트를 찾을 수 없음. MANDALART_NOT_FOUND"),
             @ApiResponse(responseCode = "403", description = "해당 만다라트에 대한 권한 없음. MANDALART_FORBIDDEN"),
     })
-    SuccessResponse<MandalartResponse> getMandalartWithReminderOption(
+    SuccessResponse<MandalartResponse> getMandalart(
             @Parameter(hidden = true)
             @AuthenticationPrincipal CustomUserDetails userDetails
     );

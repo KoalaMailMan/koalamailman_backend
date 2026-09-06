@@ -24,18 +24,6 @@
         </encoder>
     </appender>
 
-    <!-- 스케줄러 전용 파일 -->
-    <appender name="SCHEDULER_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/scheduler.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/scheduler.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
-        </encoder>
-    </appender>
-
     <!-- Hibernate 쿼리 로그 OFF -->
     <logger name="org.hibernate.SQL" level="OFF"/>
     <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="OFF"/>
@@ -43,12 +31,6 @@
     <!-- 컨트롤러 로그 전용 -->
     <logger name="com.koa.koalamailman.domain" level="INFO" additivity="false">
         <appender-ref ref="CONTROLLER_FILE"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
-    <!-- 스케줄러 로그 전용 -->
-    <logger name="com.koa.koalamailman.domain.reminder" level="INFO" additivity="false">
-        <appender-ref ref="SCHEDULER_FILE"/>
         <appender-ref ref="STDOUT"/>
     </logger>
 
