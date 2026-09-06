@@ -36,12 +36,12 @@ public class MandalartController implements MandalartControllerDocs {
 
     @GetMapping
     @Override
-    public SuccessResponse<MandalartResponse> getMandalartWithReminderOption(
+    public SuccessResponse<MandalartResponse> getMandalart(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         return SuccessResponse.success(
                 SuccessCode.GET_MANDALART_SUCCESS,
-                MandalartResponse.from(mandalartUseCase.getMandalartWithRemind(userDetails.getUserId()))
+                MandalartResponse.from(mandalartUseCase.getMandalart(userDetails.getUserId()))
         );
     }
 

@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -32,7 +31,7 @@ public class MandalartUseCase {
     }
 
     @Transactional(readOnly = true)
-    public MandalartDto getMandalartWithRemind(Long userId) {
+    public MandalartDto getMandalart(Long userId) {
         Mandalart mandalart = findMandalartByUserId(userId);
         return MandalartDto.from(mandalart, getGoalsByMandalartId(mandalart.getId()));
     }
@@ -70,19 +69,8 @@ public class MandalartUseCase {
     }
 
     @Transactional(readOnly = true)
-    public List<Mandalart> findDueMandalarts(LocalDateTime until) {
-        return mandalartRepository.findDueReminders(until);
-    }
-
-    @Transactional(readOnly = true)
     public List<Goal> getCoreAndMainGoals(Long mandalartId) {
         return goalService.findByMandalartIdAndLevelIn(mandalartId, List.of(GoalLevel.CORE, GoalLevel.MAIN));
     }
 
-    @Transactional
-    public void rescheduleReminder(Long mandalartId, LocalDateTime nextTime) {
-        Mandalart mandalart = mandalartRepository.findById(mandalartId).orElse(null);
-        if (mandalart == null) return;
-        mandalart.rescheduleReminder(nextTime);
-    }
 }
